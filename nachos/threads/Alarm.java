@@ -50,9 +50,8 @@ public class Alarm {
 	 * should be run.
 	 */
 	public void timerInterrupt() {
-		KThread.yield();
-        
 		boolean intStatus = Machine.interrupt().disable();
+        
         if (!blockedThreadQueue.isEmpty() && blockedThreadQueue.peek().wakeTime > Machine.timer().getTime()) {
             blockedThreadQueue.poll().thread.ready();
         }
