@@ -1,5 +1,7 @@
 package nachos.threads;
 
+import java.util.PriorityQueue;
+
 import nachos.machine.*;
 
 /**
@@ -20,7 +22,25 @@ public class Alarm {
 				timerInterrupt();
 			}
 		});
+
+        blockedThreadQueue = new PriorityQueue<>();
 	}
+
+    private class BlockedThread implements Comparable {
+        private KThread thread;
+        private long wakeTime;
+
+        public BlockedThread(KThread thread, long wakeTime) {
+            this.thread = thread;
+            this.wakeTime = wakeTime;
+        }
+
+        @Override
+        public int compareTo(BlockedThread that) {
+            return this.wakeTime - that.wakeTime;
+        }
+
+    }
 
 	/**
 	 * The timer interrupt handler. This is called by the machine's timer
@@ -29,7 +49,11 @@ public class Alarm {
 	 * should be run.
 	 */
 	public void timerInterrupt() {
-		KThread.currentThread().yield();
+		KThread.yield();
+
+        if (!blockedThreadQueue.isEmpty() && blockedThreadQueue.peek().wakeTime > Machine.timer().getTime()) {
+            blockedThreadQueue.poll().thread.ready();
+        }
 	}
 
 	/**
@@ -46,9 +70,23 @@ public class Alarm {
 	 */
 	public void waitUntil(long x) {
 		// for now, cheat just to get something working (busy waiting is bad)
-		long wakeTime = Machine.timer().getTime() + x;
-		while (wakeTime > Machine.timer().getTime())
-			KThread.yield();
+		// long wakeTime = Machine.timer().getTime() + x;
+		// while (wakeTime > Machine.timer().getTime())
+		// 	KThread.yield();
+        if (x <= 0) {
+            return;
+        }
+
+		boolean intStatus = Machine.interrupt().disable();
+
+        /* critical section, the priority queue is shared */
+        long wakeTime = Machine.timer().getTime() + x;
+        BlockedThread blocked = new BlockedThread(KThread.currentThread(), wakeTime);
+        blockedQueue.offer(blocked);
+
+        Machine.interrupt().restore(intStatus);
+
+        KThread.yield();
 	}
 
         /**
@@ -63,4 +101,22 @@ public class Alarm {
         public boolean cancel(KThread thread) {
 		return false;
 	}
+
+    public static void alarmTest1() {
+        int durations[] = {1000, 10*1000, 100*1000};
+        long t0, t1;
+    
+        for (int d : durations) {
+            t0 = Machine.timer().getTime();
+            ThreadedKernel.alarm.waitUntil (d);
+            t1 = Machine.timer().getTime();
+            System.out.println ("alarmTest1: waited for " + (t1 - t0) + " ticks");
+        }
+    }
+
+    public static void selfTest() {
+        alarmTest1();
+    }
+
+    PriorityQueue<BlockedThread> blockedThreadQueue;
 }
