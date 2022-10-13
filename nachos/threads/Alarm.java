@@ -119,11 +119,11 @@ public class Alarm {
     }
 
     public static void selfTest() {
-		Lib.debug(dbgThread, "Enter KThread.selfTest");
+		Lib.debug(dbgAlarm, "Enter Alarm.selfTest");
         alarmTest1();
     }
 
-	private static final char dbgThread = 'l';
+	private static final char dbgAlarm = 'l';
 
     PriorityQueue<BlockedThread> blockedThreadQueue;
 }
