@@ -51,8 +51,8 @@ public class Alarm {
 	 */
 	public void timerInterrupt() {
 		boolean intStatus = Machine.interrupt().disable();
-        
-        if (!blockedThreadQueue.isEmpty() && blockedThreadQueue.peek().wakeTime > Machine.timer().getTime()) {
+
+        while (!blockedThreadQueue.isEmpty() && blockedThreadQueue.peek().wakeTime > Machine.timer().getTime()) {
             blockedThreadQueue.poll().thread.ready();
         }
 		Machine.interrupt().restore(intStatus);
