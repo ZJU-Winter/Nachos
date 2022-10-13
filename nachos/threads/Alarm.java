@@ -84,10 +84,9 @@ public class Alarm {
         long wakeTime = Machine.timer().getTime() + x;
         BlockedThread blocked = new BlockedThread(KThread.currentThread(), wakeTime);
         blockedThreadQueue.offer(blocked);
-
-        Machine.interrupt().restore(intStatus);
-
         KThread.yield();
+        
+        Machine.interrupt().restore(intStatus);
 	}
 
         /**
