@@ -90,7 +90,7 @@ public class Alarm {
         blockedThreadQueue.offer(blocked);
         Machine.interrupt().restore(intStatus);
 
-        KThread.yield();
+        KThread.sleep();
 	}
 
         /**
@@ -119,9 +119,8 @@ public class Alarm {
     }
 
     public static void selfTest() {
-        alarmTest1();
-
 		Lib.debug(dbgThread, "Enter KThread.selfTest");
+        alarmTest1();
     }
 
 	private static final char dbgThread = 'l';
