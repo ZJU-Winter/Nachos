@@ -36,8 +36,9 @@ public class Alarm {
         }
 
         @Override
-        public int compareTo(BlockedThread that) {
-            return this.wakeTime - that.wakeTime;
+        public int compareTo(Object o) {
+            BlockedThread that = (BlockedThread)o;
+            return (int)(this.wakeTime - that.wakeTime);
         }
 
     }
@@ -82,7 +83,7 @@ public class Alarm {
         /* critical section, the priority queue is shared */
         long wakeTime = Machine.timer().getTime() + x;
         BlockedThread blocked = new BlockedThread(KThread.currentThread(), wakeTime);
-        blockedQueue.offer(blocked);
+        blockedThreadQueue.offer(blocked);
 
         Machine.interrupt().restore(intStatus);
 
