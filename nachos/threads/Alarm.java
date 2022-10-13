@@ -78,7 +78,6 @@ public class Alarm {
 		// while (wakeTime > Machine.timer().getTime())
 		// 	KThread.yield();
 
-        
         if (x <= 0) {
             return;
         }
