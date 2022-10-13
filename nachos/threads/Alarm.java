@@ -23,25 +23,25 @@ public class Alarm {
 			}
 		});
 
-        //blockedThreadQueue = new PriorityQueue<>();
+        blockedThreadQueue = new PriorityQueue<>();
 	}
 
-    // private class BlockedThread implements Comparable {
-    //     private KThread thread;
-    //     private long wakeTime;
+    private class BlockedThread implements Comparable {
+        private KThread thread;
+        private long wakeTime;
 
-    //     public BlockedThread(KThread thread, long wakeTime) {
-    //         this.thread = thread;
-    //         this.wakeTime = wakeTime;
-    //     }
+        public BlockedThread(KThread thread, long wakeTime) {
+            this.thread = thread;
+            this.wakeTime = wakeTime;
+        }
 
-    //     @Override
-    //     public int compareTo(Object o) {
-    //         BlockedThread that = (BlockedThread)o;
-    //         return (int)(this.wakeTime - that.wakeTime);
-    //     }
+        @Override
+        public int compareTo(Object o) {
+            BlockedThread that = (BlockedThread)o;
+            return (int)(this.wakeTime - that.wakeTime);
+        }
 
-    // }
+    }
 
 	/**
 	 * The timer interrupt handler. This is called by the machine's timer
@@ -52,9 +52,9 @@ public class Alarm {
 	public void timerInterrupt() {
 		KThread.yield();
 
-        // if (!blockedThreadQueue.isEmpty() && blockedThreadQueue.peek().wakeTime > Machine.timer().getTime()) {
-        //     blockedThreadQueue.poll().thread.ready();
-        // }
+        if (!blockedThreadQueue.isEmpty() && blockedThreadQueue.peek().wakeTime > Machine.timer().getTime()) {
+            blockedThreadQueue.poll().thread.ready();
+        }
 	}
 
 	/**
@@ -71,24 +71,24 @@ public class Alarm {
 	 */
 	public void waitUntil(long x) {
 		// for now, cheat just to get something working (busy waiting is bad)
-		long wakeTime = Machine.timer().getTime() + x;
-		while (wakeTime > Machine.timer().getTime())
-			KThread.yield();
+		// long wakeTime = Machine.timer().getTime() + x;
+		// while (wakeTime > Machine.timer().getTime())
+		// 	KThread.yield();
 
         
-        // if (x <= 0) {
-        //     return;
-        // }
+        if (x <= 0) {
+            return;
+        }
 
-		// boolean intStatus = Machine.interrupt().disable();
+		boolean intStatus = Machine.interrupt().disable();
 
-        // /* critical section, the priority queue is shared */
-        // long wakeTime = Machine.timer().getTime() + x;
-        // BlockedThread blocked = new BlockedThread(KThread.currentThread(), wakeTime);
-        // blockedThreadQueue.offer(blocked);
-        // KThread.yield();
+        /* critical section, the priority queue is shared */
+        long wakeTime = Machine.timer().getTime() + x;
+        BlockedThread blocked = new BlockedThread(KThread.currentThread(), wakeTime);
+        blockedThreadQueue.offer(blocked);
+        KThread.yield();
 
-        // Machine.interrupt().restore(intStatus);
+        Machine.interrupt().restore(intStatus);
 	}
 
         /**
@@ -120,5 +120,5 @@ public class Alarm {
         alarmTest1();
     }
 
-    //PriorityQueue<BlockedThread> blockedThreadQueue;
+    PriorityQueue<BlockedThread> blockedThreadQueue;
 }
