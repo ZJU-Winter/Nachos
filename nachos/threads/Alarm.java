@@ -50,11 +50,14 @@ public class Alarm {
 	 * should be run.
 	 */
 	public void timerInterrupt() {
-		KThread.yield();
-
+		boolean intStatus = Machine.interrupt().disable();
+		
         if (!blockedThreadQueue.isEmpty() && blockedThreadQueue.peek().wakeTime > Machine.timer().getTime()) {
             blockedThreadQueue.poll().thread.ready();
         }
+		Machine.interrupt().restore(intStatus);
+
+		KThread.yield();
 	}
 
 	/**
@@ -118,7 +121,11 @@ public class Alarm {
 
     public static void selfTest() {
         alarmTest1();
+
+		Lib.debug(dbgThread, "Enter KThread.selfTest");
     }
+
+	private static final char dbgThread = 'l';
 
     PriorityQueue<BlockedThread> blockedThreadQueue;
 }
