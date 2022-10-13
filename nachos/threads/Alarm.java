@@ -23,7 +23,7 @@ public class Alarm {
 			}
 		});
 
-        blockedThreadQueue = new PriorityQueue<>();
+        //blockedThreadQueue = new PriorityQueue<>();
 	}
 
     // private class BlockedThread implements Comparable {
@@ -120,5 +120,5 @@ public class Alarm {
         alarmTest1();
     }
 
-    PriorityQueue<BlockedThread> blockedThreadQueue;
+    //PriorityQueue<BlockedThread> blockedThreadQueue;
 }
