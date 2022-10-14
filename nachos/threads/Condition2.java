@@ -82,7 +82,7 @@ public class Condition2 {
 
     private static class InterlockTest {
         private static Lock lock;
-        private static Condition cv;
+        private static Condition2 cv;
 
         private static class Interlocker implements Runnable {
             public void run () {
@@ -125,7 +125,7 @@ public class Condition2 {
     public static void cvTest5() {
         final Lock lock = new Lock();
         // final Condition empty = new Condition(lock);
-        final Condition empty = new Condition(lock);
+        final Condition2 empty = new Condition2(lock);
         final LinkedList<Integer> list = new LinkedList<>();
 
         KThread consumer = new KThread( new Runnable () {
