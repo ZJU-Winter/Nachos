@@ -98,7 +98,7 @@ public class Condition2 {
 
         public InterlockTest () {
             lock = new Lock();
-            cv = new Condition2(lock);
+            cv = new Condition(lock);
 
             KThread ping = new KThread(new Interlocker());
             ping.setName("ping");
