@@ -42,7 +42,7 @@ public class Condition2 {
         boolean intStatus = Machine.interrupt().disable();
 
         waitQueue.addLast(KThread.currentThread());
-        map.put(KThread.currentThread(), -1);
+        map.put(KThread.currentThread(), -1l);
         KThread.sleep();
 
 		Machine.interrupt().restore(intStatus);

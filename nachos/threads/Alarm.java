@@ -50,7 +50,7 @@ public class Alarm {
                 return false;
             }
             BlockedThread that = (BlockedThread) o;
-            return this.thread == o.thread;
+            return this.thread == that.thread;
         }
     }
 
