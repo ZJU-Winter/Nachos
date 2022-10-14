@@ -314,7 +314,7 @@ public class KThread {
 			public void run() {
 				System.out.println("I (heart) Nachos!");
 				for (int i = 0; i < 8; i++) {
-					System.out.println ("busy...");
+					System.out.println ("child1 busy...");
 					KThread.currentThread().yield();
 				}
 			}
