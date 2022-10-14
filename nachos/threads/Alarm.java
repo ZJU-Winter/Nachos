@@ -41,6 +41,17 @@ public class Alarm {
             return (int)(this.wakeTime - that.wakeTime);
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (o == null) {
+                return false;
+            }
+            if (this.getClass() != o.getClass()) {
+                return false;
+            }
+            BlockedThread that = (BlockedThread) o;
+            return this.thread == o.thread;
+        }
     }
 
 	/**
@@ -103,7 +114,19 @@ public class Alarm {
 	 * @param thread the thread whose timer should be cancelled.
 	 */
         public boolean cancel(KThread thread) {
-		return false;
+            boolean intStatus = Machine.interrupt().disable();
+
+            for (BlockedThread blockedthread : blockedThreadQueue) {
+                if (blockedthread.thread == thread) {
+                    blockedThreadQueue.remove(blockedthread);
+                    blockedthread.thread.ready();
+                    Machine.interrupt().restore(intStatus);
+                    return true;
+                }
+            }
+
+            Machine.interrupt().restore(intStatus);
+            return false;
 	}
 
     public static void alarmTest1() {

@@ -307,7 +307,7 @@ public class KThread {
 	}
 
 	/**
-	 * This is join Test
+	 * Test Cases for join
 	 */
 	private static void joinTest1 () {
 		KThread child1 = new KThread( new Runnable () {
