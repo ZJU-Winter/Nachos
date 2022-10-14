@@ -176,6 +176,7 @@ public class Condition2 {
 
     public static void selfTest() {
         new InterlockTest();
+        cvTest5();
     }
 
 
