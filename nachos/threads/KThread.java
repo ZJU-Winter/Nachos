@@ -293,8 +293,8 @@ public class KThread {
 		Lib.debug(dbgThread, "Joining to thread: " + toString());
         Lib.assertTrue(this != currentThread);
         Lib.assertTrue(!KThread.joinedThreads.containsKey(this));
-        
-        int intStatus = Machine.interrupt().disable();
+
+        boolean intStatus = Machine.interrupt().disable();
 
         if (this.status == statusFinished) {
             return;
