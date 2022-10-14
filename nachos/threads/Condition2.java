@@ -2,6 +2,7 @@ package nachos.threads;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
 import nachos.machine.*;
 
@@ -25,6 +26,7 @@ public class Condition2 {
 	public Condition2(Lock conditionLock) {
 		this.conditionLock = conditionLock;
         this.waitQueue = new ArrayDeque<>();
+        this.map = new HashMap<>();
 	}
 
 	/**
@@ -40,6 +42,7 @@ public class Condition2 {
         boolean intStatus = Machine.interrupt().disable();
 
         waitQueue.addLast(KThread.currentThread());
+        map.put(KThread.currentThread(), -1);
         KThread.sleep();
 
 		Machine.interrupt().restore(intStatus);
@@ -54,10 +57,19 @@ public class Condition2 {
 	public void wake() {
 		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
 
+        while (!waitQueue.isEmpty() && map.get(waitQueue.peekFirst()) != -1 && map.get(waitQueue.peekFirst()) < Machine.timer().getTime()) {
+            System.out.println(waitQueue.peekFirst().getName() + " is already wake up.");
+            waitQueue.pollFirst();
+        }
+
         if (!waitQueue.isEmpty()) {
             boolean intStatus = Machine.interrupt().disable();
 
-            waitQueue.pollFirst().ready();
+            KThread toWake = waitQueue.pollFirst();
+            if (ThreadedKernel.alarm.cancel(toWake)) {
+                System.out.println("canceled " + toWake.getName() + "'s intertupt.");
+            }
+            toWake.ready();
 
 		    Machine.interrupt().restore(intStatus);
         }
@@ -88,6 +100,7 @@ public class Condition2 {
 
         conditionLock.release();
         waitQueue.addLast(KThread.currentThread());
+        map.put(KThread.currentThread(), Machine.timer().getTime() + timeout);
 
         ThreadedKernel.alarm.waitUntil(timeout);
 
@@ -183,5 +196,7 @@ public class Condition2 {
 
     private Lock conditionLock;
 
-    private Deque<KThread> waitQueue;
+    private Deque<KThread> waitQueue; // a queue for waiting threads
+
+    private HashMap<KThread, Long> map; // keep track of wakeup time
 }
