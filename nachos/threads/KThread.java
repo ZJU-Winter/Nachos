@@ -1,5 +1,9 @@
 package nachos.threads;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import nachos.machine.*;
 
 /**
@@ -203,6 +207,11 @@ public class KThread {
 
 		currentThread.status = statusFinished;
 
+        if (KThread.joinedThreads.containsKey(currentThread)) {
+            KThread parent = KThread.joinedThreads.get(currentThread);
+            KThread.joinedThreads.remove(currentThread);
+            parent.ready();
+        }
 		sleep();
 	}
 
@@ -282,8 +291,18 @@ public class KThread {
 	 */
 	public void join() {
 		Lib.debug(dbgThread, "Joining to thread: " + toString());
+        Lib.assertTrue(this != currentThread);
+        Lib.assertTrue(!KThread.joinedThreads.containsKey(this));
 
-		Lib.assertTrue(this != currentThread);
+        boolean intStatus = Machine.interrupt().disable();
+
+        if (this.status == statusFinished) {
+            return;
+        }
+        KThread.joinedThreads.put(this, currentThread);
+        KThread.sleep();
+
+		Machine.interrupt().restore(intStatus);
 
 	}
 
@@ -493,4 +512,7 @@ public class KThread {
 	private static KThread toBeDestroyed = null;
 
 	private static KThread idleThread = null;
+
+    // a static map for recording joined threads, Key is the child thread, Value is the parent thread
+    private static Map<KThread, KThread> joinedThreads = new HashMap<>();
 }

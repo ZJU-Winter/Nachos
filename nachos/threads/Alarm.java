@@ -52,7 +52,7 @@ public class Alarm {
 	public void timerInterrupt() {
 		boolean intStatus = Machine.interrupt().disable();
 
-        while (!blockedThreadQueue.isEmpty() && blockedThreadQueue.peek().wakeTime > Machine.timer().getTime()) {
+        while (!blockedThreadQueue.isEmpty() && blockedThreadQueue.peek().wakeTime <= Machine.timer().getTime()) {
             blockedThreadQueue.poll().thread.ready();
         }
 		Machine.interrupt().restore(intStatus);
@@ -119,11 +119,11 @@ public class Alarm {
     }
 
     public static void selfTest() {
-		Lib.debug(dbgThread, "Enter KThread.selfTest");
+		Lib.debug(dbgAlarm, "Enter Alarm.selfTest");
         alarmTest1();
     }
 
-	private static final char dbgThread = 'l';
+	private static final char dbgAlarm = 'l';
 
     PriorityQueue<BlockedThread> blockedThreadQueue;
 }
