@@ -446,10 +446,10 @@ public class KThread {
         child2.setName("child2");
 
         KThread child3 = new KThread(target);
-        child1.setName("child3");
+        child3.setName("child3");
 
         KThread child4 = new KThread(target);
-        child2.setName("child4");
+        child4.setName("child4");
 
         KThread[] threads = new KThread[]{child1, child2, child3, child4};
 
@@ -457,10 +457,10 @@ public class KThread {
 
         for (int i = 0; i < 4; i++) {
             System.out.println ("I will be waiting for child" + (i + 1));
+            threads[i].join();
             if (i >= 1 && i <= 3) {
                 threads[i].fork();
             }
-            threads[i].join();
         }
         System.out.println("===== End of Join Test5 ======");
     }
@@ -590,8 +590,8 @@ public class KThread {
 	public static void selfTest() {
         Lib.debug(dbgJoin, "Enter KThread.selfTest - Join Test");
         if (Lib.test(dbgJoin)) {
-            joinTest1();
-            joinTest2();
+            //joinTest1();
+            //joinTest2();
             //joinTest3();
             //joinTest4();
             joinTest5();
