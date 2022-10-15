@@ -422,6 +422,49 @@ public class KThread {
             KThread.yield();
         }
     }
+
+    /* Test Case4: one thread can join with multiple other threads in succession. */
+    private static void joinTest5() {
+        System.out.println("===== Start of Join Test5 ======");
+        Runnable target = new Runnable() {
+            public void run() {
+                for (int i = 0; i < 8; i++) {
+                    if (i == 2) {
+                        System.out.println("I love Nachos " + (i + 1) * 1000 + "!");
+                        child1.join();
+                    } else {
+                        System.out.println("I love Nachos " + (i + 1) * 1000 + ".");
+                    }
+                    KThread.yield();
+                }
+            }
+        };
+
+        KThread child1 = new KThread(target);
+        child1.setName("child1");
+
+        KThread child2 = new KThread(target);
+        child2.setName("child2");
+
+        KThread child3 = new KThread(target);
+        child1.setName("child3");
+
+        KThread child4 = new KThread(target);
+        child2.setName("child4");
+
+        KThread[] threads = new KThread[]{child1, child2, child3, child4};
+
+        child1.fork();
+
+        for (int i = 0; i < 4; i++) {
+            System.out.println ("I will be waiting for child" + (i + 1));
+            if (i >= 1 && i <= 3) {
+                threads[i].fork();
+            }
+            threads[i].join();
+        }
+        System.out.println("===== End of Join Test5 ======");
+    }
 	/**
 	 * Create the idle thread. Whenever there are no threads ready to be run,
 	 * and <tt>runNextThread()</tt> is called, it will run the idle thread. The
@@ -551,7 +594,7 @@ public class KThread {
             joinTest1();
             joinTest2();
             //joinTest3();
-            joinTest4();
+            //joinTest4();
         }
 
 		Lib.debug(dbgThread, "Enter KThread.selfTest");
