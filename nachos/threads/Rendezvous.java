@@ -157,11 +157,11 @@ public class Rendezvous {
 
         t1.fork();
         t2.fork();
-        t1.join();
-        t2.join();
-
         t3.fork();
         t4.fork();
+        
+        t1.join();
+        t2.join();
         t3.join();
         t4.join();
 
