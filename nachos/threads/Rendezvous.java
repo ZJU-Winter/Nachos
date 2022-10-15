@@ -55,6 +55,7 @@ public class Rendezvous {
         int firstVal = first.get(tag);
         first.remove(tag);
         second.remove(tag);
+        lock.release();
         return firstVal;
     }
 
