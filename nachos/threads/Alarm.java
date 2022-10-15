@@ -137,7 +137,7 @@ public class Alarm {
             t0 = Machine.timer().getTime();
             ThreadedKernel.alarm.waitUntil (d);
             t1 = Machine.timer().getTime();
-            System.out.println ("alarmTest1: waited for " + (t1 - t0) + " ticks");
+            System.out.println ("alarmTest - waitUntil(" + d + "): waited for " + (t1 - t0) + " ticks");
         }
     }
 
