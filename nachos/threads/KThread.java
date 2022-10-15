@@ -302,6 +302,7 @@ public class KThread {
         KThread.joinedThreads.put(this, currentThread);
         KThread.sleep();
 
+        KThread.joinedThreads.remove(this);
 		Machine.interrupt().restore(intStatus);
 
 	}
@@ -516,6 +517,6 @@ public class KThread {
 
 	private static KThread idleThread = null;
 
-    // a static map for recording joined threads, Key is the child thread, Value is the parent thread
+    /* a static map for recording all joined threads, Key is the child thread, Value is the parent thread. */
     private static Map<KThread, KThread> joinedThreads = new HashMap<>();
 }

@@ -16,6 +16,7 @@ public class Future {
      * of invoking <i>function</i>.
      */
     public Future (IntSupplier function) {
+        
     }
 
     /**
@@ -28,6 +29,6 @@ public class Future {
      * threads), and it should always return the same value.
      */
     public int get () {
-	return -1;
+	    return -1;
     }
 }
