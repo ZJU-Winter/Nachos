@@ -326,7 +326,7 @@ public class KThread {
         child1.join();
         System.out.println("After joining, child should be finished.");
         System.out.println("is it? " + (child1.status == statusFinished));
-        System.out.println();
+        System.out.println("===== End of Join Test1 ======");
         Lib.assertTrue((child1.status == statusFinished), " Expected child to be finished.");
 	}
 
@@ -353,7 +353,7 @@ public class KThread {
         child1.join();
         System.out.println("After joining, child should be finished.");
         System.out.println("is it? " + (child1.status == statusFinished));
-        System.out.println();
+        System.out.println("===== End of Join Test2 ======");
         Lib.assertTrue((child1.status == statusFinished), " Expected child to be finished.");
 	}
 
