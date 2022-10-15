@@ -18,7 +18,6 @@ public class Rendezvous {
         this.cv = new Condition(this.lock);
         this.first = new HashMap<>();
         this.second = new HashMap<>();
-        this.set = new HashSet<>();
     }
 
     /**
@@ -47,6 +46,7 @@ public class Rendezvous {
             while (!second.containsKey(tag)) {
                 cv.sleep();
             }
+            lock.release();
             return second.get(value);
         }
 
@@ -106,6 +106,4 @@ public class Rendezvous {
     private Map<Integer, Integer> first;
 
     private Map<Integer, Integer> second;
-
-    private Set<Integer> set;
 }
