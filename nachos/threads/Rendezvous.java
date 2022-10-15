@@ -60,7 +60,7 @@ public class Rendezvous {
     }
 
     /* Test Cases for Rendezvous. */
-    public static void rendezTest1() {
+    public static void rendezTest() {
         final Rendezvous r = new Rendezvous();
     
         KThread t1 = new KThread(new Runnable () {
@@ -93,15 +93,12 @@ public class Rendezvous {
             t2.fork();
             t1.join();
             t2.join();
-
-            t1.fork();
-            t2.fork();
-            t1.join();
-            t2.join();
+            
         }
     
         public static void selfTest() {
-            rendezTest1();
+            rendezTest();
+            rendezTest();
         }
 
     private Condition cv;
