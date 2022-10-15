@@ -178,7 +178,7 @@ public class Rendezvous {
                 int tag = 0;
                 int send = -1;
     
-                System.out.println ("Thread " + KThread.currentThread().getName() + " exchanging " + send + " with tag " + tag);
+                System.out.println ("Thread " + KThread.currentThread().getName() + " exchanging " + send + " on tag " + tag);
                 int recv = r.exchange (tag, send);
                 Lib.assertTrue (recv == 1, "Was expecting " + 1 + " but received " + recv);
                 System.out.println ("Thread " + KThread.currentThread().getName() + " received " + recv);
@@ -191,7 +191,7 @@ public class Rendezvous {
                 int tag = 0;
                 int send = 1;
 
-                System.out.println ("Thread " + KThread.currentThread().getName() + " exchanging " + send + " with tag " + tag);
+                System.out.println ("Thread " + KThread.currentThread().getName() + " exchanging " + send + " on tag " + tag);
                 int recv = r.exchange (tag, send);
                 Lib.assertTrue (recv == -1, "Was expecting " + -1 + " but received " + recv);
                 System.out.println ("Thread " + KThread.currentThread().getName() + " received " + recv);
@@ -204,7 +204,7 @@ public class Rendezvous {
                 int tag = 2;
                 int send = 3;
     
-                System.out.println ("Thread " + KThread.currentThread().getName() + " exchanging " + send + " with tag " + tag);
+                System.out.println ("Thread " + KThread.currentThread().getName() + " exchanging " + send + " on tag " + tag);
                 int recv = r.exchange (tag, send);
                 Lib.assertTrue (recv == 4, "Was expecting " + 4 + " but received " + recv);
                 System.out.println ("Thread " + KThread.currentThread().getName() + " received " + recv);
@@ -217,9 +217,9 @@ public class Rendezvous {
                 int tag = 2;
                 int send = 4;
 
-                System.out.println ("Thread " + KThread.currentThread().getName() + " exchanging " + send + " with tag " + tag);
+                System.out.println ("Thread " + KThread.currentThread().getName() + " exchanging " + send + " on tag " + tag);
                 int recv = r.exchange (tag, send);
-                Lib.assertTrue (recv == 3, "Was expecting " + 4 + " but received " + recv);
+                Lib.assertTrue (recv == 3, "Was expecting " + 3 + " but received " + recv);
                 System.out.println ("Thread " + KThread.currentThread().getName() + " received " + recv);
             }
         });
@@ -234,7 +234,7 @@ public class Rendezvous {
         t4.fork();
         t3.join();
         t4.join();
-        
+
         System.out.println("===== End of Rendezvous Test3 ======");
     }
 
