@@ -297,6 +297,7 @@ public class KThread {
         boolean intStatus = Machine.interrupt().disable();
 
         if (this.status == statusFinished) {
+            Lib.debug(dbgJoin, this.toString() + " is already finished");
             return;
         }
         KThread.joinedThreads.put(this, currentThread);
