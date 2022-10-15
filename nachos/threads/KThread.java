@@ -460,7 +460,11 @@ public class KThread {
 	 * Tests whether this module is working.
 	 */
 	public static void selfTest() {
-		joinTest1();
+        Lib.debug(dbgJoin, "Enter KThread.selfTest - Join Test");
+        if (Lib.test(dbgJoin)) {
+            joinTest1();
+        }
+
 		Lib.debug(dbgThread, "Enter KThread.selfTest");
 
 		new KThread(new PingTest(1)).setName("forked thread").fork();
@@ -469,6 +473,7 @@ public class KThread {
 
 	private static final char dbgThread = 't';
 
+    private static final char dbgJoin = 'j';
 	/**
 	 * Additional state used by schedulers.
 	 * 
