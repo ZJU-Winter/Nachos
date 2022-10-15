@@ -51,7 +51,6 @@ public class ThreadedKernel extends Kernel {
         Alarm.selfTest(); // nachos -d l to enable Alarm tests
         Condition2.selfTest(); // nachos -d o to enable Condition2 tests
         Rendezvous.selfTest(); // nachos -d r to enable Rendezvous tests
-        
         KThread.selfTest(); // nachos -d j to enable Join tests
 
 		Semaphore.selfTest();
