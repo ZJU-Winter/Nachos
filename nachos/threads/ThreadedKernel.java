@@ -46,13 +46,13 @@ public class ThreadedKernel extends Kernel {
 	 * here.
 	 */
 	public void selfTest() {
-
         /* project1 tests */
-        Alarm.selfTest(); // nachos -d l to test Alarm
-        Condition2.selfTest(); // nachos -d o to test Condition2
-        Rendezvous.selfTest(); // nachos -d r to test Rendezvous
+
+        Alarm.selfTest(); // nachos -d l to enable Alarm tests
+        Condition2.selfTest(); // nachos -d o to enable Condition2 tests
+        Rendezvous.selfTest(); // nachos -d r to enable Rendezvous tests
         
-        KThread.selfTest(); // include join test
+        KThread.selfTest(); // nachos -d j to enable Join tests
 
 		Semaphore.selfTest();
 		SynchList.selfTest();
