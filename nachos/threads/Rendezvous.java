@@ -59,8 +59,8 @@ public class Rendezvous {
         return firstVal;
     }
 
-    /* Test Cases for Rendezvous. */
-    public static void rendezTest() {
+    /* Test Case 1: simple test. */
+    public static void rendezTest1() {
         final Rendezvous r = new Rendezvous();
     
         KThread t1 = new KThread(new Runnable () {
@@ -74,35 +74,39 @@ public class Rendezvous {
                 System.out.println ("Thread " + KThread.currentThread().getName() + " received " + recv);
             }
             });
-
         t1.setName("t1");
+
         KThread t2 = new KThread(new Runnable () {
             public void run() {
                 int tag = 0;
                 int send = 1;
-    
+
                 System.out.println ("Thread " + KThread.currentThread().getName() + " exchanging " + send);
                 int recv = r.exchange (tag, send);
                 Lib.assertTrue (recv == -1, "Was expecting " + -1 + " but received " + recv);
                 System.out.println ("Thread " + KThread.currentThread().getName() + " received " + recv);
             }
-            });
-            t2.setName("t2");
-        
-            t1.fork();
-            t2.fork();
-            t1.join();
-            t2.join();
-            
-        }
+        });
+        t2.setName("t2");
     
-        public static void selfTest() {
-            Lib.debug(dbgRendezvous, "Enter Rendezvous.selfTest");
-            if (Lib.test(dbgRendezvous)) {
-                rendezTest();
-                rendezTest();
-            }
+        t1.fork();
+        t2.fork();
+        //t1.join();
+        //t2.join();
+    }
+
+    /* Test Case 2: reuse the same tag. */
+    public static void rendezTest2() {
+        
+    }
+
+    public static void selfTest() {
+        Lib.debug(dbgRendezvous, "Enter Rendezvous.selfTest");
+        if (Lib.test(dbgRendezvous)) {
+            rendezTest1();
+            rendezTest2();
         }
+    }
 
     private static final char dbgRendezvous = 'r';
 

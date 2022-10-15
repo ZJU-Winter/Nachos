@@ -307,7 +307,7 @@ public class KThread {
 
 	}
 
-    /* Test Case1: child thread is finished before join. */
+    /* Test Case 1: child thread is finished before join. */
     private static void joinTest1() {
         System.out.println("===== Start of Join Test1 ======");
         KThread child1 = new KThread( new Runnable () {
@@ -332,7 +332,7 @@ public class KThread {
 	}
 
 
-    /* Test Case2: child thread is not finished before join. */
+    /* Test Case 2: child thread is not finished before join. */
     private static void joinTest2() {
         System.out.println("===== Start of Join Test2 ======");
         KThread child1 = new KThread( new Runnable () {
@@ -363,7 +363,7 @@ public class KThread {
         Lib.assertTrue((child1.status == statusFinished), " Expected child to be finished.");
 	}
 
-    /* Test Case3: thread call join on itself. */
+    /* Test Case 3: thread call join on itself. */
     private static void joinTest3() {
         System.out.println("===== Start of Join Test3 ======");
         KThread child1 = new KThread( new Runnable () {
@@ -380,7 +380,7 @@ public class KThread {
         KThread.currentThread().join();
     }
 
-    /* Test Case4: join is called more than once on a thread. */
+    /* Test Case 4: join is called more than once on a thread. */
     private static void joinTest4() {
         System.out.println("===== Start of Join Test4 ======");
         KThread child1 = new KThread( new Runnable () {
@@ -464,6 +464,7 @@ public class KThread {
         }
         System.out.println("===== End of Join Test5 ======");
     }
+
 	/**
 	 * Create the idle thread. Whenever there are no threads ready to be run,
 	 * and <tt>runNextThread()</tt> is called, it will run the idle thread. The
