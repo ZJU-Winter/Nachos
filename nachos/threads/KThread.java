@@ -325,6 +325,7 @@ public class KThread {
         child1.join();
         System.out.println("After joining, child should be finished.");
         System.out.println("is it? " + (child1.status == statusFinished));
+        System.out.println();
         Lib.assertTrue((child1.status == statusFinished), " Expected child to be finished.");
 	}
 
@@ -333,9 +334,9 @@ public class KThread {
     private static void joinTest2() {
         KThread child1 = new KThread( new Runnable () {
             public void run() {
-                System.out.println("I (heart) Nachos!");
+                System.out.println("I (heart) Nachos more!");
                 for (int i = 0; i < 8; i++) {
-                    System.out.println ("child busy...");
+                    System.out.println ("child: busy...");
                     KThread.yield();
                 }
             }
@@ -352,6 +353,7 @@ public class KThread {
         child1.join();
         System.out.println("After joining, child should be finished.");
         System.out.println("is it? " + (child1.status == statusFinished));
+        System.out.println();
         Lib.assertTrue((child1.status == statusFinished), " Expected child to be finished.");
 	}
 	/**
