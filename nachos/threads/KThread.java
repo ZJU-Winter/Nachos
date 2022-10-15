@@ -595,6 +595,7 @@ public class KThread {
             joinTest2();
             //joinTest3();
             //joinTest4();
+            joinTest5();
         }
 
 		Lib.debug(dbgThread, "Enter KThread.selfTest");
