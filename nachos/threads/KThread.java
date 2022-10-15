@@ -309,6 +309,7 @@ public class KThread {
 
     /* Test Case1: child thread is finished before join. */
     private static void joinTest1() {
+        System.out.println("===== Start of Join Test1 ======");
         KThread child1 = new KThread( new Runnable () {
             public void run() {
                 System.out.println("I (heart) Nachos!");
@@ -333,6 +334,7 @@ public class KThread {
 
     /* Test Case2: child thread is not finished before join. */
     private static void joinTest2() {
+        System.out.println("===== Start of Join Test2 ======");
         KThread child1 = new KThread( new Runnable () {
             public void run() {
                 for (int i = 0; i < 8; i++) {
@@ -359,6 +361,7 @@ public class KThread {
 
     /* Test Case3: thread call join on itself. */
     private static void joinTest3() {
+        System.out.println("===== Start of Join Test3 ======");
         KThread child1 = new KThread( new Runnable () {
             public void run() {
                 System.out.println("I really love Nachos.");
@@ -375,6 +378,7 @@ public class KThread {
 
     /* Test Case4: join is called more than once on a thread. */
     private static void joinTest4() {
+        System.out.println("===== Start of Join Test4 ======");
         KThread child1 = new KThread( new Runnable () {
             public void run() {
                 for (int i = 0; i < 8; i++) {
