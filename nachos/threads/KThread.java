@@ -402,6 +402,7 @@ public class KThread {
                 for (int i = 0; i < 8; i++) {
                     if (i == 2) {
                         System.out.println("I love Nachos " + (i + 1) * 1000 + "!");
+                        child1.join();
                     } else {
                         System.out.println("I love Nachos " + (i + 1) * 1000 + ".");
                     }
