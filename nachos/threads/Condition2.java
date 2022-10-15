@@ -57,7 +57,7 @@ public class Condition2 {
 	public void wake() {
 		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
 
-        /* remove stale threads from waitQueue, stale means it was waked by timer interrupt. */
+        /* remove stale threads from waitQueue, stale means it was awakened by a timer interrupt handler. */
         while (!waitQueue.isEmpty() && map.get(waitQueue.peekFirst()) != -1 && map.get(waitQueue.peekFirst()) < Machine.timer().getTime()) {
             System.out.println(waitQueue.peekFirst().getName() + " is already wake up.");
             waitQueue.pollFirst();
@@ -145,7 +145,7 @@ public class Condition2 {
         }
     }
 
-    public static void cvTest2() {
+    public static void cvTest() {
         final Lock lock = new Lock();
         // final Condition empty = new Condition(lock);
         final Condition2 empty = new Condition2(lock);
@@ -193,7 +193,7 @@ public class Condition2 {
 
     public static void selfTest() {
         new InterlockTest();
-        cvTest2();
+        cvTest();
     }
 
     private Lock conditionLock;

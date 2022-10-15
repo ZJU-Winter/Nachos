@@ -47,8 +47,10 @@ public class ThreadedKernel extends Kernel {
 	 */
 	public void selfTest() {
         /* project1 tests */
+
         //Alarm.selfTest();
-        Condition2.selfTest();
+        //Condition2.selfTest();
+        Rendezvous.selfTest();
         //KThread.selfTest();
 
 		Semaphore.selfTest();
@@ -63,6 +65,7 @@ public class ThreadedKernel extends Kernel {
 	 * nothing.
 	 */
 	public void run() {
+        
 	}
 
 	/**
