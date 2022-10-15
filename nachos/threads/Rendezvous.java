@@ -97,9 +97,14 @@ public class Rendezvous {
         }
     
         public static void selfTest() {
-            rendezTest();
-            rendezTest();
+            Lib.debug(dbgRendezvous, "Enter Rendezvous.selfTest");
+            if (Lib.test(dbgRendezvous)) {
+                rendezTest();
+                rendezTest();
+            }
         }
+
+    private static final char dbgRendezvous = 'r';
 
     private Condition cv;
 
