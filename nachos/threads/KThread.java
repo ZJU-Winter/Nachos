@@ -338,7 +338,11 @@ public class KThread {
         KThread child1 = new KThread( new Runnable () {
             public void run() {
                 for (int i = 0; i < 8; i++) {
-                    System.out.println("I love Nachos " + (i + 1) * 1000 + ".");
+                    if (i == 2) {
+                        System.out.println("I hate Nachos " + (i + 1) * 1000 + "!");
+                    } else {
+                        System.out.println("I hate Nachos " + (i + 1) * 1000 + ".");
+                    }
                     KThread.yield();
                 }
             }
@@ -382,7 +386,11 @@ public class KThread {
         KThread child1 = new KThread( new Runnable () {
             public void run() {
                 for (int i = 0; i < 8; i++) {
-                    System.out.println("I hate Nachos " + (i + 1) * 1000 + ".");
+                    if (i == 2) {
+                        System.out.println("I hate Nachos " + (i + 1) * 1000 + "!");
+                    } else {
+                        System.out.println("I hate Nachos " + (i + 1) * 1000 + ".");
+                    }
                     KThread.yield();
                 }
             }
@@ -392,7 +400,11 @@ public class KThread {
         KThread child2 = new KThread(new Runnable() {
             public void run() {
                 for (int i = 0; i < 8; i++) {
-                    System.out.println("I love Nachos " + (i + 1) * 1000 + ".");
+                    if (i == 2) {
+                        System.out.println("I hate Nachos " + (i + 1) * 1000 + "!");
+                    } else {
+                        System.out.println("I hate Nachos " + (i + 1) * 1000 + ".");
+                    }
                     KThread.yield();
                     child1.join();
                 }
