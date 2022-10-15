@@ -129,8 +129,8 @@ public class Alarm {
             return false;
 	}
 
-    public static void alarmTest1() {
-        int durations[] = {1000, 10*1000, 100*1000};
+    public static void alarmTest() {
+        int durations[] = {-100, -10, 0, 1000, 10*1000, 100*1000};
         long t0, t1;
     
         for (int d : durations) {
@@ -143,7 +143,9 @@ public class Alarm {
 
     public static void selfTest() {
 		Lib.debug(dbgAlarm, "Enter Alarm.selfTest");
-        alarmTest1();
+        if (Lib.test(dbgAlarm)) {
+            alarmTest();
+        }
     }
 
 	private static final char dbgAlarm = 'l';

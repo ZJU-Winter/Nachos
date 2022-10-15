@@ -460,8 +460,8 @@ public class KThread {
 	 * Tests whether this module is working.
 	 */
 	public static void selfTest() {
-		Lib.debug(dbgThread, "Enter KThread.selfTest");
 		joinTest1();
+		Lib.debug(dbgThread, "Enter KThread.selfTest");
 
 		new KThread(new PingTest(1)).setName("forked thread").fork();
 		new PingTest(0).run();
@@ -516,6 +516,6 @@ public class KThread {
 
 	private static KThread idleThread = null;
 
-    /* a static map for recording all joined threads, Key is the child thread, Value is the parent thread. */
+    /* a static hashmap for recording all joined threads, Key is the child thread, Value is the parent thread. */
     private static Map<KThread, KThread> joinedThreads = new HashMap<>();
 }

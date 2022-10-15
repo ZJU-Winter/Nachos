@@ -192,9 +192,14 @@ public class Condition2 {
     }
 
     public static void selfTest() {
-        new InterlockTest();
-        cvTest();
+        Lib.debug(dbgCondition, "Enter Condition2.selfTest");
+        if (Lib.test(dbgCondition)) {
+            new InterlockTest();
+            cvTest();
+        }
     }
+
+    private static final char dbgCondition = 'o';
 
     private Lock conditionLock;
 
