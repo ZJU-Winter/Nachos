@@ -297,7 +297,7 @@ public class KThread {
         boolean intStatus = Machine.interrupt().disable();
 
         if (this.status == statusFinished) {
-            Lib.debug(dbgJoin, this.toString() + " is already finished");
+            Lib.debug(dbgJoin, this.toString() + " is already finished. Return.");
             return;
         }
         KThread.joinedThreads.put(this, currentThread);
@@ -313,7 +313,7 @@ public class KThread {
             public void run() {
                 System.out.println("I (heart) Nachos!");
             }
-            });
+        });
 		child1.setName("child").fork();
 	
         for (int i = 0; i < 5; i++) {
@@ -335,13 +335,12 @@ public class KThread {
     private static void joinTest2() {
         KThread child1 = new KThread( new Runnable () {
             public void run() {
-                System.out.println("I (heart) Nachos more!");
                 for (int i = 0; i < 8; i++) {
-                    System.out.println ("child: busy...");
+                    System.out.println("I love Nachos " + (i + 1) * 1000 + ".");
                     KThread.yield();
                 }
             }
-            });
+        });
 		child1.setName("child").fork();
 	
         for (int i = 0; i < 5; i++) {
@@ -357,6 +356,55 @@ public class KThread {
         System.out.println();
         Lib.assertTrue((child1.status == statusFinished), " Expected child to be finished.");
 	}
+
+    /* Test Case3: thread call join on itself. */
+    private static void joinTest3() {
+        KThread child1 = new KThread( new Runnable () {
+            public void run() {
+                System.out.println("I really love Nachos.");
+            }
+        });
+		child1.setName("child").fork();
+	
+        for (int i = 0; i < 5; i++) {
+            System.out.println ("busy...");
+            KThread.yield();
+        }
+        KThread.currentThread().join();
+    }
+
+    /* Test Case4: join is called more than once on a thread. */
+    private static void joinTest4() {
+        KThread child1 = new KThread( new Runnable () {
+            public void run() {
+                for (int i = 0; i < 8; i++) {
+                    System.out.println("I hate Nachos " + (i + 1) * 1000 + ".");
+                    KThread.yield();
+                }
+            }
+        });
+        child1.setName("bad child");
+
+        KThread child2 = new KThread(new Runnable() {
+            public void run() {
+                for (int i = 0; i < 8; i++) {
+                    System.out.println("I love Nachos " + (i + 1) * 1000 + ".");
+                    KThread.yield();
+                    child1.join();
+                }
+            }
+        });
+        child2.setName("good child");
+
+        child1.fork();
+        child2.fork();
+        
+        child1.join();
+        for (int i = 0; i < 5; i++) {
+            System.out.println ("busy...");
+            KThread.yield();
+        }
+    }
 	/**
 	 * Create the idle thread. Whenever there are no threads ready to be run,
 	 * and <tt>runNextThread()</tt> is called, it will run the idle thread. The
@@ -485,6 +533,8 @@ public class KThread {
         if (Lib.test(dbgJoin)) {
             joinTest1();
             joinTest2();
+            joinTest3();
+            //joinTest4();
         }
 
 		Lib.debug(dbgThread, "Enter KThread.selfTest");
