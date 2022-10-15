@@ -41,7 +41,6 @@ public class Rendezvous {
         lock.acquire();
         if (!first.containsKey(tag)) {
             first.put(tag, value);
-            set.add(tag);
 
             while (!second.containsKey(tag)) {
                 cv.sleep();
