@@ -42,7 +42,7 @@ public class Rendezvous {
         if (!first.containsKey(tag)) {
             first.put(tag, value);
 
-            while (!second.containsKey(tag)) {
+            if (!second.containsKey(tag)) {
                 cv.sleep();
             }
             lock.release();
