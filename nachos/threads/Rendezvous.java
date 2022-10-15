@@ -157,9 +157,14 @@ public class Rendezvous {
 
         t1.fork();
         t2.fork();
+        t1.join();
+        t2.join();
 
         t3.fork();
         t4.fork();
+        t3.join();
+        t4.join();
+
         System.out.println("===== End of Rendezvous Test2 ======");
     }
 
@@ -222,10 +227,14 @@ public class Rendezvous {
 
         t1.fork();
         t2.fork();
+        t1.join();
+        t2.join();
 
         t3.fork();
         t4.fork();
-
+        t3.join();
+        t4.join();
+        
         System.out.println("===== End of Rendezvous Test3 ======");
     }
 
