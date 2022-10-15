@@ -302,7 +302,6 @@ public class KThread {
         KThread.joinedThreads.put(this, currentThread);
         KThread.sleep();
 
-        KThread.joinedThreads.remove(this);
 		Machine.interrupt().restore(intStatus);
 
 	}
