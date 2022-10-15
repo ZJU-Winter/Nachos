@@ -457,10 +457,10 @@ public class KThread {
 
         for (int i = 0; i < 4; i++) {
             System.out.println ("I will be waiting for child" + (i + 1));
-            threads[i].join();
             if (i >= 1 && i <= 3) {
                 threads[i].fork();
             }
+            threads[i].join();
         }
         System.out.println("===== End of Join Test5 ======");
     }
