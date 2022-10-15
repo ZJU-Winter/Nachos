@@ -93,6 +93,11 @@ public class Rendezvous {
             t2.fork();
             t1.join();
             t2.join();
+
+            t1.fork();
+            t2.fork();
+            t1.join();
+            t2.join();
         }
     
         public static void selfTest() {
