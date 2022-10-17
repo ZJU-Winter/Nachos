@@ -623,6 +623,7 @@ public class KThread {
             //joinTest5();
             joinTest6();
         }
+        Lib.debug(dbgJoin, "End KThread.selfTest - Join Test\n");
 
 		Lib.debug(dbgThread, "Enter KThread.selfTest");
 

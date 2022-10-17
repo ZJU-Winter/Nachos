@@ -145,6 +145,7 @@ public class Alarm {
 		Lib.debug(dbgAlarm, "Enter Alarm.selfTest");
         if (Lib.test(dbgAlarm)) {
             alarmTest();
+            System.out.println("End Alarm.selfTest");
         }
     }
 

@@ -241,7 +241,9 @@ public class Rendezvous {
             rendezTest1();
             rendezTest2();
             rendezTest3();
+            System.out.println();
         }
+        Lib.debug(dbgRendezvous, "End Rendezvous.selfTest\n");
     }
 
     private static final char dbgRendezvous = 'r';

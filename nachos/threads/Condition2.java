@@ -319,6 +319,7 @@ public class Condition2 {
             sleepForTest3();
             sleepForTest4();
         }
+        Lib.debug(dbgCondition, "End Condition2.selfTest\n");
     }
 
     private static final char dbgCondition = 'o';
