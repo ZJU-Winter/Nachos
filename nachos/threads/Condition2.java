@@ -303,8 +303,8 @@ public class Condition2 {
                 System.out.println(KThread.currentThread().getName() +
                 " woke up, slept for " + (t1 - t0) + " ticks");
                  */
-                ThreadedKernel.alarm.cancel(thread1);
                 cv.wake();
+                ThreadedKernel.alarm.cancel(thread1);
                 lock.release();
             }
         });
