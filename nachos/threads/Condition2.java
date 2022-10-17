@@ -42,7 +42,7 @@ public class Condition2 {
         boolean intStatus = Machine.interrupt().disable();
 
         waitQueue.addLast(KThread.currentThread());
-        map.put(KThread.currentThread(), -1l);
+        //map.put(KThread.currentThread(), -1l);
         KThread.sleep();
 
 		Machine.interrupt().restore(intStatus);
@@ -57,22 +57,23 @@ public class Condition2 {
 	public void wake() {
 		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
 
-        /* remove stale threads from waitQueue, stale means it was awakened by a timer interrupt handler. */
-        while (!waitQueue.isEmpty() && map.get(waitQueue.peekFirst()) != -1 && map.get(waitQueue.peekFirst()) < Machine.timer().getTime()) {
-            Lib.debug(dbgCondition, waitQueue.peekFirst().getName() + " is already wake up.");
-            waitQueue.pollFirst();
-        }
+        // /* remove stale threads from waitQueue, stale means it was awakened by a timer interrupt handler. */
+        // while (!waitQueue.isEmpty() && map.get(waitQueue.peekFirst()) != -1 && map.get(waitQueue.peekFirst()) < Machine.timer().getTime()) {
+        //     Lib.debug(dbgCondition, waitQueue.peekFirst().getName() + " is already wake up.");
+        //     waitQueue.pollFirst();
+        // }
 
         /* wake up first thread in the waitQueue, and cancle its interrupt. */
         if (!waitQueue.isEmpty()) {
             boolean intStatus = Machine.interrupt().disable();
 
             KThread toWake = waitQueue.pollFirst();
-            if (ThreadedKernel.alarm.cancel(toWake)) {
-                System.out.println("cancelled " + toWake.getName() + "'s intertupt.");
-            } else {
-                toWake.ready();
-            }
+            // if (ThreadedKernel.alarm.cancel(toWake)) {
+            //     System.out.println("cancelled " + toWake.getName() + "'s intertupt.");
+            // } else {
+            //     toWake.ready();
+            // }
+            toWake.ready();
 
 		    Machine.interrupt().restore(intStatus);
         }
@@ -103,9 +104,10 @@ public class Condition2 {
 
         conditionLock.release();
         waitQueue.addLast(KThread.currentThread());
-        map.put(KThread.currentThread(), Machine.timer().getTime() + timeout);
+        //map.put(KThread.currentThread(), Machine.timer().getTime() + timeout);
 
         ThreadedKernel.alarm.waitUntil(timeout);
+        waitQueue.remove(KThread.currentThread());
 
         conditionLock.acquire();
 	}
@@ -331,5 +333,5 @@ public class Condition2 {
 
     private Deque<KThread> waitQueue; // a queue of waiting threads
 
-    private HashMap<KThread, Long> map; // keep track of wakeup time
+    //private HashMap<KThread, Long> map; // keep track of wakeup time
 }
