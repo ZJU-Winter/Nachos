@@ -93,13 +93,13 @@ public class ThreadedKernel extends Kernel {
 
 	private static Condition2 dummy4 = null;
 
-        //private static Communicator dummy5 = null;
+    //private static Communicator dummy5 = null;
 
 	private static Rider dummy6 = null;
 
 	private static ElevatorController dummy7 = null;
 
-        private static GameMatch dummy8 = null;
+    private static GameMatch dummy8 = null;
 
-        private static Future dummy9 = null;
+    private static Future dummy9 = null;
 }
