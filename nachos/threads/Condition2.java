@@ -211,7 +211,41 @@ public class Condition2 {
                     " woke up, slept for " + (t1 - t0) + " ticks");
         lock.release();
         System.out.println("===== End of sleepFor Test1 ======");
-        }
+    
+    }
+
+    private static void sleepForTest2() {
+        System.out.println("===== Start of sleepFor Test2 ======");
+        Lock lock = new Lock();
+        Condition2 cv = new Condition2(lock);
+
+        KThread thread1 = new KThread(new Runnable() {
+            public void run() {
+                lock.acquire();
+                long t0 = Machine.timer().getTime();
+                System.out.println (KThread.currentThread().getName() + " sleeping");
+                cv.sleepFor(20000);
+                long t1 = Machine.timer().getTime();
+                System.out.println(KThread.currentThread().getName() +
+                            " woke up, slept for " + (t1 - t0) + " ticks");
+                lock.release();
+            }
+        });
+        KThread thread2 = new KThread(new Runnable() {
+            public void run() {
+                lock.acquire();
+                if (ThreadedKernel.alarm.cancel(thread1)) {
+                    System.out.println(KThread.currentThread().getName() + " cancelled " + thread1.getName() + "'s timer interrupt.");
+                }
+                lock.release();                
+            }
+        });
+        thread1.setName("thread1").fork();
+        thread2.setName("thread2").fork();
+
+
+        System.out.println("===== End of sleepFor Test2 ======");
+    }
 
     public static void selfTest() {
         Lib.debug(dbgCondition, "Enter Condition2.selfTest");
@@ -219,6 +253,7 @@ public class Condition2 {
             new InterlockTest();
             cvTest1();
             sleepForTest1();
+            sleepForTest2();
         }
     }
 
