@@ -484,7 +484,7 @@ public class KThread {
         }
     }
     
-    public static void selfTest6() {
+    public static void joinTest6() {
         KThread t1 = new KThread (new A()).setName ("A");
         System.out.println ("fee");
         t1.fork ();
