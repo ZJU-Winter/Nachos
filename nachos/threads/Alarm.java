@@ -120,6 +120,7 @@ public class Alarm {
                 if (blockedthread.thread == thread) {
                     blockedThreadQueue.remove(blockedthread);
                     blockedthread.thread.ready();
+                    System.out.println(KThread.currentThread().getName() + " cancelled " + thread.getName() + "'s timer interrupt.");
                     Machine.interrupt().restore(intStatus);
                     return true;
                 }

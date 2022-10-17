@@ -212,6 +212,7 @@ public class Condition2 {
         lock.release();    
     }
 
+    /* Test Case 2: thread2 cancel thread1's sleep by cancel. */
     private static void sleepForTest2() {
         System.out.println("===== Start of sleepFor Test2 ======");
         Lock lock = new Lock();
@@ -233,9 +234,7 @@ public class Condition2 {
         KThread thread2 = new KThread(new Runnable() {
             public void run() {
                 lock.acquire();
-                if (ThreadedKernel.alarm.cancel(thread1)) {
-                    System.out.println(KThread.currentThread().getName() + " cancelled " + thread1.getName() + "'s timer interrupt.");
-                }
+                ThreadedKernel.alarm.cancel(thread1);
                 lock.release();
             }
         });
@@ -244,6 +243,7 @@ public class Condition2 {
         thread1.join();
     }
 
+    /* Test Case 3: thread2 cancel thread1's sleep by wake. */
     private static void sleepForTest3() {
         System.out.println("===== Start of sleepFor Test3 ======");
         Lock lock = new Lock();
@@ -274,6 +274,7 @@ public class Condition2 {
         thread1.join();
     }
 
+    /* Test Case 4: thread2 cancel thread1's sleep by wake, and cancel again. */
     private static void sleepForTest4() {
         System.out.println("===== Start of sleepFor Test4 ======");
         Lock lock = new Lock();
@@ -295,16 +296,40 @@ public class Condition2 {
         KThread thread2 = new KThread(new Runnable() {
             public void run() {
                 lock.acquire();
-                /*
-                long t0 = Machine.timer().getTime();
-                System.out.println (KThread.currentThread().getName() + " sleeping");
-                cv.sleepFor(5000);
-                long t1 = Machine.timer().getTime();
-                System.out.println(KThread.currentThread().getName() +
-                " woke up, slept for " + (t1 - t0) + " ticks");
-                 */
                 cv.wake();
                 ThreadedKernel.alarm.cancel(thread1);
+                lock.release();
+            }
+        });
+        thread1.setName("thread1").fork();
+        thread2.setName("thread2").fork();
+        thread1.join();
+    }
+
+     /* Test Case 5: thread2 cancel thread1's sleep by cancel, and wake again. */
+     private static void sleepForTest5() {
+        System.out.println("===== Start of sleepFor Test4 ======");
+        Lock lock = new Lock();
+        Condition2 cv = new Condition2(lock);
+
+        KThread thread1 = new KThread(new Runnable() {
+            public void run() {
+                lock.acquire();
+                long t0 = Machine.timer().getTime();
+                System.out.println (KThread.currentThread().getName() + " sleeping");
+                cv.sleepFor(2000);
+                long t1 = Machine.timer().getTime();
+                System.out.println(KThread.currentThread().getName() + 
+                " woke up, slept for " + (t1 - t0) + " ticks");
+                lock.release();
+            }
+        });
+
+        KThread thread2 = new KThread(new Runnable() {
+            public void run() {
+                lock.acquire();
+                ThreadedKernel.alarm.cancel(thread1);
+                cv.wake();
                 lock.release();
             }
         });
@@ -322,6 +347,7 @@ public class Condition2 {
             sleepForTest2();
             sleepForTest3();
             sleepForTest4();
+            sleepForTest5();
         }
         Lib.debug(dbgCondition, "End Condition2.selfTest\n");
     }
