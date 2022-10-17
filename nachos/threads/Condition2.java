@@ -142,7 +142,6 @@ public class Condition2 {
 
             ping.join();
             //for (int i = 0; i < 50; i++) { KThread.currentThread().yield(); }
-            System.out.println("===== End of Condition PingPong Test ======");
         }
     }
 
@@ -192,7 +191,6 @@ public class Condition2 {
         consumer.join();
         producer.join();
         //for (int i = 0; i < 50; i++) { KThread.currentThread().yield(); }
-        System.out.println("===== End of Condition Test1 ======");
     }
 
     /* Test Case 1: simple sleepFor test. */
@@ -209,9 +207,7 @@ public class Condition2 {
         long t1 = Machine.timer().getTime();
         System.out.println (KThread.currentThread().getName() +
                     " woke up, slept for " + (t1 - t0) + " ticks");
-        lock.release();
-        System.out.println("===== End of sleepFor Test1 ======");
-    
+        lock.release();    
     }
 
     private static void sleepForTest2() {
@@ -231,6 +227,7 @@ public class Condition2 {
                 lock.release();
             }
         });
+
         KThread thread2 = new KThread(new Runnable() {
             public void run() {
                 lock.acquire();
@@ -243,9 +240,36 @@ public class Condition2 {
         thread1.setName("thread1").fork();
         thread2.setName("thread2").fork();
         thread1.join();
+    }
 
+    private static void sleepForTest3() {
+        System.out.println("===== Start of sleepFor Test3 ======");
+        Lock lock = new Lock();
+        Condition2 cv = new Condition2(lock);
 
-        System.out.println("===== End of sleepFor Test2 ======");
+        KThread thread1 = new KThread(new Runnable() {
+            public void run() {
+                lock.acquire();
+                long t0 = Machine.timer().getTime();
+                System.out.println (KThread.currentThread().getName() + " sleeping");
+                cv.sleepFor(20000);
+                long t1 = Machine.timer().getTime();
+                System.out.println(KThread.currentThread().getName() +
+                            " woke up, slept for " + (t1 - t0) + " ticks");
+                lock.release();
+            }
+        });
+
+        KThread thread2 = new KThread(new Runnable() {
+            public void run() {
+                lock.acquire();
+                cv.wake();
+                lock.release();
+            }
+        });
+        thread1.setName("thread1").fork();
+        thread2.setName("thread2").fork();
+        thread1.join();
     }
 
     public static void selfTest() {
@@ -255,6 +279,7 @@ public class Condition2 {
             cvTest1();
             sleepForTest1();
             sleepForTest2();
+            sleepForTest3();
         }
     }
 

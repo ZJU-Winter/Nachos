@@ -95,7 +95,6 @@ public class Rendezvous {
 
         t1.join();
         t2.join();
-        System.out.println("===== End of Rendezvous Test1 ======");
     }
 
     /* Test Case 2: many threads echange on the same tag. */
@@ -165,7 +164,6 @@ public class Rendezvous {
         t3.join();
         t4.join();
 
-        System.out.println("===== End of Rendezvous Test2 ======");
     }
 
     /* Test Case 3: exchange with different tags. */
@@ -235,7 +233,6 @@ public class Rendezvous {
         t3.join();
         t4.join();
 
-        System.out.println("===== End of Rendezvous Test3 ======");
     }
 
     public static void selfTest() {
