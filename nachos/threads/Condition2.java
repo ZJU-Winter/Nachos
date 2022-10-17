@@ -253,7 +253,7 @@ public class Condition2 {
                 lock.acquire();
                 long t0 = Machine.timer().getTime();
                 System.out.println (KThread.currentThread().getName() + " sleeping");
-                cv.sleepFor(20000);
+                cv.sleepFor(2000);
                 long t1 = Machine.timer().getTime();
                 System.out.println(KThread.currentThread().getName() +
                             " woke up, slept for " + (t1 - t0) + " ticks");
@@ -264,6 +264,7 @@ public class Condition2 {
         KThread thread2 = new KThread(new Runnable() {
             public void run() {
                 lock.acquire();
+                cv.sleepFor(5000);
                 cv.wake();
                 lock.release();
             }
