@@ -109,9 +109,7 @@ public class Condition2 {
         conditionLock.acquire();
 	}
 
-    /**
-     * TestCases for Condition Variable
-     */
+    /* Test Case 1: ping pong test. */
     private static class InterlockTest {
         private static Lock lock;
         private static Condition2 cv;
@@ -130,6 +128,7 @@ public class Condition2 {
         }
 
         public InterlockTest () {
+            System.out.println("===== Start of Condition PingPong Test ======");
             lock = new Lock();
             cv = new Condition2(lock);
 
@@ -143,10 +142,13 @@ public class Condition2 {
 
             ping.join();
             //for (int i = 0; i < 50; i++) { KThread.currentThread().yield(); }
+            System.out.println("===== End of Condition PingPong Test ======");
         }
     }
 
+    /* Test Case 2: producer and comsumer test. */
     public static void cvTest1() {
+        System.out.println("===== Start of Condition Test1 ======");
         final Lock lock = new Lock();
         // final Condition empty = new Condition(lock);
         final Condition2 empty = new Condition2(lock);
@@ -190,13 +192,33 @@ public class Condition2 {
         consumer.join();
         producer.join();
         //for (int i = 0; i < 50; i++) { KThread.currentThread().yield(); }
+        System.out.println("===== End of Condition Test1 ======");
     }
+
+    /* Test Case 1: simple sleepFor test. */
+    private static void sleepForTest1 () {
+        System.out.println("===== Start of sleepFor Test1 ======");
+        Lock lock = new Lock();
+        Condition2 cv = new Condition2(lock);
+    
+        lock.acquire();
+        long t0 = Machine.timer().getTime();
+        System.out.println (KThread.currentThread().getName() + " sleeping");
+        // no other thread will wake us up, so we should time out
+        cv.sleepFor(2000);
+        long t1 = Machine.timer().getTime();
+        System.out.println (KThread.currentThread().getName() +
+                    " woke up, slept for " + (t1 - t0) + " ticks");
+        lock.release();
+        System.out.println("===== End of sleepFor Test1 ======");
+        }
 
     public static void selfTest() {
         Lib.debug(dbgCondition, "Enter Condition2.selfTest");
         if (Lib.test(dbgCondition)) {
             new InterlockTest();
             cvTest1();
+            sleepForTest1();
         }
     }
 
