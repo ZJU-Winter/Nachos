@@ -122,6 +122,7 @@ public class Condition2 {
                 for (int i = 0; i < 10; i++) {
                     System.out.println(KThread.currentThread().getName());
                     cv.wake();
+                    KThread.yield();
                     cv.sleep();
                 }
                 lock.release();
