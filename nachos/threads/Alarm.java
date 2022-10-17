@@ -119,7 +119,7 @@ public class Alarm {
             for (BlockedThread blockedthread : blockedThreadQueue) {
                 if (blockedthread.thread == thread) {
                     blockedThreadQueue.remove(blockedthread);
-                    blockedthread.thread.ready();
+                    //blockedthread.thread.ready();
                     Machine.interrupt().restore(intStatus);
                     return true;
                 }
