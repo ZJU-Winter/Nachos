@@ -237,11 +237,12 @@ public class Condition2 {
                 if (ThreadedKernel.alarm.cancel(thread1)) {
                     System.out.println(KThread.currentThread().getName() + " cancelled " + thread1.getName() + "'s timer interrupt.");
                 }
-                lock.release();                
+                lock.release();
             }
         });
         thread1.setName("thread1").fork();
         thread2.setName("thread2").fork();
+        thread1.join();
 
 
         System.out.println("===== End of sleepFor Test2 ======");
