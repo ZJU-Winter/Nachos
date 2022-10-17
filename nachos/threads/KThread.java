@@ -585,6 +585,14 @@ public class KThread {
 		}
 	}
 
+    /**
+     * get thread's current status
+     * @return status
+     */
+    protected int getStatus() {
+        return status;
+    }
+
 	/**
 	 * Prepare this thread to give up the processor. Kernel threads do not need
 	 * to do anything here.

@@ -70,8 +70,9 @@ public class Condition2 {
             KThread toWake = waitQueue.pollFirst();
             if (ThreadedKernel.alarm.cancel(toWake)) {
                 System.out.println("cancelled " + toWake.getName() + "'s intertupt.");
+            } else if (toWake.getStatus() != 1){
+                toWake.ready();
             }
-            toWake.ready();
 
 		    Machine.interrupt().restore(intStatus);
         }
