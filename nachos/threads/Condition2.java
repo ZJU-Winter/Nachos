@@ -297,6 +297,7 @@ public class Condition2 {
                 long t0 = Machine.timer().getTime();
                 System.out.println (KThread.currentThread().getName() + " sleeping");
                 cv.sleepFor(5000);
+                long t1 = Machine.timer().getTime();
                 System.out.println(KThread.currentThread().getName() +
                 " woke up, slept for " + (t1 - t0) + " ticks");
                 cv.wake();
