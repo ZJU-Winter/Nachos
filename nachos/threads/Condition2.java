@@ -26,7 +26,6 @@ public class Condition2 {
 	public Condition2(Lock conditionLock) {
 		this.conditionLock = conditionLock;
         this.waitQueue = new ArrayDeque<>();
-        //this.map = new HashMap<>();
 	}
 
 	/**
@@ -42,7 +41,6 @@ public class Condition2 {
         boolean intStatus = Machine.interrupt().disable();
 
         waitQueue.addLast(KThread.currentThread());
-        //map.put(KThread.currentThread(), -1l);
         KThread.sleep();
 
 		Machine.interrupt().restore(intStatus);
@@ -57,12 +55,6 @@ public class Condition2 {
 	public void wake() {
 		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
 
-        // /* remove stale threads from waitQueue, stale means it was awakened by a timer interrupt handler. */
-        // while (!waitQueue.isEmpty() && map.get(waitQueue.peekFirst()) != -1 && map.get(waitQueue.peekFirst()) < Machine.timer().getTime()) {
-        //     Lib.debug(dbgCondition, waitQueue.peekFirst().getName() + " is already wake up.");
-        //     waitQueue.pollFirst();
-        // }
-
         /* wake up first thread in the waitQueue, and cancle its interrupt. */
         if (!waitQueue.isEmpty()) {
             boolean intStatus = Machine.interrupt().disable();
@@ -70,7 +62,7 @@ public class Condition2 {
             KThread toWake = waitQueue.pollFirst();
             if (ThreadedKernel.alarm.cancel(toWake)) {
                 System.out.println("cancelled " + toWake.getName() + "'s intertupt.");
-            } else if (toWake.getStatus() != 1){
+            } else if (toWake.getStatus() != 1) {
                 toWake.ready();
             }
 
@@ -103,7 +95,6 @@ public class Condition2 {
 
         conditionLock.release();
         waitQueue.addLast(KThread.currentThread());
-        //map.put(KThread.currentThread(), Machine.timer().getTime() + timeout);
 
         ThreadedKernel.alarm.waitUntil(timeout);
         waitQueue.remove(KThread.currentThread());
@@ -212,7 +203,7 @@ public class Condition2 {
         lock.release();    
     }
 
-    /* Test Case 2: thread2 cancel thread1's sleep by cancel. */
+    /* Test Case 2: thread2 cancel thread1's sleep by invoking cancel. */
     private static void sleepForTest2() {
         System.out.println("===== Start of sleepFor Test2 ======");
         Lock lock = new Lock();
@@ -243,7 +234,7 @@ public class Condition2 {
         thread1.join();
     }
 
-    /* Test Case 3: thread2 cancel thread1's sleep by wake. */
+    /* Test Case 3: thread2 cancel thread1's sleep by invoking wake. */
     private static void sleepForTest3() {
         System.out.println("===== Start of sleepFor Test3 ======");
         Lock lock = new Lock();
@@ -274,7 +265,7 @@ public class Condition2 {
         thread1.join();
     }
 
-    /* Test Case 4: thread2 cancel thread1's sleep by wake, and cancel again. */
+    /* Test Case 4: thread2 cancel thread1's sleep by invoking wake, and cancel again. */
     private static void sleepForTest4() {
         System.out.println("===== Start of sleepFor Test4 ======");
         Lock lock = new Lock();
@@ -306,7 +297,7 @@ public class Condition2 {
         thread1.join();
     }
 
-     /* Test Case 5: thread2 cancel thread1's sleep by cancel, and wake again. */
+     /* Test Case 5: thread2 cancel thread1's sleep by invoking cancel, and wake again. */
      private static void sleepForTest5() {
         System.out.println("===== Start of sleepFor Test4 ======");
         Lock lock = new Lock();
@@ -356,7 +347,5 @@ public class Condition2 {
 
     private Lock conditionLock;
 
-    private Deque<KThread> waitQueue; // a queue of waiting threads
-
-    //private HashMap<KThread, Long> map; // keep track of wakeup time
+    private Deque<KThread> waitQueue; // A queue of waiting threads.
 }
