@@ -264,7 +264,41 @@ public class Condition2 {
         KThread thread2 = new KThread(new Runnable() {
             public void run() {
                 lock.acquire();
+                cv.wake();
+                lock.release();
+            }
+        });
+        thread1.setName("thread1").fork();
+        thread2.setName("thread2").fork();
+        thread1.join();
+    }
+
+    private static void sleepForTest4() {
+        System.out.println("===== Start of sleepFor Test4 ======");
+        Lock lock = new Lock();
+        Condition2 cv = new Condition2(lock);
+
+        KThread thread1 = new KThread(new Runnable() {
+            public void run() {
+                lock.acquire();
+                long t0 = Machine.timer().getTime();
+                System.out.println (KThread.currentThread().getName() + " sleeping");
+                cv.sleepFor(2000);
+                long t1 = Machine.timer().getTime();
+                System.out.println(KThread.currentThread().getName() + 
+                " woke up, slept for " + (t1 - t0) + " ticks");
+                lock.release();
+            }
+        });
+
+        KThread thread2 = new KThread(new Runnable() {
+            public void run() {
+                lock.acquire();
+                long t0 = Machine.timer().getTime();
+                System.out.println (KThread.currentThread().getName() + " sleeping");
                 cv.sleepFor(5000);
+                System.out.println(KThread.currentThread().getName() +
+                " woke up, slept for " + (t1 - t0) + " ticks");
                 cv.wake();
                 lock.release();
             }
