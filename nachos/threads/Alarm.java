@@ -113,21 +113,21 @@ public class Alarm {
 	 * <p>
 	 * @param thread the thread whose timer should be cancelled.
 	 */
-        public boolean cancel(KThread thread) {
-            boolean intStatus = Machine.interrupt().disable();
+    public boolean cancel(KThread thread) {
+        boolean intStatus = Machine.interrupt().disable();
 
-            for (BlockedThread blockedthread : blockedThreadQueue) {
-                if (blockedthread.thread == thread) {
-                    blockedThreadQueue.remove(blockedthread);
-                    blockedthread.thread.ready();
-                    System.out.println(KThread.currentThread().getName() + " cancelled " + thread.getName() + "'s timer interrupt.");
-                    Machine.interrupt().restore(intStatus);
-                    return true;
-                }
+        for (BlockedThread blockedthread : blockedThreadQueue) {
+            if (blockedthread.thread == thread) {
+                blockedThreadQueue.remove(blockedthread);
+                blockedthread.thread.ready();
+                System.out.println(KThread.currentThread().getName() + " cancelled " + thread.getName() + "'s timer interrupt.");
+                Machine.interrupt().restore(intStatus);
+                return true;
             }
+        }
 
-            Machine.interrupt().restore(intStatus);
-            return false;
+        Machine.interrupt().restore(intStatus);
+        return false;
 	}
 
     public static void alarmTest() {

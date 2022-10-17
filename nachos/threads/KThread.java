@@ -482,6 +482,7 @@ public class KThread {
     }
     
     public static void joinTest6() {
+        System.out.println("===== Start of Join Test6 ======");
         KThread t1 = new KThread (new A()).setName ("A");
         System.out.println ("fee");
         t1.fork ();
@@ -586,8 +587,7 @@ public class KThread {
 	}
 
     /**
-     * get thread's current status
-     * @return status
+     * Get thread's current status.
      */
     protected int getStatus() {
         return status;
