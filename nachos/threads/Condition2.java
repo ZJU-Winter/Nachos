@@ -68,12 +68,12 @@ public class Condition2 {
             boolean intStatus = Machine.interrupt().disable();
 
             KThread toWake = waitQueue.pollFirst();
-            // if (ThreadedKernel.alarm.cancel(toWake)) {
-            //     System.out.println("cancelled " + toWake.getName() + "'s intertupt.");
-            // } else {
-            //     toWake.ready();
-            // }
-            toWake.ready();
+            if (ThreadedKernel.alarm.cancel(toWake)) {
+                System.out.println("cancelled " + toWake.getName() + "'s intertupt.");
+            } else {
+                toWake.ready();
+            }
+            //toWake.ready();
 
 		    Machine.interrupt().restore(intStatus);
         }
