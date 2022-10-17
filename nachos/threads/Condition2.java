@@ -294,19 +294,22 @@ public class Condition2 {
         KThread thread2 = new KThread(new Runnable() {
             public void run() {
                 lock.acquire();
+                /*
                 long t0 = Machine.timer().getTime();
                 System.out.println (KThread.currentThread().getName() + " sleeping");
                 cv.sleepFor(5000);
                 long t1 = Machine.timer().getTime();
                 System.out.println(KThread.currentThread().getName() +
                 " woke up, slept for " + (t1 - t0) + " ticks");
+                 */
+                ThreadedKernel.alarm.cancel(thread1);
                 cv.wake();
                 lock.release();
             }
         });
         thread1.setName("thread1").fork();
         thread2.setName("thread2").fork();
-        thread2.join();
+        thread1.join();
     }
 
     public static void selfTest() {
