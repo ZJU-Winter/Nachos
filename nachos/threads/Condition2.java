@@ -271,7 +271,7 @@ public class Condition2 {
         });
         thread1.setName("thread1").fork();
         thread2.setName("thread2").fork();
-        thread1.join();
+        thread2.join();
     }
 
     public static void selfTest() {
