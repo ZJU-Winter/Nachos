@@ -92,8 +92,8 @@ public class Condition2 {
     public void sleepFor(long timeout) {
 		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
 
-        conditionLock.release();
         waitQueue.addLast(KThread.currentThread());
+        conditionLock.release();
 
         ThreadedKernel.alarm.waitUntil(timeout);
         waitQueue.remove(KThread.currentThread());
