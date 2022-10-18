@@ -289,7 +289,6 @@ public class Condition2 {
                 lock.acquire();
                 cv.wake();
                 ThreadedKernel.alarm.cancel(thread1);
-                ThreadedKernel.alarm.cancel(thread1);
                 lock.release();
             }
         });
