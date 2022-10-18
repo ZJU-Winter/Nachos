@@ -96,9 +96,10 @@ public class Condition2 {
         conditionLock.release();
 
         ThreadedKernel.alarm.waitUntil(timeout);
+        conditionLock.acquire();
+
         waitQueue.remove(KThread.currentThread());
 
-        conditionLock.acquire();
 	}
 
     /* Test Case 1: ping pong test. */
@@ -287,6 +288,7 @@ public class Condition2 {
             public void run() {
                 lock.acquire();
                 cv.wake();
+                ThreadedKernel.alarm.cancel(thread1);
                 ThreadedKernel.alarm.cancel(thread1);
                 lock.release();
             }
