@@ -587,7 +587,7 @@ public class KThread {
 	}
 
     /**
-     * Get thread's current status.
+     * Check if thread's status is ready.
      */
     protected boolean isReady() {
         return status == statusReady;
