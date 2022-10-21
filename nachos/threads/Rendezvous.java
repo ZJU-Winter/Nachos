@@ -52,7 +52,7 @@ public class Rendezvous {
         }
 
         second.put(tag, value);
-        cv.wake();
+        cv.wakeAll();
         int firstVal = first.get(tag);
         first.remove(tag);
         lock.release();
