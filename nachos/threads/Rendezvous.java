@@ -235,12 +235,82 @@ public class Rendezvous {
 
     }
 
+    /* Test Case 4: different order of exchange, possible deadlock. */
+    public static void rendezTest4() {
+        System.out.println("===== Start of Rendezvous Test4 ======");
+        final Rendezvous r = new Rendezvous();
+    
+        KThread t1 = new KThread(new Runnable () {
+            public void run() {
+                int tag = 0;
+                int send = -1;
+    
+                System.out.println ("Thread " + KThread.currentThread().getName() + " exchanging " + send + " on tag " + tag);
+                int recv = r.exchange (tag, send);
+                Lib.assertTrue (recv == 4, "Was expecting " + 4 + " but received " + recv);
+                System.out.println ("Thread " + KThread.currentThread().getName() + " received " + recv);
+            }
+        });
+        t1.setName("t1");
+
+        KThread t2 = new KThread(new Runnable () {
+            public void run() {
+                int tag = 2;
+                int send = 1;
+
+                System.out.println ("Thread " + KThread.currentThread().getName() + " exchanging " + send + " on tag " + tag);
+                int recv = r.exchange (tag, send);
+                Lib.assertTrue (recv == 3, "Was expecting " + 3 + " but received " + recv);
+                System.out.println ("Thread " + KThread.currentThread().getName() + " received " + recv);
+            }
+        });
+        t2.setName("t2");
+
+        KThread t3 = new KThread(new Runnable () {
+            public void run() {
+                int tag = 2;
+                int send = 3;
+    
+                System.out.println ("Thread " + KThread.currentThread().getName() + " exchanging " + send + " on tag " + tag);
+                int recv = r.exchange (tag, send);
+                Lib.assertTrue (recv == 1, "Was expecting " + 1 + " but received " + recv);
+                System.out.println ("Thread " + KThread.currentThread().getName() + " received " + recv);
+            }
+        });
+        t3.setName("t3");
+
+        KThread t4 = new KThread(new Runnable () {
+            public void run() {
+                int tag = 0;
+                int send = 4;
+
+                System.out.println ("Thread " + KThread.currentThread().getName() + " exchanging " + send + " on tag " + tag);
+                int recv = r.exchange (tag, send);
+                Lib.assertTrue (recv == -1, "Was expecting " + -1 + " but received " + recv);
+                System.out.println ("Thread " + KThread.currentThread().getName() + " received " + recv);
+            }
+        });
+        t4.setName("t4");
+
+        t1.fork();
+        t2.fork();
+        t3.fork();
+        t4.fork();
+
+        t1.join();
+        t2.join();
+        t3.join();
+        t4.join();
+
+    }
+
     public static void selfTest() {
         Lib.debug(dbgRendezvous, "Enter Rendezvous.selfTest");
         if (Lib.test(dbgRendezvous)) {
             rendezTest1();
             rendezTest2();
             rendezTest3();
+            rendezTest4();
             System.out.println();
         }
         Lib.debug(dbgRendezvous, "End Rendezvous.selfTest\n");
