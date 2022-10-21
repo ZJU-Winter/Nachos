@@ -11,8 +11,6 @@
 * Alarm.timerInterrupt(): search for all threads in **blockedThreadQueue** whose wake up time is due, let the threads ready.
 #### 2. Testing Cases
 * waitUntil -100, -10, 0, 1000, 10000, 100000 clock time, check whether waiting periods are approximately same as wakeUntil time x.
-#### 3. Contributions
-* Jiayi Wang proposed the idea of setting a HashMap to store the waiting threads. Siran Ma simplified it by using a priority queue. Wentan Huang implemented the code. Testing and analyzing together.
 ### Join
 #### 1. Code Modified
 * set a hashmap(**"joinedThreads"**) for recording all joined threads' relationship. Key is the child thread, Value is the parent thread.
@@ -25,8 +23,6 @@
 * Test Case 4: join is called more than once on a thread.
 * Test Case 5: one thread can join with multiple other threads in succession.
 * Test Case 6: same as Homework2.
-#### 3. Contributions
-* Todo
 ### Condition
 #### 1. Code Modified
 * set a queue(**"waitQueue"**) of waiting threads. set a lock(**"conditionLock"**) to protect this condition variable's data.
@@ -43,6 +39,16 @@
 * Test Case 3: thread2 cancel thread1's sleep by invoking wake.
 * Test Case 4: thread2 cancel thread1's sleep by invoking wake, and cancel again.
 * Test Case 5: thread2 cancel thread1's sleep by invoking cancel, and wake again.
-#### 3. Contributions
-* Todo
 ### Rendezvous
+#### 1. Code Modified
+* set a hashmap(**"first"**) to store the first exchanged value with corresponding tag. set another hashmap(**"second"**) to store the second exchanged value with corresponding tag. set a lock (**"lock"**) and condition variable(**"cv"**) to manage concurrency.
+* Rendezvous.exchange(): There are two if statesment for threadA (first occurence with a tag) and threadB (second occurence with same tag). Since the tag is first appeard, ThreadA put the tag and exchanged value in **first** and call cv.sleep(). Suppose threadB with the same tag, threadB put the tag and exchanged value in **second** and call cv.wake(). ThreadB then get the return value through tag-value pair stored in **first** and then remove this tag-value pair from **first**. As threadA is waken up by cv.wake() called in thread B before, threadA then get the tag-value pair stored in **second** and remove this tag-value pair from **second.
+#### 2. Testing Cases
+* Test Case 1: simple exchange test
+* Test Case 2: four threads exchange values on the same tag
+* Test Case 3: four threads exchange values on two different tags
+
+### Contributions
+* Wentao Huang: group discussion, implementated most part of the code
+* Siran Ma: group discussion, make improvements of part of the code, code review
+* Jiayi Wang: group discussion, code review
