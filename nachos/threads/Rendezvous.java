@@ -52,7 +52,7 @@ public class Rendezvous {
         }
 
         second.put(tag, value);
-        cv.wakeAll();
+        cv.wake();
         int firstVal = first.get(tag);
         first.remove(tag);
         lock.release();
@@ -295,6 +295,7 @@ public class Rendezvous {
         t1.fork();
         t2.fork();
         t3.fork();
+
         t3.join();
         t4.fork();
 
