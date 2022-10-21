@@ -235,7 +235,7 @@ public class Rendezvous {
 
     }
 
-    /* Test Case 4: different order of exchange, possible deadlock. */
+    /* Test Case 4: different order of exchange, a possible deadlock situation. */
     public static void rendezTest4() {
         System.out.println("===== Start of Rendezvous Test4 ======");
         final Rendezvous r = new Rendezvous();
