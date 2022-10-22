@@ -1,4 +1,4 @@
-## Members of Group
+## Group Members
 * Wentao Huang
 * Siran Ma
 * Jiayi Wang
