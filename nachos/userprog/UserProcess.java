@@ -157,7 +157,7 @@ public class UserProcess {
 
 		// for now, just assume that virtual addresses equal physical addresses
 		if (vaddr < 0 || vaddr >= memory.length)
-			return 0;
+			return -1;
 
 		int amount = Math.min(length, memory.length - vaddr);
 		System.arraycopy(memory, vaddr, data, offset, amount);
@@ -199,7 +199,7 @@ public class UserProcess {
 
 		// for now, just assume that virtual addresses equal physical addresses
 		if (vaddr < 0 || vaddr >= memory.length)
-			return 0;
+			return -1;
 
 		int amount = Math.min(length, memory.length - vaddr);
 		System.arraycopy(data, offset, memory, vaddr, amount);
@@ -443,7 +443,7 @@ public class UserProcess {
             }
             total += readBytes;
             int writeBytes = writeVirtualMemory(addr, buffer, 0, readBytes);
-            if (writeBytes == 0) {
+            if (writeBytes < 0) {
                 return -1;
             }
             Lib.debug(dbgProcess, "write " + writeBytes + " bytes to VM");
@@ -458,7 +458,7 @@ public class UserProcess {
                 }
                 total += readBytes;
                 int writeBytes = writeVirtualMemory(addr, buffer, 0, readBytes);
-                if (writeBytes == 0) {
+                if (writeBytes < 0) {
                     return -1;
                 }
                 addr += writeBytes;
@@ -490,7 +490,7 @@ public class UserProcess {
         if (count < pageSize) {
             byte[] buffer = new byte[pageSize];
             int readBytes = readVirtualMemory(addr, buffer, 0, count);
-            if (readBytes == 0) {
+            if (readBytes < 0) {
                 return -1;
             }
             writeBytes = file.write(buffer, 0, readBytes);
@@ -504,7 +504,7 @@ public class UserProcess {
             byte[] buffer = new byte[pageSize];
             do {
                 int readBytes = readVirtualMemory(addr, buffer, 0, Math.min(pageSize, count - total));
-                if (readBytes == 0) {
+                if (readBytes < 0) {
                     return -1;
                 }
                 writeBytes = file.write(buffer, 0, readBytes);
@@ -513,9 +513,6 @@ public class UserProcess {
                 }
                 total += writeBytes;
                 addr += writeBytes;
-                if (total == count) {
-                    return total;
-                }
                 Lib.debug(dbgProcess, "read " + writeBytes + " bytes from VM");
                 Lib.debug(dbgProcess, "writeTotal " + total + " bytes");
             } while (writeBytes == pageSize);
