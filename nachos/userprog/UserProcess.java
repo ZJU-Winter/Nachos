@@ -35,7 +35,7 @@ public class UserProcess {
         fileTable[0] = UserKernel.console.openForReading();
         fileTable[1] = UserKernel.console.openForWriting();
         for (int i = 2; i < 16; i += 1) {
-            nextIndexQueue.add(i);
+            nextIndexQueue.offer(i);
         }
 	}
 
@@ -419,13 +419,15 @@ public class UserProcess {
     }
 
     /**
-     * Handle the read() system call.
+     * Handle the read(int fileDescriptor, void *buffer, int count) system call.
      */
     private int handleRead(int fileDescriptor, int addr, int count) {
         OpenFile file = fileTable[fileDescriptor];
         if (file == null) {
             return -1;
         }
+        int total = 0;
+        byte[] buffer = new byte[64];
         return -1;
     }
 
