@@ -425,6 +425,9 @@ public class UserProcess {
         if (addr == 0 || count < 0) {
             return -1;
         }
+        if (fileDescriptor < 0 || fileDescriptor >= 16) {
+            return -1;
+        }
         OpenFile file = fileTable[fileDescriptor];
         if (file == null) {
             return -1;
@@ -462,6 +465,9 @@ public class UserProcess {
         if (addr == 0 || count < 0) {
             return -1;
         }
+        if (fileDescriptor < 0 || fileDescriptor >= 16) {
+            return -1;
+        }
         OpenFile file = fileTable[fileDescriptor];
         if (file == null) {
             return -1;
@@ -494,14 +500,36 @@ public class UserProcess {
      * Handle the close() system call.
      */
     private int handleClose(int fileDescriptor) {
-        return -1;
+        if (fileDescriptor < 0 || fileDescriptor >= 16) {
+            return -1;
+        }
+        OpenFile file = fileTable[fileDescriptor];
+        if (file == null) {
+            return -1;
+        }
+        fileTable[fileDescriptor] = null;
+        nextIndexQueue.offer(fileDescriptor);
+        file.close();
+        return 0;
     }
 
     /**
      * Handle the unlink() system call.
      */
-    private int handleUnlink(int nameAddr) {
-        return -1;
+    private int handleUnlink(int addr) {
+        String name = readVirtualMemoryString(addr, 256);
+        if (name == null) {
+            return -1;
+        }
+        for (int i = 0; i < 16; i += 1) {
+            if (fileTable[i].name.equals(name)) {
+                nextIndexQueue.offer(i);
+                fileTable[i] = null;
+                break;
+            }
+        }
+        ThreadedKernel.fileSystem.remove(name);
+        return 0;
     }
 
 	private static final int syscallHalt = 0, syscallExit = 1, syscallExec = 2,
