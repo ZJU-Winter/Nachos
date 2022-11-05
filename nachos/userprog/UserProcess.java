@@ -29,8 +29,14 @@ public class UserProcess {
 	public UserProcess() {
 		int numPhysPages = Machine.processor().getNumPhysPages();
 		pageTable = new TranslationEntry[numPhysPages];
-		for (int i = 0; i < numPhysPages; i++)
+		for (int i = 0; i < numPhysPages; i += 1) {
 			pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
+        }
+        fileTable[0] = UserKernel.console.openForReading();
+        fileTable[1] = UserKernel.console.openForWriting();
+        for (int i = 2; i < 16; i += 1) {
+            nextIndexQueue.add(i);
+        }
 	}
 
 	/**
@@ -47,7 +53,6 @@ public class UserProcess {
 		// of file descriptors and throws an exception in
 		// createClassLoader.  Hack around it by hard-coding
 		// creating new processes of the appropriate type.
-
 		if (name.equals ("nachos.userprog.UserProcess")) {
 		    return new UserProcess ();
 		} else if (name.equals ("nachos.vm.VMProcess")) {
@@ -55,11 +60,6 @@ public class UserProcess {
 		} else {
 		    return (UserProcess) Lib.constructObject(Machine.getProcessClassName());
 		}
-        fileTable[0] = UserKernel.console.openForReading();
-        fileTable[1] = UserKernel.console.openForWriting();
-        for (int i = 2; i < 16; i += 1) {
-            nextIndexQueue.add(i);
-        }
 	}
 
 	/**
