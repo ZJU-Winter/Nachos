@@ -426,27 +426,28 @@ public class UserProcess {
         if (file == null) {
             return -1;
         }
+        return -1;
     }
 
     /**
      * Handle the write() system call.
      */
     private int handleWrite(int fileDescriptor, int addr, int count) {
-
+        return -1;
     }
 
     /**
      * Handle the close() system call.
      */
     private int handleClose(int fileDescriptor) {
-
+        return -1;
     }
 
     /**
      * Handle the unlink() system call.
      */
     private int handleUnlink(int nameAddr) {
-        
+        return -1;
     }
 
 	private static final int syscallHalt = 0, syscallExit = 1, syscallExec = 2,
