@@ -512,11 +512,13 @@ public class UserProcess {
                     return -1;
                 }
                 total += writeBytes;
-                count -= writeBytes;
                 addr += writeBytes;
+                if (total == count) {
+                    return total;
+                }
                 Lib.debug(dbgProcess, "read " + writeBytes + " bytes from VM");
                 Lib.debug(dbgProcess, "writeTotal " + total + " bytes");
-            } while (writeBytes == pageSize && count != 0);
+            } while (writeBytes == pageSize);
         }
         return total;
     }
