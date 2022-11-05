@@ -522,7 +522,7 @@ public class UserProcess {
             return -1;
         }
         for (int i = 0; i < 16; i += 1) {
-            if (fileTable[i].name.equals(name)) {
+            if (fileTable[i].getName().equals(name)) {
                 nextIndexQueue.offer(i);
                 fileTable[i] = null;
                 break;
