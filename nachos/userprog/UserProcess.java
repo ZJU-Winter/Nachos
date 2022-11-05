@@ -516,7 +516,7 @@ public class UserProcess {
                 addr += writeBytes;
                 Lib.debug(dbgProcess, "read " + writeBytes + " bytes from VM");
                 Lib.debug(dbgProcess, "writeTotal " + total + " bytes");
-            } while (writeBytes == pageSize && total != 0);
+            } while (writeBytes == pageSize && count != 0);
         }
         return total;
     }
