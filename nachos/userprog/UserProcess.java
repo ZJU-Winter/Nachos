@@ -422,20 +422,72 @@ public class UserProcess {
      * Handle the read(int fileDescriptor, void *buffer, int count) system call.
      */
     private int handleRead(int fileDescriptor, int addr, int count) {
+        if (addr == 0 || count < 0) {
+            return -1;
+        }
         OpenFile file = fileTable[fileDescriptor];
         if (file == null) {
             return -1;
         }
         int total = 0;
-        byte[] buffer = new byte[64];
-        return -1;
+        int readBytes = 0;
+        // from file to buffer, from buffer to addr
+        if (count < pageSize) {
+            byte[] buffer = new byte[pageSize];
+            readBytes += file.read(buffer, 0, count);
+            total += readBytes;
+            int writeBytes = writeVirtualMemory(addr, buffer, 0, readBytes);
+            Lib.debug(dbgProcess, "write " + writeBytes + " bytes to VM");
+            Lib.debug(dbgProcess, "readTotal " + total + " bytes");
+            //Lib.assertTrue(readBytes == writeBytes, "readBytes should be equals to writeBytes");
+        } else {
+            do {
+                byte[] buffer = new byte[pageSize];
+                readBytes = file.read(buffer, 0, pageSize);
+                total += readBytes;
+                int writeBytes = writeVirtualMemory(addr, buffer, 0, readBytes);
+                addr += writeBytes;
+                Lib.debug(dbgProcess, "write " + writeBytes + " bytes to VM");
+                Lib.debug(dbgProcess, "readTotal " + total + " bytes");
+                //Lib.assertTrue(readBytes == writeBytes, "readBytes should be equals to writeBytes");
+            } while (readBytes == pageSize);
+        }
+        return total;
     }
 
     /**
-     * Handle the write() system call.
+     * Handle the write(int fileDescriptor, void *buffer, int count) system call.
      */
     private int handleWrite(int fileDescriptor, int addr, int count) {
-        return -1;
+        if (addr == 0 || count < 0) {
+            return -1;
+        }
+        OpenFile file = fileTable[fileDescriptor];
+        if (file == null) {
+            return -1;
+        }
+        int total = 0;
+        int writeBytes = 0;
+        // from addr to buffer, from buffer to file
+        if (count < pageSize) {
+            byte[] buffer = new byte[pageSize];
+            int readBytes = readVirtualMemory(addr, buffer, 0, count);
+            writeBytes = file.write(buffer, 0, readBytes);
+            total += writeBytes;
+            Lib.debug(dbgProcess, "read " + writeBytes + " bytes from VM");
+            Lib.debug(dbgProcess, "writeTotal " + total + " bytes");
+        } else {
+            byte[] buffer = new byte[pageSize];
+            do {
+                int readBytes = readVirtualMemory(addr, buffer, 0, Math.min(pageSize, count - total));
+                writeBytes = file.write(buffer, 0, writeBytes);
+                total += writeBytes;
+                addr += writeBytes;
+                Lib.debug(dbgProcess, "read " + writeBytes + " bytes from VM");
+                Lib.debug(dbgProcess, "writeTotal " + total + " bytes");
+            } while (writeBytes == pageSize);
+        }
+        return total;
     }
 
     /**
