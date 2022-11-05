@@ -6,6 +6,9 @@ import nachos.userprog.*;
 import nachos.vm.*;
 
 import java.io.EOFException;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.PriorityQueue;
 
 /**
  * Encapsulates the state of a user process that is not contained in its user
@@ -38,7 +41,7 @@ public class UserProcess {
 	 * @return a new process of the correct class.
 	 */
 	public static UserProcess newUserProcess() {
-	        String name = Machine.getProcessClassName ();
+	    String name = Machine.getProcessClassName ();
 
 		// If Lib.constructObject is used, it quickly runs out
 		// of file descriptors and throws an exception in
@@ -52,6 +55,11 @@ public class UserProcess {
 		} else {
 		    return (UserProcess) Lib.constructObject(Machine.getProcessClassName());
 		}
+        fileTable[0] = UserKernel.console.openForReading();
+        fileTable[1] = UserKernel.console.openForWriting();
+        for (int i = 2; i < 16; i += 1) {
+            nextIndexQueue.add(i);
+        }
 	}
 
 	/**
@@ -374,6 +382,73 @@ public class UserProcess {
 		return 0;
 	}
 
+    /**
+     * Handle the create(char *name) system call.
+     */
+    private int handleCreate(int addr) {
+        String name = readVirtualMemoryString(addr, 256);
+        if (name == null) {
+            return -1;
+        }
+        OpenFile file = ThreadedKernel.fileSystem.open(name, true);
+        if (file == null) {
+            return -1;
+        }
+        int index = nextIndexQueue.poll();
+        Lib.assertTrue(fileTable[index] == null, "file object at " + index + " should be null.");
+        fileTable[index] = file;
+        return index;
+    }
+
+    /**
+     * Handle the open(char *name) system call.
+     */
+    private int handleOpen(int addr) {
+        String name = readVirtualMemoryString(addr, 256);
+        if (name == null) {
+            return -1;
+        }
+        OpenFile file = ThreadedKernel.fileSystem.open(name, false);
+        if (file == null) {
+            return -1;
+        }
+        int index = nextIndexQueue.poll();
+        Lib.assertTrue(fileTable[index] == null, "file object at " + index + " should be null.");
+        fileTable[index] = file;
+        return index;
+    }
+
+    /**
+     * Handle the read() system call.
+     */
+    private int handleRead(int fileDescriptor, int addr, int count) {
+        OpenFile file = fileTable[fileDescriptor];
+        if (file == null) {
+            return -1;
+        }
+    }
+
+    /**
+     * Handle the write() system call.
+     */
+    private int handleWrite(int fileDescriptor, int addr, int count) {
+
+    }
+
+    /**
+     * Handle the close() system call.
+     */
+    private int handleClose(int fileDescriptor) {
+
+    }
+
+    /**
+     * Handle the unlink() system call.
+     */
+    private int handleUnlink(int nameAddr) {
+        
+    }
+
 	private static final int syscallHalt = 0, syscallExit = 1, syscallExec = 2,
 			syscallJoin = 3, syscallCreate = 4, syscallOpen = 5,
 			syscallRead = 6, syscallWrite = 7, syscallClose = 8,
@@ -446,6 +521,10 @@ public class UserProcess {
 			return handleHalt();
 		case syscallExit:
 			return handleExit(a0);
+        case syscallCreate:
+            return handleCreate(a0);
+        case syscallOpen:
+            return handleOpen(a0);
 
 		default:
 			Lib.debug(dbgProcess, "Unknown syscall " + syscall);
@@ -495,13 +574,17 @@ public class UserProcess {
 	protected final int stackPages = 8;
 
 	/** The thread that executes the user-level program. */
-        protected UThread thread;
+    protected UThread thread;
     
 	private int initialPC, initialSP;
 
 	private int argc, argv;
 
 	private static final int pageSize = Processor.pageSize;
+
+    private static OpenFile[] fileTable = new OpenFile[16];
+
+    private static PriorityQueue<Integer> nextIndexQueue = new PriorityQueue<>();
 
 	private static final char dbgProcess = 'a';
 }

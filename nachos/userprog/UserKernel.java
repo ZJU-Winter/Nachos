@@ -106,7 +106,6 @@ public class UserKernel extends ThreadedKernel {
 					    shellProgram + "', aborting.");
 			Lib.assertTrue(false);
 		    }
-
 		}
 
 		KThread.currentThread().finish();
