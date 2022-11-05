@@ -486,7 +486,7 @@ public class UserProcess {
             byte[] buffer = new byte[pageSize];
             do {
                 int readBytes = readVirtualMemory(addr, buffer, 0, Math.min(pageSize, count - total));
-                writeBytes = file.write(buffer, 0, writeBytes);
+                writeBytes = file.write(buffer, 0, readBytes);
                 total += writeBytes;
                 addr += writeBytes;
                 Lib.debug(dbgProcess, "read " + writeBytes + " bytes from VM");
