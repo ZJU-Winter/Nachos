@@ -321,11 +321,13 @@ public class UserProcess {
 				int vpn = section.getFirstVPN() + i;
 
 				// for now, just assume virtual addresses=physical addresses
-				//section.loadPage(i, vpn);
+				section.loadPage(i, vpn);
 
+                /*
                 int ppn = UserKernel.allocate();
                 section.loadPage(i, ppn);
                 pageTable[vpn] = new TranslationEntry()
+                */
 
 			}
 		}
