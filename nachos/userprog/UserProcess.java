@@ -164,7 +164,7 @@ public class UserProcess {
 	private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
 		int currentVa = vaddr;
 		int copyAmount = 0;
-		while(currentVa < vaddr + amount){
+		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
 			int ppn = pageTable[vpn].ppn;
 			int addrOffset = Processor.offsetFromAddress(currentVa);
