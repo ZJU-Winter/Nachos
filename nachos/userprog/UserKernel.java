@@ -28,6 +28,12 @@ public class UserKernel extends ThreadedKernel {
 		console = new SynchConsole(Machine.console());
 
         lock = new Lock();
+        notEmpty = new Condition(lock);
+
+        int numPhysPages = Machine.processor().getNumPhysPages();
+        for (int i = 0; i < numPhysPages; i += 1) {
+            freePageList.addLast(i);
+        }
 
 		Machine.processor().setExceptionHandler(new Runnable() {
 			public void run() {
@@ -127,14 +133,23 @@ public class UserKernel extends ThreadedKernel {
      * @return the page number of allocated page
      */
     public static int allocate() {
-        return freePageList.removeFirst();
+        lock.acquire();
+        while (freePageList.size() == 0) {
+            notEmpty.wait();
+        }
+        int pageNum = freePageList.removeFirst();
+        lock.release();
+        return pageNum;
     }
 
     /**
      * @param pagenum the pagenum to be freed, add it at the end of freePageList.
      */
     public static void deallocate(int pagenum) {
+        lock.acquire();
         freePageList.addLast(pagenum);
+        notEmpty.notify();
+        lock.release();
     }
 
 	/** Globally accessible reference to the synchronized console. */
@@ -147,10 +162,6 @@ public class UserKernel extends ThreadedKernel {
 
     private static Lock lock;
 
-    static {
-        int numPhysPages = Machine.processor().getNumPhysPages();
-        for (int i = 0; i < numPhysPages; i += 1) {
-            freePageList.addLast(i);
-        }
-    }
+    private static Condition notEmpty;
+
 }
