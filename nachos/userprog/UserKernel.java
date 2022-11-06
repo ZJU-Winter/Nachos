@@ -24,9 +24,11 @@ public class UserKernel extends ThreadedKernel {
 
 		console = new SynchConsole(Machine.console());
         int numPhysPages = Machine.processor().getNumPhysPages();
+        /* 
         for (int i = 0; i < numPhysPages; i += 1) {
             freePageList.add(i);
         }
+        */
 		Machine.processor().setExceptionHandler(new Runnable() {
 			public void run() {
 				exceptionHandler();
@@ -124,16 +126,16 @@ public class UserKernel extends ThreadedKernel {
     /**
      * Allocate one page to process.
      */
-    public static int allocate() {
-        return freePageList.removeFirst();
-    }
+    // public static int allocate() {
+    //     return freePageList.removeFirst();
+    // }
 
     /**
      * DeAllocate one page to process.
     */
-    public static void deallocate(int pagenum) {
-        freePageList.add(pagenum);
-    }
+    // public static void deallocate(int pagenum) {
+    //     freePageList.add(pagenum);
+    // }
 
 
 	/** Globally accessible reference to the synchronized console. */
@@ -143,5 +145,5 @@ public class UserKernel extends ThreadedKernel {
 	private static Coff dummy1 = null;
 
     /** Globally accessible reference to free pages. */
-    public static SynchList<Integer> freePageList = new SynchList<>();
+    //public static SynchList<Integer> freePageList = new SynchList<>();
 }
