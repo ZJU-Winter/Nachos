@@ -29,11 +29,6 @@ public class UserKernel extends ThreadedKernel {
 				exceptionHandler();
 			}
 		});
-
-        int numPhysPages = Machine.processor().getNumPhysPages();
-        for (int i = 0; i < numPhysPages; i += 1) {
-            freePageList.add(i);
-        }
 	}
 
 	/**
@@ -144,4 +139,11 @@ public class UserKernel extends ThreadedKernel {
 	private static Coff dummy1 = null;
 
     private static SynchList<Integer> freePageList = new SynchList<>();
+    
+    static {
+        int numPhysPages = Machine.processor().getNumPhysPages();
+        for (int i = 0; i < numPhysPages; i += 1) {
+            freePageList.add(i);
+        }
+    }
 }
