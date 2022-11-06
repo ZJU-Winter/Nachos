@@ -158,11 +158,34 @@ public class UserProcess {
 		byte[] memory = Machine.processor().getMemory();
         
 		int amount = Math.min(length, memory.length - vaddr);
-		System.arraycopy(memory, vaddr, data, offset, amount);
-
-		return amount;
+		//System.arraycopy(memory, vaddr, data, offset, amount);
+		return readVirtualMemory_pagetable(memory,vaddr,data,offset,amount);
 	}
 
+	private void readVirtualMemory_pagetable(byte[] memory,int vaddr,byte[] data,int offset,int amount){
+		int currentVa=vaddr;
+		int copyAmount=0;
+		while(currentVa<vaddr+amount){
+			int vpn = Processor.pageFromAddress(currentVa);
+			int ppn = pageTable[vpn].ppn;
+			int addrOffset = Processor.offsetFromAddress(currentVa);
+			int paddr = pageSize * ppn + addrOffset;
+			int nextVa = pageSize * (vpn + 1);
+			if (nextVa < vaddr + amount) {
+				int toRead = pageSize-addrOffset;
+				System.arraycopy(memory, paddr, data, offset, toRead);
+				offset+=toRead;
+				copyAmount+=toRead;
+			}
+			else {
+				System.arraycopy(memory, paddr, data, offset, vaddr + amount -currentVa);
+				offset+=vaddr + amount -currentVa;
+				copyAmount+=vaddr + amount -currentVa;
+			}
+			currentVa=nextVa;
+		}
+		return copyAmount
+	}
 	/**
 	 * Transfer all data from the specified array to this process's virtual
 	 * memory. Same as <tt>writeVirtualMemory(vaddr, data, 0, data.length)</tt>.
