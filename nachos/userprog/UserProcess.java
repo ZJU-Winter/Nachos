@@ -339,15 +339,15 @@ public class UserProcess {
 			for (int i = 0; i < section.getLength(); i++) {
 				int vpn = section.getFirstVPN() + i;
 
-                /*
 				// for now, just assume virtual addresses=physical addresses
 				section.loadPage(i, vpn);
-                */
 
+                /*
                 int ppn = UserKernel.allocate();
                 section.loadPage(i, ppn);
                 pageTable[vpn] = new TranslationEntry(vpn, ppn, true, section.isReadOnly(), false, false);
                 Lib.debug(dbgProcess, "loaded a page, vpn is " + vpn + " ppn is " + ppn);
+                */
 			}
 		}
 
