@@ -10,6 +10,7 @@ import java.lang.management.MemoryMXBean;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.PriorityQueue;
+import java.util.spi.ToolProvider;
 
 /**
  * Encapsulates the state of a user process that is not contained in its user
@@ -176,9 +177,10 @@ public class UserProcess {
 				offset += toRead;
 				copyAmount += toRead;
 			} else {
-				System.arraycopy(memory, paddr, data, offset, vaddr + amount - currentVa);
-				offset += vaddr + amount - currentVa;
-				copyAmount += vaddr + amount - currentVa;
+                int toRead = vaddr + amount - currentVa;
+				System.arraycopy(memory, paddr, data, offset, toRead);
+				offset += toRead;
+				copyAmount += toRead;
 			}
 			currentVa = nextVa;
 		}
@@ -223,8 +225,6 @@ public class UserProcess {
 
 		int amount = Math.min(length, memory.length - vaddr);
 
-		//System.arraycopy(data, offset, memory, vaddr, amount);
-
 		return writeVMWithPT(data, offset, memory, vaddr, amount);
 	}
 
@@ -243,9 +243,10 @@ public class UserProcess {
 				offset += toWrite;
 				copyAmount += toWrite;
 			} else {
-				System.arraycopy(data, offset, memory, paddr, vaddr + amount - currentVa);
-				offset += vaddr + amount - currentVa;
-				copyAmount += vaddr + amount - currentVa;
+                int toWrite = vaddr + amount - currentVa;
+				System.arraycopy(data, offset, memory, paddr, toWrite);
+				offset += toWrite;
+				copyAmount += toWrite;
 			}
 			currentVa = nextVa;
 		}
