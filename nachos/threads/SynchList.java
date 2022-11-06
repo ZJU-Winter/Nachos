@@ -7,12 +7,12 @@ import nachos.threads.*;
 /**
  * A synchronized queue.
  */
-public class SynchList {
+public class SynchList<Item> {
 	/**
 	 * Allocate a new synchronized queue.
 	 */
 	public SynchList() {
-		list = new LinkedList<Object>();
+		list = new LinkedList<Item>();
 		lock = new Lock();
 		listEmpty = new Condition(lock);
 	}
@@ -23,7 +23,7 @@ public class SynchList {
 	 * 
 	 * @param o the object to add. Must not be <tt>null</tt>.
 	 */
-	public void add(Object o) {
+	public void add(Item o) {
 		Lib.assertTrue(o != null);
 
 		lock.acquire();
@@ -38,8 +38,8 @@ public class SynchList {
 	 * 
 	 * @return the element removed from the front of the queue.
 	 */
-	public Object removeFirst() {
-		Object o;
+	public Item removeFirst() {
+		Item o;
 
 		lock.acquire();
 		while (list.isEmpty())
@@ -82,7 +82,7 @@ public class SynchList {
 		}
 	}
 
-	private LinkedList<Object> list;
+	private LinkedList<Item> list;
 
 	private Lock lock;
 
