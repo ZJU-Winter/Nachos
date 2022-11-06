@@ -1,7 +1,7 @@
 package nachos.userprog;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Deque;
+import java.util.ArrayDeque;
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
@@ -131,7 +131,7 @@ public class UserKernel extends ThreadedKernel {
      * @param pagenum the pagenum to be freed, add it at the end of freePageList.
      */
     public void deallocate(int pagenum) {
-        freePageList.add(pagenum);
+        freePageList.addLast(pagenum);
     }
 
 	/** Globally accessible reference to the synchronized console. */
@@ -140,12 +140,12 @@ public class UserKernel extends ThreadedKernel {
 	// dummy variables to make javac smarter
 	private static Coff dummy1 = null;
 
-    private static List<Integer> freePageList = new LinkedList<>();
+    private static Deque<Integer> freePageList = new ArrayDeque<>();
 
     static {
         int numPhysPages = Machine.processor().getNumPhysPages();
         for (int i = 0; i < numPhysPages; i += 1) {
-            freePageList.add(i);
+            freePageList.addLast(i);
         }
     }
 }
