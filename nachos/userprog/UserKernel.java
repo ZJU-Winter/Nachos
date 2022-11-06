@@ -1,6 +1,5 @@
 package nachos.userprog;
 
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.Deque;
 import java.util.ArrayDeque;
 import nachos.machine.*;
@@ -27,7 +26,7 @@ public class UserKernel extends ThreadedKernel {
 
 		console = new SynchConsole(Machine.console());
 
-        lock = new Lock();
+        //lock = new Lock();
         notEmpty = new Condition(lock);
 
         int numPhysPages = Machine.processor().getNumPhysPages();
@@ -165,7 +164,7 @@ public class UserKernel extends ThreadedKernel {
 
     private static Deque<Integer> freePageList = new ArrayDeque<>();
 
-    private static Lock lock;
+    private static Lock lock = new Lock();
 
     private static Condition notEmpty;
 
