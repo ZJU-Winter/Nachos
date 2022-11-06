@@ -150,42 +150,41 @@ public class UserProcess {
 	 * array.
 	 * @return the number of bytes successfully transferred.
 	 */
-    //TODO: VM
 	public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
 				&& offset + length <= data.length);
 
 		byte[] memory = Machine.processor().getMemory();
-        
+
 		int amount = Math.min(length, memory.length - vaddr);
-		//System.arraycopy(memory, vaddr, data, offset, amount);
-		return readVirtualMemory_pagetable(memory,vaddr,data,offset,amount);
+
+		return readVMWithPT(memory, vaddr, data, offset, amount);
 	}
 
-	private void readVirtualMemory_pagetable(byte[] memory,int vaddr,byte[] data,int offset,int amount){
-		int currentVa=vaddr;
-		int copyAmount=0;
-		while(currentVa<vaddr+amount){
+	private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
+		int currentVa = vaddr;
+		int copyAmount = 0;
+		while(currentVa < vaddr + amount){
 			int vpn = Processor.pageFromAddress(currentVa);
 			int ppn = pageTable[vpn].ppn;
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
 			int nextVa = pageSize * (vpn + 1);
 			if (nextVa < vaddr + amount) {
-				int toRead = pageSize-addrOffset;
+				int toRead = pageSize - addrOffset;
 				System.arraycopy(memory, paddr, data, offset, toRead);
-				offset+=toRead;
-				copyAmount+=toRead;
+				offset += toRead;
+				copyAmount += toRead;
+			} else {
+				System.arraycopy(memory, paddr, data, offset, vaddr + amount - currentVa);
+				offset += vaddr + amount - currentVa;
+				copyAmount += vaddr + amount - currentVa;
 			}
-			else {
-				System.arraycopy(memory, paddr, data, offset, vaddr + amount -currentVa);
-				offset+=vaddr + amount -currentVa;
-				copyAmount+=vaddr + amount -currentVa;
-			}
-			currentVa=nextVa;
+			currentVa = nextVa;
 		}
-		return copyAmount
+		return copyAmount;
 	}
+
 	/**
 	 * Transfer all data from the specified array to this process's virtual
 	 * memory. Same as <tt>writeVirtualMemory(vaddr, data, 0, data.length)</tt>.
@@ -212,7 +211,6 @@ public class UserProcess {
 	 * memory.
 	 * @return the number of bytes successfully transferred.
 	 */
-    //TODO: VM
 	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
 				&& offset + length <= data.length);
@@ -224,9 +222,10 @@ public class UserProcess {
 			return 0;
 
 		int amount = Math.min(length, memory.length - vaddr);
-		System.arraycopy(data, offset, memory, vaddr, amount);
 
-		return amount;
+		//System.arraycopy(data, offset, memory, vaddr, amount);
+
+		return readVMWithPT(data, vaddr, memory, offset, amount);
 	}
 
 	/**
