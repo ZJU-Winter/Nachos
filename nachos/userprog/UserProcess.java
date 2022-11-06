@@ -225,8 +225,33 @@ public class UserProcess {
 
 		//System.arraycopy(data, offset, memory, vaddr, amount);
 
-		return readVMWithPT(data, vaddr, memory, offset, amount);
+		return writeVMWithPT(data, offset, memory, vaddr, amount);
 	}
+
+	private int writeVMWithPT(byte[] data, int offset, byte[] memory, int vaddr, int amount) {
+		int currentVa = vaddr;
+		int copyAmount = 0;
+		while(currentVa < vaddr + amount){
+			int vpn = Processor.pageFromAddress(currentVa);
+			int ppn = pageTable[vpn].ppn;
+			int addrOffset = Processor.offsetFromAddress(currentVa);
+			int paddr = pageSize * ppn + addrOffset;
+			int nextVa = pageSize * (vpn + 1);
+			if (nextVa < vaddr + amount) {
+				int toRead = pageSize - addrOffset;
+				System.arraycopy(data, offset, memory, paddr, toRead);
+				offset += toRead;
+				copyAmount += toRead;
+			} else {
+				System.arraycopy(data, offset, memory, paddr, vaddr + amount - currentVa);
+				offset += vaddr + amount - currentVa;
+				copyAmount += vaddr + amount - currentVa;
+			}
+			currentVa = nextVa;
+		}
+		return copyAmount;
+	}
+
 
 	/**
 	 * Load the executable with the specified name into this process, and
