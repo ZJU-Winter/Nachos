@@ -1,7 +1,6 @@
 package nachos.userprog;
 
-import java.util.Deque;
-import java.util.ArrayDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
@@ -124,27 +123,14 @@ public class UserKernel extends ThreadedKernel {
      * @return the page number of allocated page
      */
     public int allocate() {
-        lock.acquire();
-        try {
-            while (freePageList.isEmpty()) {
-                notEmpty.wait();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        int pageNum = freePageList.removeFirst();
-        lock.release();
-        return pageNum;
+        return freePageList.removeFirst();
     }
 
     /**
      * @param pagenum the pagenum to be freed, add it at the end of freePageList.
      */
     public void deallocate(int pagenum) {
-        lock.acquire();
         freePageList.addLast(pagenum);
-        notEmpty.notify();
-        lock.release();
     }
 
 	/** Globally accessible reference to the synchronized console. */
@@ -153,11 +139,7 @@ public class UserKernel extends ThreadedKernel {
 	// dummy variables to make javac smarter
 	private static Coff dummy1 = null;
 
-    private static Deque<Integer> freePageList = new ArrayDeque<>();
-
-    private static Lock lock = new Lock();
-
-    private static Condition notEmpty = new Condition(lock);
+    private static LinkedBlockingDeque<Integer> freePageList = new LinkedBlockingDeque<>();
 
     static {
         int numPhysPages = Machine.processor().getNumPhysPages();
