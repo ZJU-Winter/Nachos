@@ -23,12 +23,7 @@ public class UserKernel extends ThreadedKernel {
 		super.initialize(args);
 
 		console = new SynchConsole(Machine.console());
-        int numPhysPages = Machine.processor().getNumPhysPages();
-        /* 
-        for (int i = 0; i < numPhysPages; i += 1) {
-            freePageList.add(i);
-        }
-        */
+
 		Machine.processor().setExceptionHandler(new Runnable() {
 			public void run() {
 				exceptionHandler();
@@ -123,27 +118,9 @@ public class UserKernel extends ThreadedKernel {
 		super.terminate();
 	}
 
-    /**
-     * Allocate one page to process.
-     */
-    // public static int allocate() {
-    //     return freePageList.removeFirst();
-    // }
-
-    /**
-     * DeAllocate one page to process.
-    */
-    // public static void deallocate(int pagenum) {
-    //     freePageList.add(pagenum);
-    // }
-
-
 	/** Globally accessible reference to the synchronized console. */
 	public static SynchConsole console;
 
 	// dummy variables to make javac smarter
 	private static Coff dummy1 = null;
-
-    /** Globally accessible reference to free pages. */
-    //public static SynchList<Integer> freePageList = new SynchList<>();
 }

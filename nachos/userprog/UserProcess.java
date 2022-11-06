@@ -27,13 +27,11 @@ public class UserProcess {
 	 * Allocate a new process.
 	 */
 	public UserProcess() {
-        /*
 		int numPhysPages = Machine.processor().getNumPhysPages();
 		pageTable = new TranslationEntry[numPhysPages];
 		for (int i = 0; i < numPhysPages; i += 1) {
 			pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
         }
-        */
         fileTable[0] = UserKernel.console.openForReading();
         fileTable[1] = UserKernel.console.openForWriting();
         for (int i = 2; i < 16; i += 1) {
@@ -87,7 +85,6 @@ public class UserProcess {
 	 * Called by <tt>UThread.saveState()</tt>.
 	 */
 	public void saveState() {
-        
 	}
 
 	/**
@@ -152,7 +149,6 @@ public class UserProcess {
 	 * array.
 	 * @return the number of bytes successfully transferred.
 	 */
-    //TODO: virtual memory
 	public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
 				&& offset + length <= data.length);
@@ -161,8 +157,7 @@ public class UserProcess {
 
 		// for now, just assume that virtual addresses equal physical addresses
 		if (vaddr < 0 || vaddr >= memory.length)
-            //TODO: Try another solution
-			return 0;
+			return -1;
 
 		int amount = Math.min(length, memory.length - vaddr);
 		System.arraycopy(memory, vaddr, data, offset, amount);
@@ -196,7 +191,6 @@ public class UserProcess {
 	 * memory.
 	 * @return the number of bytes successfully transferred.
 	 */
-    //TODO: virtual memory
 	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
 				&& offset + length <= data.length);
@@ -205,28 +199,13 @@ public class UserProcess {
 
 		// for now, just assume that virtual addresses equal physical addresses
 		if (vaddr < 0 || vaddr >= memory.length)
-            //TODO: Try another solution
-			return 0;
+			return -1;
 
 		int amount = Math.min(length, memory.length - vaddr);
 		System.arraycopy(data, offset, memory, vaddr, amount);
 
 		return amount;
 	}
-    
-    /**
-     * get the physical page number from virtual address.
-     * @param addr the virtual address.
-     * @return the physical page number.
-     */
-    private int getPPN(int addr) {
-        int vpn = Processor.pageFromAddress(addr);
-        return pageTable[vpn].ppn;
-    }
-    
-    private int readOnePage(int addr, byte[] data, int offset, int length) {
-        return 0;
-    }
 
 	/**
 	 * Load the executable with the specified name into this process, and
@@ -341,13 +320,6 @@ public class UserProcess {
 
 				// for now, just assume virtual addresses=physical addresses
 				section.loadPage(i, vpn);
-
-                /*
-                int ppn = UserKernel.allocate();
-                section.loadPage(i, ppn);
-                pageTable[vpn] = new TranslationEntry(vpn, ppn, true, section.isReadOnly(), false, false);
-                Lib.debug(dbgProcess, "loaded a page, vpn is " + vpn + " ppn is " + ppn);
-                */
 			}
 		}
 
@@ -456,57 +428,16 @@ public class UserProcess {
         if (fileDescriptor < 0 || fileDescriptor >= 16) {
             return -1;
         }
-        if (count == 0) {
-            return 0;
-        }
         OpenFile file = fileTable[fileDescriptor];
-        if (file == null) { // wrong file descriptor
+        if (file == null) {
             return -1;
         }
         int total = 0;
-
-        while (total < count) {
-            byte[] buffer = new byte[pageSize];
-            int readBytes = file.read(buffer, 0, Math.min(count, pageSize));
-            if (readBytes < 0) {
-                Lib.debug(dbgProcess, "read file failed");
-                return -1;
-            }
-            if (readBytes == 0) {
-                Lib.debug(dbgProcess, "nothing read from file");
-                return total;
-            }
-            if (readBytes < pageSize) { // reach end of file or count < pageSize
-                total += readBytes;
-                int writeBytes = writeVirtualMemory(addr, buffer, 0, readBytes);
-                if (writeBytes == 0) {
-                    Lib.debug(dbgProcess, "invalid address reference");
-                    return -1;
-                }
-                if (writeBytes < readBytes) {
-                    Lib.debug(dbgProcess, "run out of memory");
-                    return -1;
-                }
-                return total;
-            }
-            total += readBytes;
-            int writeBytes = writeVirtualMemory(addr, buffer,0 , readBytes);
-            if (writeBytes == 0) {
-                Lib.debug(dbgProcess, "invalid address reference");
-                return -1;
-            }
-            if (writeBytes < readBytes) {
-                Lib.debug(dbgProcess, "run our of memory");
-                return -1;
-            }
-            addr += writeBytes;
-        }
-        return total;
-
-        /* 
+        int readBytes = 0;
+        // from file to buffer, from buffer to addr
         if (count < pageSize) {
             byte[] buffer = new byte[pageSize];
-            readBytes = file.read(buffer, 0, count);
+            readBytes += file.read(buffer, 0, count);
             if (readBytes < 0) {
                 return -1;
             }
@@ -522,7 +453,7 @@ public class UserProcess {
             do {
                 byte[] buffer = new byte[pageSize];
                 readBytes = file.read(buffer, 0, pageSize);
-                if (readBytes < 0) { // read from file fails
+                if (readBytes < 0) {
                     return -1;
                 }
                 total += readBytes;
@@ -537,7 +468,6 @@ public class UserProcess {
             } while (readBytes == pageSize);
         }
         return total;
-        */
     }
 
     /**
@@ -550,44 +480,13 @@ public class UserProcess {
         if (fileDescriptor < 0 || fileDescriptor >= 16) {
             return -1;
         }
-        if (count == 0) {
-            return 0;
-        }
         OpenFile file = fileTable[fileDescriptor];
         if (file == null) {
             return -1;
         }
         int total = 0;
-
-        while (total < count) {
-            byte[] buffer = new byte[Math.min(count - total, pageSize)];
-            int readBytes = readVirtualMemory(addr, buffer, 0, buffer.length);
-            if (readBytes == 0) {
-                Lib.debug(dbgProcess, "invalid address reference");
-                return -1;
-            }
-            if (readBytes != buffer.length) {
-                Lib.debug(dbgProcess, "run out of memory");
-                return -1;
-            }
-            addr += readBytes;
-            int writeBytes = file.write(buffer, 0, readBytes);
-            if (writeBytes == -1) {
-                Lib.debug(dbgProcess, "write file failed");
-                return -1;
-            }
-            if (writeBytes != readBytes) {
-                Lib.debug(dbgProcess, "read " + readBytes + " but write " + writeBytes);
-                return -1;
-            }
-            total += writeBytes;
-        }
-        if (total != count) {
-            Lib.debug(dbgProcess, "should write " + count + " but write " + total);
-        }
-        return total;
-
-        /*
+        int writeBytes = 0;
+        // from addr to buffer, from buffer to file
         if (count < pageSize) {
             byte[] buffer = new byte[pageSize];
             int readBytes = readVirtualMemory(addr, buffer, 0, count);
@@ -619,7 +518,6 @@ public class UserProcess {
             } while (writeBytes == pageSize);
         }
         return total;
-        */
     }
 
     /**
