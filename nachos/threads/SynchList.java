@@ -47,7 +47,7 @@ public class SynchList<Item> {
 		i = list.removeFirst();
 		lock.release();
 
-		return o;
+		return i;
 	}
 
 	private static class PingTest implements Runnable {
