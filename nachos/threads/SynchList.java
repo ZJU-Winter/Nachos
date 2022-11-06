@@ -21,13 +21,13 @@ public class SynchList<Item> {
 	 * Add the specified object to the end of the queue. If another thread is
 	 * waiting in <tt>removeFirst()</tt>, it is woken up.
 	 * 
-	 * @param o the object to add. Must not be <tt>null</tt>.
+	 * @param i the object to add. Must not be <tt>null</tt>.
 	 */
-	public void add(Item o) {
-		Lib.assertTrue(o != null);
+	public void add(Item i) {
+		Lib.assertTrue(i != null);
 
 		lock.acquire();
-		list.add(o);
+		list.add(i);
 		listEmpty.wake();
 		lock.release();
 	}
@@ -39,12 +39,12 @@ public class SynchList<Item> {
 	 * @return the element removed from the front of the queue.
 	 */
 	public Item removeFirst() {
-		Item o;
+		Item i;
 
 		lock.acquire();
 		while (list.isEmpty())
 			listEmpty.sleep();
-		o = list.removeFirst();
+		i = list.removeFirst();
 		lock.release();
 
 		return o;
