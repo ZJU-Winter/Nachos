@@ -1,6 +1,7 @@
 package nachos.userprog;
 
 import java.util.LinkedList;
+import java.util.List;
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
