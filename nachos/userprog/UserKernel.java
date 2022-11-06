@@ -143,5 +143,5 @@ public class UserKernel extends ThreadedKernel {
 	private static Coff dummy1 = null;
 
     /** Globally accessible reference to free pages. */
-    public static SynchList freePageList = new SynchList();
+    public static SynchList<Integer> freePageList = new SynchList();
 }
