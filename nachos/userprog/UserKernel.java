@@ -24,16 +24,16 @@ public class UserKernel extends ThreadedKernel {
 
 		console = new SynchConsole(Machine.console());
 
-        // int numPhysPages = Machine.processor().getNumPhysPages();
-        // for (int i = 0; i < numPhysPages; i += 1) {
-        //     freePageList.add(i);
-        // }
-
 		Machine.processor().setExceptionHandler(new Runnable() {
 			public void run() {
 				exceptionHandler();
 			}
 		});
+
+        int numPhysPages = Machine.processor().getNumPhysPages();
+        for (int i = 0; i < numPhysPages; i += 1) {
+            freePageList.add(i);
+        }
 	}
 
 	/**
@@ -123,19 +123,19 @@ public class UserKernel extends ThreadedKernel {
 		super.terminate();
 	}
 
-    // /**
-    //  * @return the page number of allocated page
-    //  */
-    // public int allocate() {
-    //     return freePageList.removeFirst();
-    // }
+    /**
+     * @return the page number of allocated page
+     */
+    public int allocate() {
+        return freePageList.removeFirst();
+    }
 
-    // /**
-    //  * @param pagenum the pagenum to be freed, add it at the end of freePageList.
-    //  */
-    // public void deallocate(int pagenum) {
-    //     freePageList.add(pagenum);
-    // }
+    /**
+     * @param pagenum the pagenum to be freed, add it at the end of freePageList.
+     */
+    public void deallocate(int pagenum) {
+        freePageList.add(pagenum);
+    }
 
 	/** Globally accessible reference to the synchronized console. */
 	public static SynchConsole console;
@@ -143,5 +143,5 @@ public class UserKernel extends ThreadedKernel {
 	// dummy variables to make javac smarter
 	private static Coff dummy1 = null;
 
-    //private static SynchList<Integer> freePageList = new SynchList<>();
+    private static SynchList<Integer> freePageList = new SynchList<>();
 }
