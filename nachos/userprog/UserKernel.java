@@ -1,6 +1,8 @@
 package nachos.userprog;
 
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.Deque;
+import java.util.ArrayDeque;
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
@@ -24,6 +26,8 @@ public class UserKernel extends ThreadedKernel {
 		super.initialize(args);
 
 		console = new SynchConsole(Machine.console());
+
+        lock = new Lock();
 
 		Machine.processor().setExceptionHandler(new Runnable() {
 			public void run() {
@@ -122,14 +126,14 @@ public class UserKernel extends ThreadedKernel {
     /**
      * @return the page number of allocated page
      */
-    public int allocate() {
+    public static int allocate() {
         return freePageList.removeFirst();
     }
 
     /**
      * @param pagenum the pagenum to be freed, add it at the end of freePageList.
      */
-    public void deallocate(int pagenum) {
+    public static void deallocate(int pagenum) {
         freePageList.addLast(pagenum);
     }
 
@@ -139,7 +143,9 @@ public class UserKernel extends ThreadedKernel {
 	// dummy variables to make javac smarter
 	private static Coff dummy1 = null;
 
-    private static LinkedBlockingDeque<Integer> freePageList = new LinkedBlockingDeque<>();
+    private static Deque<Integer> freePageList = new ArrayDeque<>();
+
+    private static Lock lock;
 
     static {
         int numPhysPages = Machine.processor().getNumPhysPages();
