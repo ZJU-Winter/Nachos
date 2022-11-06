@@ -85,6 +85,7 @@ public class UserProcess {
 	 * Called by <tt>UThread.saveState()</tt>.
 	 */
 	public void saveState() {
+        
 	}
 
 	/**
@@ -157,6 +158,7 @@ public class UserProcess {
 
 		// for now, just assume that virtual addresses equal physical addresses
 		if (vaddr < 0 || vaddr >= memory.length)
+            //TODO: Try another solution
 			return -1;
 
 		int amount = Math.min(length, memory.length - vaddr);
@@ -199,6 +201,7 @@ public class UserProcess {
 
 		// for now, just assume that virtual addresses equal physical addresses
 		if (vaddr < 0 || vaddr >= memory.length)
+            //TODO: Try another solution
 			return -1;
 
 		int amount = Math.min(length, memory.length - vaddr);

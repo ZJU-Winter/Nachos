@@ -23,7 +23,11 @@ public class UserKernel extends ThreadedKernel {
 		super.initialize(args);
 
 		console = new SynchConsole(Machine.console());
-
+        freePageList = new SynchList();
+        int numPhysPages = Machine.processor().getNumPhysPages();
+        for (int i = 0; i < numPhysPages; i += 1) {
+            freePageList.add(i);
+        }
 		Machine.processor().setExceptionHandler(new Runnable() {
 			public void run() {
 				exceptionHandler();
@@ -123,4 +127,7 @@ public class UserKernel extends ThreadedKernel {
 
 	// dummy variables to make javac smarter
 	private static Coff dummy1 = null;
+
+    /** Globally accessible reference to free pages. */
+    public static SynchList<Integer> freePageList;
 }
