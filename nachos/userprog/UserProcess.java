@@ -6,6 +6,7 @@ import nachos.userprog.*;
 import nachos.vm.*;
 
 import java.io.EOFException;
+import java.lang.management.MemoryMXBean;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.PriorityQueue;
@@ -155,11 +156,7 @@ public class UserProcess {
 				&& offset + length <= data.length);
 
 		byte[] memory = Machine.processor().getMemory();
-
-		// for now, just assume that virtual addresses equal physical addresses
-		if (vaddr < 0 || vaddr >= memory.length)
-			return 0;
-
+        
 		int amount = Math.min(length, memory.length - vaddr);
 		System.arraycopy(memory, vaddr, data, offset, amount);
 
@@ -321,14 +318,12 @@ public class UserProcess {
 				int vpn = section.getFirstVPN() + i;
 
 				// for now, just assume virtual addresses=physical addresses
-				section.loadPage(i, vpn);
+				//section.loadPage(i, vpn);
 
-                /*
                 int ppn = UserKernel.allocate();
                 section.loadPage(i, ppn);
-                pageTable[vpn] = new TranslationEntry()
-                */
-
+                pageTable[vpn] = new TranslationEntry(vpn, ppn, true, section.isReadOnly(), false, false);
+                Lib.debug(dbgProcess, "loaded a page, vpn is " + vpn + " ppn is " + ppn);
 			}
 		}
 
@@ -478,7 +473,7 @@ public class UserProcess {
                 return -1;
             }
             if (writeBytes < readBytes) {
-                Lib.debug(dbgProcess, "run our of memory");
+                Lib.debug(dbgProcess, "run out of memory");
                 return -1;
             }
             addr += writeBytes;
