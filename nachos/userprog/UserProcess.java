@@ -29,11 +29,13 @@ public class UserProcess {
 	 * Allocate a new process.
 	 */
 	public UserProcess() {
+        /* 
 		int numPhysPages = Machine.processor().getNumPhysPages();
 		pageTable = new TranslationEntry[numPhysPages];
 		for (int i = 0; i < numPhysPages; i += 1) {
 			pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
         }
+        */
         fileTable[0] = UserKernel.console.openForReading();
         fileTable[1] = UserKernel.console.openForWriting();
         for (int i = 2; i < 16; i += 1) {
@@ -326,6 +328,8 @@ public class UserProcess {
 		// and finally reserve 1 page for arguments
 		numPages++;
 
+        pageTable = new TranslationEntry[numPages];
+
 		if (!loadSections())
 			return false;
 
@@ -430,6 +434,7 @@ public class UserProcess {
 	/**
 	 * Handle the exit() system call.
 	 */
+    //TODO: exit
 	private int handleExit(int status) {
 	        // Do not remove this call to the autoGrader...
 		Machine.autoGrader().finishingCurrentProcess(status);
