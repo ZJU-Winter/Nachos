@@ -157,11 +157,11 @@ public class UserProcess {
 
 		byte[] memory = Machine.processor().getMemory();
 
-        if (vaddr < 0 || vaddr >= pageTable.length * pageSize) {
+        if (vaddr < 0 || vaddr >= numPages * pageSize) {
             return 0;
         }
 
-		int amount = Math.min(length, pageTable.length * pageSize - vaddr);
+		int amount = Math.min(length, numPages * pageSize - vaddr);
 
 		return readVMWithPT(memory, vaddr, data, offset, amount);
 	}
@@ -225,11 +225,11 @@ public class UserProcess {
 
 		byte[] memory = Machine.processor().getMemory();
 
-		if (vaddr < 0 || vaddr >= pageTable.length * pageSize) {
+		if (vaddr < 0 || vaddr >= numPages * pageSize) {
 			return 0;
         }
 
-		int amount = Math.min(length, pageTable.length * pageSize - vaddr);
+		int amount = Math.min(length, numPages * pageSize - vaddr);
 
 		return writeVMWithPT(data, offset, memory, vaddr, amount);
 	}
