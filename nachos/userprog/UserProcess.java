@@ -157,8 +157,9 @@ public class UserProcess {
 
 		byte[] memory = Machine.processor().getMemory();
 
-        if (vaddr < 0 || vaddr >= pageTable.length * pageSize)
+        if (vaddr < 0 || vaddr >= pageTable.length * pageSize) {
             return 0;
+        }
 
 		int amount = Math.min(length, pageTable.length * pageSize - vaddr);
 
@@ -167,7 +168,7 @@ public class UserProcess {
 
 	private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
 		int currentVa = vaddr;
-		int copyAmount = 0;
+		int totalRead = 0;
 		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
 			int ppn = pageTable[vpn].ppn;
@@ -178,16 +179,16 @@ public class UserProcess {
 				int toRead = pageSize - addrOffset;
 				System.arraycopy(memory, paddr, data, offset, toRead);
 				offset += toRead;
-				copyAmount += toRead;
+				totalRead += toRead;
 			} else { // will not reach the end of page
                 int toRead = vaddr + amount - currentVa;
 				System.arraycopy(memory, paddr, data, offset, toRead);
 				offset += toRead;
-				copyAmount += toRead;
+				totalRead += toRead;
 			}
 			currentVa = nextVa;
 		}
-		return copyAmount;
+		return totalRead;
 	}
 
 	/**
@@ -222,8 +223,9 @@ public class UserProcess {
 
 		byte[] memory = Machine.processor().getMemory();
 
-		if (vaddr < 0 || vaddr >= pageTable.length * pageSize)
+		if (vaddr < 0 || vaddr >= pageTable.length * pageSize) {
 			return 0;
+        }
 
 		int amount = Math.min(length, pageTable.length * pageSize - vaddr);
 
@@ -232,27 +234,27 @@ public class UserProcess {
 
 	private int writeVMWithPT(byte[] data, int offset, byte[] memory, int vaddr, int amount) {
 		int currentVa = vaddr;
-		int copyAmount = 0;
+		int totalWrite = 0;
 		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
 			int ppn = pageTable[vpn].ppn;
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
 			int nextVa = pageSize * (vpn + 1);
-			if (nextVa < vaddr + amount) {
+			if (nextVa < vaddr + amount) { // reach the end of page
 				int toWrite = pageSize - addrOffset;
 				System.arraycopy(data, offset, memory, paddr, toWrite);
 				offset += toWrite;
-				copyAmount += toWrite;
-			} else {
+				totalWrite += toWrite;
+			} else { // will not reach the end of page
                 int toWrite = vaddr + amount - currentVa;
 				System.arraycopy(data, offset, memory, paddr, toWrite);
 				offset += toWrite;
-				copyAmount += toWrite;
+				totalWrite += toWrite;
 			}
 			currentVa = nextVa;
 		}
-		return copyAmount;
+		return totalWrite;
 	}
 
 
