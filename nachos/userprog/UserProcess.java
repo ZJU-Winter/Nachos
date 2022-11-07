@@ -180,11 +180,13 @@ public class UserProcess {
 				System.arraycopy(memory, paddr, data, offset, toRead);
 				offset += toRead;
 				totalRead += toRead;
+                Lib.debug(dbgProcess, "read from vpn " + vpn + " / ppn " + ppn + " to buffer " + toRead + " bytes");
 			} else { // will not reach the end of page
                 int toRead = vaddr + amount - currentVa;
 				System.arraycopy(memory, paddr, data, offset, toRead);
 				offset += toRead;
 				totalRead += toRead;
+                Lib.debug(dbgProcess, "read from vpn " + vpn + " / ppn " + ppn + " to buffer " + toRead + " bytes");
 			}
 			currentVa = nextVa;
 		}
@@ -246,11 +248,13 @@ public class UserProcess {
 				System.arraycopy(data, offset, memory, paddr, toWrite);
 				offset += toWrite;
 				totalWrite += toWrite;
+                Lib.debug(dbgProcess, "write from vpn " + vpn + " / ppn " + ppn + " to buffer " + toWrite + " bytes");
 			} else { // will not reach the end of page
                 int toWrite = vaddr + amount - currentVa;
 				System.arraycopy(data, offset, memory, paddr, toWrite);
 				offset += toWrite;
 				totalWrite += toWrite;
+                Lib.debug(dbgProcess, "write from vpn " + vpn + " / ppn " + ppn + " to buffer " + toWrite + " bytes");
 			}
 			currentVa = nextVa;
 		}
@@ -620,6 +624,7 @@ public class UserProcess {
     /**
      * Handle the exec(char *file, int argc, char *argv[]) system call.
      */
+    //TODO: exec
     private int handleExec(int nameAdd, int argc, int argvAddr) {
         return 0;
     }
@@ -627,6 +632,7 @@ public class UserProcess {
     /**
      * Handle the join(int processID, int *status) system call.
      */
+    //TODO: join
     private int handleJoin(int pid, int statusAddr) {
         return 0;
     }
