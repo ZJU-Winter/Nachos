@@ -219,7 +219,6 @@ public class UserProcess {
 
 		byte[] memory = Machine.processor().getMemory();
 
-		// for now, just assume that virtual addresses equal physical addresses
 		if (vaddr < 0 || vaddr >= memory.length)
 			return 0;
 
@@ -613,6 +612,20 @@ public class UserProcess {
         return 0;
     }
 
+    /**
+     * Handle the exec(char *file, int argc, char *argv[]) system call.
+     */
+    private int handleExec(int nameAdd, int argc, int argvAddr) {
+        return 0;
+    }
+
+    /**
+     * Handle the join(int processID, int *status) system call.
+     */
+    private int handleJoin(int pid, int statusAddr) {
+        return 0;
+    }
+
 	private static final int syscallHalt = 0, syscallExit = 1, syscallExec = 2,
 			syscallJoin = 3, syscallCreate = 4, syscallOpen = 5,
 			syscallRead = 6, syscallWrite = 7, syscallClose = 8,
@@ -697,6 +710,11 @@ public class UserProcess {
             return handleClose(a0);
         case syscallUnlink:
             return handleUnlink(a0);
+        case syscallExec:
+            return handleExec(a0, a1, a2);
+        case syscallJoin:
+            return handleJoin(a0, a1);
+
 		default:
 			Lib.debug(dbgProcess, "Unknown syscall " + syscall);
 			Lib.assertNotReached("Unknown system call!");
