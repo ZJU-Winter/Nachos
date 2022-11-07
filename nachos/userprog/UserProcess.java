@@ -244,7 +244,6 @@ public class UserProcess {
 			int paddr = pageSize * ppn + addrOffset;
 			int nextVa = pageSize * (vpn + 1);
             Lib.debug(dbgProcess, "virtual address " + vaddr + " physical address " + paddr + " offset " + addrOffset);
-            Lib.debug(dbgProcess, "vpn " + vpn + " / ppn " + ppn);
 			if (nextVa < vaddr + amount) { // reach the end of page
 				int toWrite = pageSize - addrOffset;
 				System.arraycopy(data, offset, memory, paddr, toWrite);
