@@ -157,7 +157,10 @@ public class UserProcess {
 
 		byte[] memory = Machine.processor().getMemory();
 
-		int amount = Math.min(length, memory.length - vaddr);
+        if (vaddr < 0 || vaddr >= pageTable.length * pageSize)
+            return 0;
+
+		int amount = Math.min(length, pageTable.length * pageSize - vaddr);
 
 		return readVMWithPT(memory, vaddr, data, offset, amount);
 	}
@@ -171,12 +174,12 @@ public class UserProcess {
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
 			int nextVa = pageSize * (vpn + 1);
-			if (nextVa < vaddr + amount) {
+			if (nextVa < vaddr + amount) { // reach the end of page
 				int toRead = pageSize - addrOffset;
 				System.arraycopy(memory, paddr, data, offset, toRead);
 				offset += toRead;
 				copyAmount += toRead;
-			} else {
+			} else { // will not reach the end of page
                 int toRead = vaddr + amount - currentVa;
 				System.arraycopy(memory, paddr, data, offset, toRead);
 				offset += toRead;
@@ -219,10 +222,10 @@ public class UserProcess {
 
 		byte[] memory = Machine.processor().getMemory();
 
-		if (vaddr < 0 || vaddr >= memory.length)
+		if (vaddr < 0 || vaddr >= pageTable.length * pageSize)
 			return 0;
 
-		int amount = Math.min(length, memory.length - vaddr);
+		int amount = Math.min(length, pageTable.length * pageSize - vaddr);
 
 		return writeVMWithPT(data, offset, memory, vaddr, amount);
 	}
