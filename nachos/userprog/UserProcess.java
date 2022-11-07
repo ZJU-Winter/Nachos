@@ -6,11 +6,7 @@ import nachos.userprog.*;
 import nachos.vm.*;
 
 import java.io.EOFException;
-import java.lang.management.MemoryMXBean;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.PriorityQueue;
-import java.util.spi.ToolProvider;
 
 /**
  * Encapsulates the state of a user process that is not contained in its user
