@@ -328,7 +328,7 @@ public class UserProcess {
 		// and finally reserve 1 page for arguments
 		numPages++;
 
-        pageTable = new TranslationEntry[numPages];
+        pageTable = new TranslationEntry[numPages + 1];
 
 		if (!loadSections())
 			return false;
