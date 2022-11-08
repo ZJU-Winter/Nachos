@@ -143,7 +143,8 @@ public class UserKernel extends ThreadedKernel {
             e.getStackTrace();
         }
         
-        int pageNum = freePageList.removeFirst();
+        //int pageNum = freePageList.removeFirst();
+        int pageNum = freePageList.removeLast();
         lock.release();
         return pageNum;
     }
@@ -153,7 +154,8 @@ public class UserKernel extends ThreadedKernel {
      */
     public static void deallocate(int pagenum) {
         lock.acquire();
-        freePageList.addLast(pagenum);
+        //freePageList.addLast(pagenum);
+        freePageList.addFirst(pagenum);
         notEmpty.notify();
         lock.release();
     }
