@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import javax.print.attribute.standard.NumberUpSupported;
+import javax.swing.text.AsyncBoxView.ChildLocator;
+
 /**
  * Encapsulates the state of a user process that is not contained in its user
  * thread (or threads). This includes its address translation state, a file
@@ -632,7 +635,8 @@ public class UserProcess {
         Lib.assertTrue(!children.containsKey(child.PID));
         children.put(child.PID, child);
 
-        if (fileNameAddr == 0 || argvAddr == 0) {
+        if (fileNameAddr == 0 || argvAddr == 0 || fileNameAddr >= numPages * pageSize || argvAddr >= numPages * pageSize) {
+            Lib.debug(dbgProcess, "exec: invalid address reference");
             return -1;
         }
         String name = readVirtualMemoryString(argvAddr, 256);
@@ -660,8 +664,21 @@ public class UserProcess {
     /**
      * Handle the join(int processID, int *status) system call.
      */
-    //TODO: join
     private int handleJoin(int pid, int statusAddr) {
+        if (statusAddr >= numPages * pageSize) {
+            Lib.debug(dbgProcess, "join: invalid address reference");
+            return -1;
+        }
+        if (!children.containsKey(pid)) {
+            Lib.debug(dbgProcess, "join: invalid pid, not a child");
+            return -1;
+        }
+
+        UserProcess child = children.get(pid);
+        child.thread.join();
+
+        children.remove(pid);
+        
         return 0;
     }
 
