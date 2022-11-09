@@ -372,6 +372,7 @@ public class UserProcess {
         pageTable = new TranslationEntry[numPages];
 
 		for (int s = 0; s < coff.getNumSections(); s++) {
+            System.out.println("HERE");
 			CoffSection section = coff.getSection(s);
 
 			Lib.debug(dbgProcess, "\tinitializing " + section.getName()
@@ -379,7 +380,6 @@ public class UserProcess {
 
 			for (int i = 0; i < section.getLength(); i++) {
 				int vpn = section.getFirstVPN() + i;
-                System.out.println("vpn:" + vpn);
 
 				// for now, just assume virtual addresses=physical addresses
 				//section.loadPage(i, vpn);
