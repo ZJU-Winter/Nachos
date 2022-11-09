@@ -27,13 +27,11 @@ public class UserProcess {
 	 * Allocate a new process.
 	 */
 	public UserProcess() {
-        /*
 		int numPhysPages = Machine.processor().getNumPhysPages();
 		pageTable = new TranslationEntry[numPhysPages];
 		for (int i = 0; i < numPhysPages; i += 1) {
 			pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
         }
-        */
         fileTable[0] = UserKernel.console.openForReading();
         fileTable[1] = UserKernel.console.openForWriting();
         for (int i = 2; i < 16; i += 1) {
@@ -368,8 +366,8 @@ public class UserProcess {
 			return false;
 		}
 		// load sections
-        System.out.println("numPages:" + numPages);
-        pageTable = new TranslationEntry[numPages];
+        //System.out.println("numPages:" + numPages);
+        //pageTable = new TranslationEntry[numPages];
 
 		for (int s = 0; s < coff.getNumSections(); s++) {
             System.out.println("START a NEW SECTION");
