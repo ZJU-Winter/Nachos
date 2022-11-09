@@ -277,11 +277,11 @@ public class UserProcess {
 	 * @return <tt>true</tt> if the executable was successfully loaded.
 	 */
 	private boolean load(String name, String[] args) {
-		Lib.debug(dbgProcess, "UserProcess.load(\"" + name + "\")");
+		Lib.debug(dbgProcess, "pid:" + PID + " UserProcess.load(\"" + name + "\")");
 
 		OpenFile executable = ThreadedKernel.fileSystem.open(name, false);
 		if (executable == null) {
-			Lib.debug(dbgProcess, "\topen failed");
+			Lib.debug(dbgProcess, "pid:" + PID + "\topen failed");
 			return false;
 		}
 
@@ -290,7 +290,7 @@ public class UserProcess {
 		}
 		catch (EOFException e) {
 			executable.close();
-			Lib.debug(dbgProcess, "\tcoff load failed");
+			Lib.debug(dbgProcess,"pid:" + PID +  "\tcoff load failed");
 			return false;
 		}
 
@@ -300,7 +300,7 @@ public class UserProcess {
 			CoffSection section = coff.getSection(s);
 			if (section.getFirstVPN() != numPages) {
 				coff.close();
-				Lib.debug(dbgProcess, "\tfragmented executable");
+				Lib.debug(dbgProcess, "pid:" + PID + "\tfragmented executable");
 				return false;
 			}
 			numPages += section.getLength();
@@ -316,7 +316,7 @@ public class UserProcess {
 		}
 		if (argsSize > pageSize) {
 			coff.close();
-			Lib.debug(dbgProcess, "\targuments too long");
+			Lib.debug(dbgProcess, "pid:" + PID + "\targuments too long");
 			return false;
 		}
 
@@ -393,6 +393,7 @@ public class UserProcess {
 	/**
 	 * Release any resources allocated by <tt>loadSections()</tt>.
 	 */
+    //TODO
 	protected void unloadSections() {
 
 	}
@@ -424,7 +425,10 @@ public class UserProcess {
 	 * Handle the halt() system call.
 	 */
 	private int handleHalt() {
-
+        if (PID != 0) {
+            Lib.debug(dbgProcess, "halt: only can be called by root process");
+            return -1;
+        }
 		Machine.halt();
 
 		Lib.assertNotReached("Machine.halt() did not halt machine!");
@@ -434,15 +438,15 @@ public class UserProcess {
 	/**
 	 * Handle the exit() system call.
 	 */
-    //TODO: exit
 	private int handleExit(int status) {
-	        // Do not remove this call to the autoGrader...
+	    // Do not remove this call to the autoGrader...
 		Machine.autoGrader().finishingCurrentProcess(status);
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
 
 		Lib.debug(dbgProcess, "UserProcess.handleExit (" + status + ")");
 		// for now, unconditionally terminate with just one process
+        //TODO
 		Kernel.kernel.terminate();
 
 		return 0;

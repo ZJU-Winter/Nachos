@@ -120,7 +120,7 @@ public class UserKernel extends ThreadedKernel {
 			Lib.assertTrue(false);
 		    }
 		}
-
+        System.out.println("hello from UserKernel");
 		KThread.currentThread().finish();
 	}
 
@@ -182,9 +182,9 @@ public class UserKernel extends ThreadedKernel {
 
     private static Lock lock;
 
+    private static Lock pidLock;
+
     private static Condition notEmpty;
 
     private static int PIDCount = 0;
-
-    private static Lock pidLock;
 }
