@@ -379,6 +379,7 @@ public class UserProcess {
 
 			for (int i = 0; i < section.getLength(); i++) {
 				int vpn = section.getFirstVPN() + i;
+                System.out.println("vpn:" + vpn);
 
 				// for now, just assume virtual addresses=physical addresses
 				//section.loadPage(i, vpn);
