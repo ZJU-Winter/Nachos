@@ -635,7 +635,7 @@ public class UserProcess {
         Lib.assertTrue(!children.containsKey(child.PID));
         children.put(child.PID, child);
 
-        if (fileNameAddr == 0 || argvAddr == 0 || fileNameAddr >= numPages * pageSize || argvAddr >= numPages * pageSize) {
+        if (fileNameAddr == 0 || fileNameAddr >= numPages * pageSize || argvAddr >= numPages * pageSize) {
             Lib.debug(dbgProcess, "exec: invalid address reference");
             return -1;
         }
@@ -647,6 +647,10 @@ public class UserProcess {
 
         String[] args = new String[argc];
         for (int i = 0; i < argc; i += 1) {
+            if (argvAddr == 0 || argvAddr >= numPages * pageSize) {
+                Lib.debug(dbgProcess, "exec: invalid address reference");
+                return -1;
+            }
             args[i] = readVirtualMemoryString(argvAddr, 256);
             if (args[i] == null) {
                 Lib.debug(dbgProcess, "exec: invalid argument");
@@ -678,7 +682,7 @@ public class UserProcess {
         child.thread.join();
 
         children.remove(pid);
-        
+
         return 0;
     }
 
