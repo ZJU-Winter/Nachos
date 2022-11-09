@@ -639,7 +639,7 @@ public class UserProcess {
             Lib.debug(dbgProcess, "exec: invalid address reference");
             return -1;
         }
-        String name = readVirtualMemoryString(argvAddr, 256);
+        String name = readVirtualMemoryString(fileNameAddr, 256);
         if (name == null) {
             Lib.debug(dbgProcess, "exec: invalid file name");
             return -1;
