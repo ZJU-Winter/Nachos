@@ -629,8 +629,8 @@ public class UserProcess {
     private int handleExec(int fileNameAddr, int argc, int argvAddr) {
         UserProcess child = newUserProcess();
 
-        Lib.assertTrue(!children.containsKey(child.getPID()));
-        children.put(child.getClass(), child);
+        Lib.assertTrue(!children.containsKey(child.PID));
+        children.put(child.PID, child);
 
         if (fileNameAddr == 0 || argvAddr == 0) {
             return -1;
@@ -654,7 +654,7 @@ public class UserProcess {
             Lib.debug(dbgProcess, "exec: execute failed");
             return -1;
         }
-        return child.getPID();
+        return child.PID;
     }
 
     /**
