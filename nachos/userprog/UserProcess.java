@@ -370,9 +370,9 @@ public class UserProcess {
 		// load sections
         System.out.println("numPages:" + numPages);
         pageTable = new TranslationEntry[numPages];
-        int numSections = coff.getNumSections();
-        
-		for (int s = 0; s < numSections; s++) {
+
+		for (int s = 0; s < coff.getNumSections(); s++) {
+            System.out.println("START a NEW SECTION");
 			CoffSection section = coff.getSection(s);
 
 			Lib.debug(dbgProcess, "\tinitializing " + section.getName()
@@ -389,7 +389,7 @@ public class UserProcess {
                 pageTable[vpn] = new TranslationEntry(vpn, ppn, true, section.isReadOnly(), false, false);
                 Lib.debug(dbgProcess, "loaded a page, vpn is " + vpn + " ppn is " + ppn);
 			}
-            System.out.println("HERE");
+            System.out.println("LOADED a SECTION");
 		}
 
 		return true;
