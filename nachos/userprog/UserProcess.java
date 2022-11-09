@@ -6,6 +6,8 @@ import nachos.userprog.*;
 import nachos.vm.*;
 
 import java.io.EOFException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 /**
@@ -624,9 +626,35 @@ public class UserProcess {
     /**
      * Handle the exec(char *file, int argc, char *argv[]) system call.
      */
-    //TODO: exec
-    private int handleExec(int nameAddr, int argc, int argvAddr) {
-        return 0;
+    private int handleExec(int fileNameAddr, int argc, int argvAddr) {
+        UserProcess child = newUserProcess();
+
+        Lib.assertTrue(!children.containsKey(child.getPID()));
+        children.put(child.getClass(), child);
+
+        if (fileNameAddr == 0 || argvAddr == 0) {
+            return -1;
+        }
+        String name = readVirtualMemoryString(argvAddr, 256);
+        if (name == null) {
+            Lib.debug(dbgProcess, "exec: invalid file name");
+            return -1;
+        }
+
+        String[] args = new String[argc];
+        for (int i = 0; i < argc; i += 1) {
+            args[i] = readVirtualMemoryString(argvAddr, 256);
+            if (args[i] == null) {
+                Lib.debug(dbgProcess, "exec: invalid argument");
+                return -1;
+            }
+            argvAddr += (args[i].length() + 1);
+        }
+        if (!child.execute(name, argc)) {
+            Lib.debug(dbgProcess, "exec: execute failed");
+            return -1;
+        }
+        return child.getPID();
     }
 
     /**
@@ -761,6 +789,13 @@ public class UserProcess {
 		}
 	}
 
+    /**
+     * @return the PID of process.
+     */
+    public int getPID() {
+        return PID;
+    }
+
 	/** The program being run by this process. */
 	protected Coff coff;
 
@@ -785,6 +820,10 @@ public class UserProcess {
     private OpenFile[] fileTable = new OpenFile[16];
 
     private PriorityQueue<Integer> nextIndexQueue = new PriorityQueue<>();
+
+    private final int PID = UserKernel.allocatePID();
+
+    private Map<Integer, UserProcess> children = new HashMap<>();
 
 	private static final char dbgProcess = 'a';
 }
