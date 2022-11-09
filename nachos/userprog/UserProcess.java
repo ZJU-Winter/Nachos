@@ -9,10 +9,6 @@ import java.io.EOFException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
-
-import javax.print.attribute.standard.NumberUpSupported;
-import javax.swing.text.AsyncBoxView.ChildLocator;
-
 /**
  * Encapsulates the state of a user process that is not contained in its user
  * thread (or threads). This includes its address translation state, a file
@@ -30,11 +26,13 @@ public class UserProcess {
 	 * Allocate a new process.
 	 */
 	public UserProcess() {
+        /*
 		int numPhysPages = Machine.processor().getNumPhysPages();
 		pageTable = new TranslationEntry[numPhysPages];
 		for (int i = 0; i < numPhysPages; i += 1) {
 			pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
         }
+        */
         fileTable[0] = UserKernel.console.openForReading();
         fileTable[1] = UserKernel.console.openForWriting();
         for (int i = 2; i < 16; i += 1) {
@@ -169,6 +167,7 @@ public class UserProcess {
 	}
 
 	private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
+        //TODO valid
 		int currentVa = vaddr;
 		int totalRead = 0;
 		while (currentVa < vaddr + amount) {
@@ -223,6 +222,7 @@ public class UserProcess {
 	 * @return the number of bytes successfully transferred.
 	 */
 	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
+        //TODO: readonly valid
 		Lib.assertTrue(offset >= 0 && length >= 0
 				&& offset + length <= data.length);
 
@@ -277,11 +277,11 @@ public class UserProcess {
 	 * @return <tt>true</tt> if the executable was successfully loaded.
 	 */
 	private boolean load(String name, String[] args) {
-		Lib.debug(dbgProcess, "pid:" + PID + " UserProcess.load(\"" + name + "\")");
+		Lib.debug(dbgProcess, "pid " + PID + ":" + " UserProcess.load(\"" + name + "\")");
 
 		OpenFile executable = ThreadedKernel.fileSystem.open(name, false);
 		if (executable == null) {
-			Lib.debug(dbgProcess, "pid:" + PID + "\topen failed");
+			Lib.debug(dbgProcess, "pid " + PID + ":" + "\topen failed");
 			return false;
 		}
 
@@ -290,7 +290,7 @@ public class UserProcess {
 		}
 		catch (EOFException e) {
 			executable.close();
-			Lib.debug(dbgProcess,"pid:" + PID +  "\tcoff load failed");
+			Lib.debug(dbgProcess,"pid " + PID + ":" + "\tcoff load failed");
 			return false;
 		}
 
@@ -300,7 +300,7 @@ public class UserProcess {
 			CoffSection section = coff.getSection(s);
 			if (section.getFirstVPN() != numPages) {
 				coff.close();
-				Lib.debug(dbgProcess, "pid:" + PID + "\tfragmented executable");
+				Lib.debug(dbgProcess, "pid " + PID + ":" + "\tfragmented executable");
 				return false;
 			}
 			numPages += section.getLength();
@@ -316,7 +316,7 @@ public class UserProcess {
 		}
 		if (argsSize > pageSize) {
 			coff.close();
-			Lib.debug(dbgProcess, "pid:" + PID + "\targuments too long");
+			Lib.debug(dbgProcess, "pid " + PID + ":" + "\targuments too long");
 			return false;
 		}
 
@@ -635,8 +635,9 @@ public class UserProcess {
      */
     private int handleExec(int fileNameAddr, int argc, int argvAddr) {
         UserProcess child = newUserProcess();
+        child.parent = this;
 
-        Lib.assertTrue(!children.containsKey(child.PID));
+        Lib.assertTrue(!children.containsKey(child.PID)); // unique PID
         children.put(child.PID, child);
 
         if (fileNameAddr == 0 || fileNameAddr >= numPages * pageSize || argvAddr >= numPages * pageSize) {
@@ -672,6 +673,7 @@ public class UserProcess {
     /**
      * Handle the join(int processID, int *status) system call.
      */
+    //TODO: child process already exit
     private int handleJoin(int pid, int statusAddr) {
         if (statusAddr >= numPages * pageSize) {
             Lib.debug(dbgProcess, "join: invalid address reference");
@@ -684,6 +686,7 @@ public class UserProcess {
 
         UserProcess child = children.get(pid);
         child.thread.join();
+        int status = childStatus.get(pid);
 
         children.remove(pid);
 
@@ -780,6 +783,7 @@ public class UserProcess {
             return handleJoin(a0, a1);
 
 		default:
+            //TODO
 			Lib.debug(dbgProcess, "Unknown syscall " + syscall);
 			Lib.assertNotReached("Unknown system call!");
 		}
@@ -808,6 +812,7 @@ public class UserProcess {
 			break;
 
 		default:
+            //TODO
 			Lib.debug(dbgProcess, "Unexpected exception: "
 					+ Processor.exceptionNames[cause]);
 			Lib.assertNotReached("Unexpected exception");
@@ -849,6 +854,10 @@ public class UserProcess {
     private final int PID = UserKernel.allocatePID();
 
     private Map<Integer, UserProcess> children = new HashMap<>();
+
+    private Map<Integer, Integer> childStatus = new HashMap<>();
+
+    private UserProcess parent = null;
 
 	private static final char dbgProcess = 'a';
 }

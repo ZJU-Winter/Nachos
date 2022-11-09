@@ -120,7 +120,7 @@ public class UserKernel extends ThreadedKernel {
 			Lib.assertTrue(false);
 		    }
 		}
-        System.out.println("hello from UserKernel");
+        
 		KThread.currentThread().finish();
 	}
 
