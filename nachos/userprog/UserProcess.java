@@ -368,8 +368,9 @@ public class UserProcess {
 			return false;
 		}
 		// load sections
+        System.out.println("numPages:" + numPages);
         pageTable = new TranslationEntry[numPages];
-        
+
 		for (int s = 0; s < coff.getNumSections(); s++) {
 			CoffSection section = coff.getSection(s);
 
