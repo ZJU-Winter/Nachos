@@ -367,10 +367,9 @@ public class UserProcess {
 			Lib.debug(dbgProcess, "\tinsufficient physical memory");
 			return false;
 		}
-        System.out.println("HERE");
-        int num = Machine.processor().getNumPhysPages();
-        pageTable = new TranslationEntry[num];
 		// load sections
+        pageTable = new TranslationEntry[numPages];
+        
 		for (int s = 0; s < coff.getNumSections(); s++) {
 			CoffSection section = coff.getSection(s);
 
