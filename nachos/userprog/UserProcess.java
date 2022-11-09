@@ -9,6 +9,7 @@ import java.io.EOFException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
+
 /**
  * Encapsulates the state of a user process that is not contained in its user
  * thread (or threads). This includes its address translation state, a file
@@ -330,9 +331,8 @@ public class UserProcess {
 		// and finally reserve 1 page for arguments
 		numPages++;
 
-        for (int i = 0; i < numPages; i += 1) {
-            pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
-        }
+        pageTable = new TranslationEntry[numPages];
+
 		if (!loadSections())
 			return false;
 
