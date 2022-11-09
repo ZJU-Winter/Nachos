@@ -650,7 +650,7 @@ public class UserProcess {
             }
             argvAddr += (args[i].length() + 1);
         }
-        if (!child.execute(name, argc)) {
+        if (!child.execute(name, args)) {
             Lib.debug(dbgProcess, "exec: execute failed");
             return -1;
         }
