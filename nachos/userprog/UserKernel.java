@@ -27,6 +27,7 @@ public class UserKernel extends ThreadedKernel {
 		console = new SynchConsole(Machine.console());
 
         lock = new Lock();
+        pidLock = new Lock();
         notEmpty = new Condition(lock);
 
         int numPhysPages = Machine.processor().getNumPhysPages();
@@ -143,8 +144,8 @@ public class UserKernel extends ThreadedKernel {
             e.getStackTrace();
         }
         
-        //int pageNum = freePageList.removeFirst();
-        int pageNum = freePageList.removeLast();
+        int pageNum = freePageList.removeFirst();
+        //int pageNum = freePageList.removeLast();
         lock.release();
         return pageNum;
     }
@@ -154,10 +155,21 @@ public class UserKernel extends ThreadedKernel {
      */
     public static void deallocate(int pagenum) {
         lock.acquire();
-        //freePageList.addLast(pagenum);
-        freePageList.addFirst(pagenum);
+        freePageList.addLast(pagenum);
+        //freePageList.addFirst(pagenum);
         notEmpty.notify();
         lock.release();
+    }
+
+    /**
+     * @return the PID of new process.
+     */
+    public static int allocatePID() {
+        pidLock.acquire();
+        int rst = PIDCount;
+        PIDCount += 1;
+        pidLock.release();
+        return rst;
     }
 
 	/** Globally accessible reference to the synchronized console. */
@@ -172,4 +184,7 @@ public class UserKernel extends ThreadedKernel {
 
     private static Condition notEmpty;
 
+    private static int PIDCount = 0;
+
+    private static Lock pidLock;
 }

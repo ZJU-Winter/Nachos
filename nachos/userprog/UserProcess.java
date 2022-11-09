@@ -83,6 +83,7 @@ public class UserProcess {
 	 * Called by <tt>UThread.saveState()</tt>.
 	 */
 	public void saveState() {
+
 	}
 
 	/**
@@ -624,7 +625,7 @@ public class UserProcess {
      * Handle the exec(char *file, int argc, char *argv[]) system call.
      */
     //TODO: exec
-    private int handleExec(int nameAdd, int argc, int argvAddr) {
+    private int handleExec(int nameAddr, int argc, int argvAddr) {
         return 0;
     }
 
@@ -781,9 +782,9 @@ public class UserProcess {
 
 	private static final int pageSize = Processor.pageSize;
 
-    private static OpenFile[] fileTable = new OpenFile[16];
+    private OpenFile[] fileTable = new OpenFile[16];
 
-    private static PriorityQueue<Integer> nextIndexQueue = new PriorityQueue<>();
+    private PriorityQueue<Integer> nextIndexQueue = new PriorityQueue<>();
 
 	private static final char dbgProcess = 'a';
 }
