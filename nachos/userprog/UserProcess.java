@@ -330,6 +330,9 @@ public class UserProcess {
 		// and finally reserve 1 page for arguments
 		numPages++;
 
+        for (int i = 0; i < numPages; i += 1) {
+            pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
+        }
 		if (!loadSections())
 			return false;
 
