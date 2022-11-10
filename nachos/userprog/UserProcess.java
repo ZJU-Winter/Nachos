@@ -453,7 +453,7 @@ public class UserProcess {
 	 */
 	private int handleHalt() {
         if (PID != 0) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" "halt: only can be called by root process");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "halt: only can be called by root process");
             return -1;
         }
 		Machine.halt();
