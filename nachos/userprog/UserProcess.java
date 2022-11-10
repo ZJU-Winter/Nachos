@@ -32,6 +32,8 @@ public class UserProcess {
 		for (int i = 0; i < numPhysPages; i += 1) {
 			pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
         }
+
+        UserKernel.incrementProcess();
         fileTable[0] = UserKernel.console.openForReading();
         fileTable[1] = UserKernel.console.openForWriting();
         for (int i = 2; i < 16; i += 1) {
@@ -370,7 +372,7 @@ public class UserProcess {
         //pageTable = new TranslationEntry[numPages];
 
 		for (int s = 0; s < coff.getNumSections(); s++) {
-            System.out.println("START a NEW SECTION");
+            //System.out.println("START a NEW SECTION");
 			CoffSection section = coff.getSection(s);
 
 			Lib.debug(dbgProcess, "\tinitializing " + section.getName()
@@ -387,7 +389,7 @@ public class UserProcess {
                 pageTable[vpn] = new TranslationEntry(vpn, ppn, true, section.isReadOnly(), false, false);
                 Lib.debug(dbgProcess, "loaded a page, vpn is " + vpn + " ppn is " + ppn);
 			}
-            System.out.println("LOADED a SECTION");
+            //System.out.println("LOADED a SECTION");
 		}
 
 		return true;
@@ -396,10 +398,35 @@ public class UserProcess {
 	/**
 	 * Release any resources allocated by <tt>loadSections()</tt>.
 	 */
-    //TODO
 	protected void unloadSections() {
-
+        // deacllocate memory
+        for (int i = 0; i < numPages; i += 1) {
+            int ppn = pageTable[i].ppn;
+            UserKernel.deallocate(ppn);
+        }
 	}
+
+    /**
+     * Release any resources allocated for the process.
+     */
+    protected void cleanup() {
+        UserKernel.decrementProcess();
+         // close files
+         for (int i = 0; i < 16; i += 1) {
+             if (fileTable[i] != null) {
+                 OpenFile file = fileTable[i];
+                 fileTable[i] = null;
+                 nextIndexQueue.offer(i);
+                 file.close();
+             }
+             file.close();
+         }
+         // set children's parent to null
+         for (UserProcess child : children.values()) {
+             child.parent = null;
+         }
+         coff.close();
+    }
 
 	/**
 	 * Initialize the processor's registers in preparation for running the
@@ -446,12 +473,16 @@ public class UserProcess {
 		Machine.autoGrader().finishingCurrentProcess(status);
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
-
 		Lib.debug(dbgProcess, "UserProcess.handleExit (" + status + ")");
 		// for now, unconditionally terminate with just one process
-        //TODO
-		Kernel.kernel.terminate();
 
+        unloadSections();
+        cleanup();
+        this.parent.childStatus.put(this, status);
+        if (UserKernel.notOtherProcessLeft()) {
+		    Kernel.kernel.terminate();
+        }
+        KThread.finish();
 		return 0;
 	}
 
@@ -676,7 +707,6 @@ public class UserProcess {
     /**
      * Handle the join(int processID, int *status) system call.
      */
-    //TODO: child process already exit
     private int handleJoin(int pid, int statusAddr) {
         if (statusAddr >= numPages * pageSize) {
             Lib.debug(dbgProcess, "join: invalid address reference");
@@ -689,10 +719,23 @@ public class UserProcess {
 
         UserProcess child = children.get(pid);
         child.thread.join();
-        int status = childStatus.get(pid);
+
+        if (childStatus.containsKey(child)) {
+            int status = childStatus.get(child);
+            childStatus.remove(child);
+            if (statusAddr == 0) {
+                children.remove(pid);
+                return 1;
+            }
+            byte[] statusBytes = new byte[4];
+            Lib.bytesFromInt(statusBytes, 0, status);
+            writeVirtualMemory(statusAddr, statusBytes);
+
+            children.remove(pid);
+            return 1;
+        }
 
         children.remove(pid);
-
         return 0;
     }
 
@@ -786,7 +829,6 @@ public class UserProcess {
             return handleJoin(a0, a1);
 
 		default:
-            //TODO
 			Lib.debug(dbgProcess, "Unknown syscall " + syscall);
 			Lib.assertNotReached("Unknown system call!");
 		}
@@ -815,9 +857,16 @@ public class UserProcess {
 			break;
 
 		default:
-            //TODO
 			Lib.debug(dbgProcess, "Unexpected exception: "
 					+ Processor.exceptionNames[cause]);
+            
+            unloadSections();
+            cleanup();
+            if (UserKernel.notOtherProcessLeft()) {
+                Kernel.kernel.terminate();
+            }
+            KThread.finish();
+            
 			Lib.assertNotReached("Unexpected exception");
 		}
 	}
@@ -858,7 +907,7 @@ public class UserProcess {
 
     private Map<Integer, UserProcess> children = new HashMap<>();
 
-    private Map<Integer, Integer> childStatus = new HashMap<>();
+    private Map<UserProcess, Integer> childStatus = new HashMap<>();
 
     private UserProcess parent = null;
 

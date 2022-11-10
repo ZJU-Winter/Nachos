@@ -28,6 +28,7 @@ public class UserKernel extends ThreadedKernel {
 
         lock = new Lock();
         pidLock = new Lock();
+        numProcessLock = new Lock();
         notEmpty = new Condition(lock);
 
         int numPhysPages = Machine.processor().getNumPhysPages();
@@ -172,6 +173,31 @@ public class UserKernel extends ThreadedKernel {
         return rst;
     }
 
+    /**
+     * increment the total num of proccesses.
+     */
+    public static void incrementProcess() {
+        numProcessLock.acquire();
+        numProcess += 1;
+        numProcessLock.release();
+    }
+    
+    /**
+     * decrement the total num of proccesses.
+     */
+    public static void decrementProcess() {
+        numProcessLock.acquire();
+        numProcess -= 1;
+        numProcessLock.release();
+    }
+
+    /**
+     * @return if there is only one process left.
+     */
+    public static boolean notOtherProcessLeft() {
+        return numProcess == 0;
+    }
+
 	/** Globally accessible reference to the synchronized console. */
 	public static SynchConsole console;
 
@@ -184,7 +210,11 @@ public class UserKernel extends ThreadedKernel {
 
     private static Lock pidLock;
 
+    private static Lock numProcessLock;
+
     private static Condition notEmpty;
 
     private static int PIDCount = 0;
+
+    private static int numProcess = 0;
 }
