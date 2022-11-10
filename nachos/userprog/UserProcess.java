@@ -396,6 +396,7 @@ public class UserProcess {
             int ppn = UserKernel.allocate();
             int vpn = nextVPN + i;
             pageTable[vpn] = new TranslationEntry(vpn, ppn, true, false, false, false);
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
         }
 		return true;
 	}
