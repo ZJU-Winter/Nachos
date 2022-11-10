@@ -192,7 +192,7 @@ public class UserKernel extends ThreadedKernel {
     /**
      * @return if there is only one process left.
      */
-    public static boolean notOtherProcessLeft() {
+    public static boolean isLastProcess() {
         return numProcess == 0;
     }
 
