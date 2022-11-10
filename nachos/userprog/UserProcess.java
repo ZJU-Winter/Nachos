@@ -278,7 +278,7 @@ public class UserProcess {
 	 * @return <tt>true</tt> if the executable was successfully loaded.
 	 */
 	private boolean load(String name, String[] args) {
-		Lib.debug(dbgProcess, "PID[" + PID + "]:" + " UserProcess.load(\"" + name + "\")");
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.load(\"" + name + "\")");
 
 		OpenFile executable = ThreadedKernel.fileSystem.open(name, false);
 		if (executable == null) {
@@ -453,7 +453,7 @@ public class UserProcess {
 	 */
 	private int handleHalt() {
         if (PID != 0) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "halt: only can be called by root process");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" +  "halt: only can be called by root process");
             return -1;
         }
 		Machine.halt();
@@ -475,7 +475,9 @@ public class UserProcess {
 
         unloadSections();
         cleanup();
-        this.parent.childStatus.put(this, status);
+        if (this.parent != null) {
+            this.parent.childStatus.put(this, status);
+        }
         if (UserKernel.isLastProcess()) {
 		    Kernel.kernel.terminate();
         }
