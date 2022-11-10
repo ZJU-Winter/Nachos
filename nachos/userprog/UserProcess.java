@@ -452,6 +452,7 @@ public class UserProcess {
 	 * Handle the halt() system call.
 	 */
 	private int handleHalt() {
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleHalt()");
         if (PID != 0) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" +  "halt: only can be called by root process");
             return -1;
@@ -470,7 +471,7 @@ public class UserProcess {
 		Machine.autoGrader().finishingCurrentProcess(status);
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
-		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExit (" + status + ")");
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExit(" + status + ")");
 		// for now, unconditionally terminate with just one process
 
         unloadSections();
@@ -491,8 +492,10 @@ public class UserProcess {
     private int handleCreate(int addr) {
         String name = readVirtualMemoryString(addr, 256);
         if (name == null) {
+		    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleCreate() failed");
             return -1;
         }
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleCreate(" + name + ")");
         OpenFile file = ThreadedKernel.fileSystem.open(name, true);
         if (file == null) {
             return -1;
@@ -509,8 +512,10 @@ public class UserProcess {
     private int handleOpen(int addr) {
         String name = readVirtualMemoryString(addr, 256);
         if (name == null) {
+		    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleOpen() failed");
             return -1;
         }
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleOpen(" + name + ")");
         OpenFile file = ThreadedKernel.fileSystem.open(name, false);
         if (file == null) {
             return -1;
@@ -525,6 +530,7 @@ public class UserProcess {
      * Handle the read(int fileDescriptor, void *buffer, int count) system call.
      */
     private int handleRead(int fileDescriptor, int addr, int count) {
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleRead(" + fileDescriptor + ")");
         if (addr == 0 || count < 0) {
             return -1;
         }
@@ -583,6 +589,7 @@ public class UserProcess {
      * Handle the write(int fileDescriptor, void *buffer, int count) system call.
      */
     private int handleWrite(int fileDescriptor, int addr, int count) {
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleWrite(" + fileDescriptor + ")");
         if (addr == 0 || count < 0) {
             return -1;
         }
@@ -631,6 +638,7 @@ public class UserProcess {
      * Handle the close() system call.
      */
     private int handleClose(int fileDescriptor) {
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleClose(" + fileDescriptor + ")");
         if (fileDescriptor < 0 || fileDescriptor >= 16) {
             return -1;
         }
@@ -650,8 +658,10 @@ public class UserProcess {
     private int handleUnlink(int addr) {
         String name = readVirtualMemoryString(addr, 256);
         if (name == null) {
+		    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleUnlink() failed");
             return -1;
         }
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleUnlink(" + name + ")");
         for (int i = 0; i < 16; i += 1) {
             if (fileTable[i].getName().equals(name)) {
                 nextIndexQueue.offer(i);
@@ -667,37 +677,41 @@ public class UserProcess {
      * Handle the exec(char *file, int argc, char *argv[]) system call.
      */
     private int handleExec(int fileNameAddr, int argc, int argvAddr) {
+        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec()");
         UserProcess child = newUserProcess();
         child.parent = this;
 
-        Lib.assertTrue(!children.containsKey(child.PID)); // unique PID
+        if (children.containsKey(child.PID)) {
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec() failed, should have unique PIDs");
+            return -1;
+        }
         children.put(child.PID, child);
 
         if (fileNameAddr == 0 || fileNameAddr >= numPages * pageSize || argvAddr >= numPages * pageSize) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "exec: invalid address reference");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec() failed, invalid address reference");
             return -1;
         }
         String name = readVirtualMemoryString(fileNameAddr, 256);
         if (name == null) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "exec: invalid file name");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec() failed, invalid file name");
             return -1;
         }
 
         String[] args = new String[argc];
         for (int i = 0; i < argc; i += 1) {
             if (argvAddr == 0 || argvAddr >= numPages * pageSize) {
-                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "exec: invalid address reference");
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec() failed, invalid address reference");
                 return -1;
             }
             args[i] = readVirtualMemoryString(argvAddr, 256);
             if (args[i] == null) {
-                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "exec: invalid argument");
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec() failed, invalid argument");
                 return -1;
             }
             argvAddr += (args[i].length() + 1);
         }
         if (!child.execute(name, args)) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "exec: execute failed");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec() failed, execute failed");
             return -1;
         }
         return child.PID;
@@ -707,12 +721,13 @@ public class UserProcess {
      * Handle the join(int processID, int *status) system call.
      */
     private int handleJoin(int pid, int statusAddr) {
+        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleJoin()");
         if (statusAddr >= numPages * pageSize) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "join: invalid address reference");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleJoin() failed, invalid address reference");
             return -1;
         }
         if (!children.containsKey(pid)) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "join: invalid pid, not a child");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleJoin() failed, invalid pid, not a child");
             return -1;
         }
 
