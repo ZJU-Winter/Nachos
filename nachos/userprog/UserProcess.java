@@ -34,7 +34,6 @@ public class UserProcess {
 			pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
         }
         */
-
         UserKernel.incrementProcess();
         fileTable[0] = UserKernel.console.openForReading();
         fileTable[1] = UserKernel.console.openForWriting();
@@ -480,7 +479,6 @@ public class UserProcess {
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
 		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExit(" + status + ")");
-		// for now, unconditionally terminate with just one process
 
         unloadSections();
         cleanup();
