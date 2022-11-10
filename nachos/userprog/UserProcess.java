@@ -419,7 +419,6 @@ public class UserProcess {
                  nextIndexQueue.offer(i);
                  file.close();
              }
-             file.close();
          }
          // set children's parent to null
          for (UserProcess child : children.values()) {
@@ -866,7 +865,7 @@ public class UserProcess {
                 Kernel.kernel.terminate();
             }
             KThread.finish();
-            
+
 			Lib.assertNotReached("Unexpected exception");
 		}
 	}
