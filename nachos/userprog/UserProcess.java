@@ -177,19 +177,19 @@ public class UserProcess {
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
 			int nextVa = pageSize * (vpn + 1);
-            Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tvirtual address " + vaddr + ", physical address " + paddr + ", offset " + addrOffset);
+            //Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tvirtual address " + vaddr + ", physical address " + paddr + ", offset " + addrOffset);
 			if (nextVa < vaddr + amount) { // reach the end of page
 				int toRead = pageSize - addrOffset;
 				System.arraycopy(memory, paddr, data, offset, toRead);
 				offset += toRead;
 				totalRead += toRead;
-                Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tread from vpn " + vpn + " / ppn " + ppn + " to buffer " + toRead + " bytes");
+                //Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tread from vpn " + vpn + " / ppn " + ppn + " to buffer " + toRead + " bytes");
 			} else { // will not reach the end of page
                 int toRead = vaddr + amount - currentVa;
 				System.arraycopy(memory, paddr, data, offset, toRead);
 				offset += toRead;
 				totalRead += toRead;
-                Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tread from vpn " + vpn + " / ppn " + ppn + " to buffer " + toRead + " bytes");
+                //Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tread from vpn " + vpn + " / ppn " + ppn + " to buffer " + toRead + " bytes");
 			}
 			currentVa = nextVa;
 		}
@@ -247,19 +247,19 @@ public class UserProcess {
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
 			int nextVa = pageSize * (vpn + 1);
-            Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tvirtual address " + vaddr + ", physical address " + paddr + ", offset " + addrOffset);
+            //Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tvirtual address " + vaddr + ", physical address " + paddr + ", offset " + addrOffset);
 			if (nextVa < vaddr + amount) { // reach the end of page
 				int toWrite = pageSize - addrOffset;
 				System.arraycopy(data, offset, memory, paddr, toWrite);
 				offset += toWrite;
 				totalWrite += toWrite;
-                Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\twrite from vpn " + vpn + " / ppn " + ppn + " to buffer " + toWrite + " bytes");
+                //Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\twrite from vpn " + vpn + " / ppn " + ppn + " to buffer " + toWrite + " bytes");
 			} else { // will not reach the end of page
                 int toWrite = vaddr + amount - currentVa;
 				System.arraycopy(data, offset, memory, paddr, toWrite);
 				offset += toWrite;
 				totalWrite += toWrite;
-                Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\twrite from vpn " + vpn + " / ppn " + ppn + " to buffer " + toWrite + " bytes");
+                //Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\twrite from vpn " + vpn + " / ppn " + ppn + " to buffer " + toWrite + " bytes");
 			}
 			currentVa = nextVa;
 		}
