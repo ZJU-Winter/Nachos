@@ -27,11 +27,13 @@ public class UserProcess {
 	 * Allocate a new process.
 	 */
 	public UserProcess() {
+        /*
 		int numPhysPages = Machine.processor().getNumPhysPages();
 		pageTable = new TranslationEntry[numPhysPages];
 		for (int i = 0; i < numPhysPages; i += 1) {
 			pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
         }
+        */
 
         UserKernel.incrementProcess();
         fileTable[0] = UserKernel.console.openForReading();
@@ -367,9 +369,8 @@ public class UserProcess {
 			Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tinsufficient physical memory");
 			return false;
 		}
-		// load sections
-        //System.out.println("numPages:" + numPages);
-        //pageTable = new TranslationEntry[numPages];
+
+        pageTable = new TranslationEntry[numPages];
 
 		for (int s = 0; s < coff.getNumSections(); s++) {
 			CoffSection section = coff.getSection(s);
@@ -382,14 +383,20 @@ public class UserProcess {
 
 				// for now, just assume virtual addresses=physical addresses
 				//section.loadPage(i, vpn);
-
                 int ppn = UserKernel.allocate();
                 section.loadPage(i, ppn);
                 pageTable[vpn] = new TranslationEntry(vpn, ppn, true, section.isReadOnly(), false, false);
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
 			}
 		}
-
+        //load pages for stack and args
+        CoffSection lastSection = coff.getSection(coff.getNumSections() - 1);
+        int nextVPN = lastSection.getFirstVPN() + lastSection.getLength();
+        for (int i = 0; i <= stackPages; i += 1) {
+            int ppn = UserKernel.allocate();
+            int vpn = nextVPN + i;
+            pageTable[vpn] = new TranslationEntry(vpn, ppn, true, false, false, false);
+        }
 		return true;
 	}
 
