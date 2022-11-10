@@ -177,19 +177,19 @@ public class UserProcess {
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
 			int nextVa = pageSize * (vpn + 1);
-            Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "virtual address " + vaddr + ", physical address " + paddr + ", offset " + addrOffset);
+            Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tvirtual address " + vaddr + ", physical address " + paddr + ", offset " + addrOffset);
 			if (nextVa < vaddr + amount) { // reach the end of page
 				int toRead = pageSize - addrOffset;
 				System.arraycopy(memory, paddr, data, offset, toRead);
 				offset += toRead;
 				totalRead += toRead;
-                Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "read from vpn " + vpn + " / ppn " + ppn + " to buffer " + toRead + " bytes");
+                Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tread from vpn " + vpn + " / ppn " + ppn + " to buffer " + toRead + " bytes");
 			} else { // will not reach the end of page
                 int toRead = vaddr + amount - currentVa;
 				System.arraycopy(memory, paddr, data, offset, toRead);
 				offset += toRead;
 				totalRead += toRead;
-                Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "read from vpn " + vpn + " / ppn " + ppn + " to buffer " + toRead + " bytes");
+                Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tread from vpn " + vpn + " / ppn " + ppn + " to buffer " + toRead + " bytes");
 			}
 			currentVa = nextVa;
 		}
@@ -247,19 +247,19 @@ public class UserProcess {
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
 			int nextVa = pageSize * (vpn + 1);
-            Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "virtual address " + vaddr + ", physical address " + paddr + ", offset " + addrOffset);
+            Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tvirtual address " + vaddr + ", physical address " + paddr + ", offset " + addrOffset);
 			if (nextVa < vaddr + amount) { // reach the end of page
 				int toWrite = pageSize - addrOffset;
 				System.arraycopy(data, offset, memory, paddr, toWrite);
 				offset += toWrite;
 				totalWrite += toWrite;
-                Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "write from vpn " + vpn + " / ppn " + ppn + " to buffer " + toWrite + " bytes");
+                Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\twrite from vpn " + vpn + " / ppn " + ppn + " to buffer " + toWrite + " bytes");
 			} else { // will not reach the end of page
                 int toWrite = vaddr + amount - currentVa;
 				System.arraycopy(data, offset, memory, paddr, toWrite);
 				offset += toWrite;
 				totalWrite += toWrite;
-                Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "write from vpn " + vpn + " / ppn " + ppn + " to buffer " + toWrite + " bytes");
+                Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\twrite from vpn " + vpn + " / ppn " + ppn + " to buffer " + toWrite + " bytes");
 			}
 			currentVa = nextVa;
 		}
@@ -278,7 +278,7 @@ public class UserProcess {
 	 * @return <tt>true</tt> if the executable was successfully loaded.
 	 */
 	private boolean load(String name, String[] args) {
-		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.load(\"" + name + "\")");
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.load(\"" + name + "\")");
 
 		OpenFile executable = ThreadedKernel.fileSystem.open(name, false);
 		if (executable == null) {
@@ -452,9 +452,9 @@ public class UserProcess {
 	 * Handle the halt() system call.
 	 */
 	private int handleHalt() {
-		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleHalt()");
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleHalt()");
         if (PID != 0) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" +  "halt: only can be called by root process");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" +  "\tUserProcess.handleHalt() failed, only can be called by root process");
             return -1;
         }
 		Machine.halt();
@@ -471,7 +471,7 @@ public class UserProcess {
 		Machine.autoGrader().finishingCurrentProcess(status);
 		// ...and leave it as the top of handleExit so that we
 		// can grade your implementation.
-		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExit(" + status + ")");
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExit(" + status + ")");
 		// for now, unconditionally terminate with just one process
 
         unloadSections();
@@ -492,10 +492,10 @@ public class UserProcess {
     private int handleCreate(int addr) {
         String name = readVirtualMemoryString(addr, 256);
         if (name == null) {
-		    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleCreate() failed");
+		    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleCreate() failed");
             return -1;
         }
-		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleCreate(" + name + ")");
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleCreate(" + name + ")");
         OpenFile file = ThreadedKernel.fileSystem.open(name, true);
         if (file == null) {
             return -1;
@@ -512,10 +512,10 @@ public class UserProcess {
     private int handleOpen(int addr) {
         String name = readVirtualMemoryString(addr, 256);
         if (name == null) {
-		    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleOpen() failed");
+		    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleOpen() failed");
             return -1;
         }
-		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleOpen(" + name + ")");
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleOpen(" + name + ")");
         OpenFile file = ThreadedKernel.fileSystem.open(name, false);
         if (file == null) {
             return -1;
@@ -530,7 +530,7 @@ public class UserProcess {
      * Handle the read(int fileDescriptor, void *buffer, int count) system call.
      */
     private int handleRead(int fileDescriptor, int addr, int count) {
-		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleRead(" + fileDescriptor + ")");
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleRead(" + fileDescriptor + ")");
         if (addr == 0 || count < 0) {
             return -1;
         }
@@ -550,22 +550,22 @@ public class UserProcess {
             byte[] buffer = new byte[pageSize];
             int readBytes = file.read(buffer, 0, Math.min(count, pageSize));
             if (readBytes < 0) {
-                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "read file failed");
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleRead() failed, read failed");
                 return -1;
             }
             if (readBytes == 0) {
-                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "nothing read from file");
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleRead() reach end of file");
                 return total;
             }
             if (readBytes < pageSize) { // reach end of file or count < pageSize
                 total += readBytes;
                 int writeBytes = writeVirtualMemory(addr, buffer, 0, readBytes);
                 if (writeBytes == 0) {
-                    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "invalid address reference");
+                    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleRead() failed, invalid address reference");
                     return -1;
                 }
                 if (writeBytes < readBytes) {
-                    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "run out of memory");
+                    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleRead() failed, run out of memory");
                     return -1;
                 }
                 return total;
@@ -573,11 +573,11 @@ public class UserProcess {
             total += readBytes;
             int writeBytes = writeVirtualMemory(addr, buffer,0 , readBytes);
             if (writeBytes == 0) {
-                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "invalid address reference");
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleRead() failed, invalid address reference");
                 return -1;
             }
             if (writeBytes < readBytes) {
-                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "run out of memory");
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleRead() failed, run out of memory");
                 return -1;
             }
             addr += writeBytes;
@@ -589,7 +589,7 @@ public class UserProcess {
      * Handle the write(int fileDescriptor, void *buffer, int count) system call.
      */
     private int handleWrite(int fileDescriptor, int addr, int count) {
-		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleWrite(" + fileDescriptor + ")");
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleWrite(" + fileDescriptor + ")");
         if (addr == 0 || count < 0) {
             return -1;
         }
@@ -609,17 +609,17 @@ public class UserProcess {
             byte[] buffer = new byte[Math.min(count - total, pageSize)];
             int readBytes = readVirtualMemory(addr, buffer, 0, buffer.length);
             if (readBytes == 0) {
-                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "invalid address reference");
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleWrite() failed, invalid address reference");
                 return -1;
             }
             if (readBytes != buffer.length) {
-                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "run out of memory");
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleWrite() failed, run out of memory");
                 return -1;
             }
             addr += readBytes;
             int writeBytes = file.write(buffer, 0, readBytes);
             if (writeBytes == -1) {
-                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "write file failed");
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleWrite() failed, write file failed");
                 return -1;
             }
             if (writeBytes != readBytes) {
@@ -638,7 +638,7 @@ public class UserProcess {
      * Handle the close() system call.
      */
     private int handleClose(int fileDescriptor) {
-		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleClose(" + fileDescriptor + ")");
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleClose(" + fileDescriptor + ")");
         if (fileDescriptor < 0 || fileDescriptor >= 16) {
             return -1;
         }
@@ -658,10 +658,10 @@ public class UserProcess {
     private int handleUnlink(int addr) {
         String name = readVirtualMemoryString(addr, 256);
         if (name == null) {
-		    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleUnlink() failed");
+		    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleUnlink() failed");
             return -1;
         }
-		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleUnlink(" + name + ")");
+		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleUnlink(" + name + ")");
         for (int i = 0; i < 16; i += 1) {
             if (fileTable[i].getName().equals(name)) {
                 nextIndexQueue.offer(i);
@@ -677,41 +677,41 @@ public class UserProcess {
      * Handle the exec(char *file, int argc, char *argv[]) system call.
      */
     private int handleExec(int fileNameAddr, int argc, int argvAddr) {
-        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec()");
+        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec()");
         UserProcess child = newUserProcess();
         child.parent = this;
 
         if (children.containsKey(child.PID)) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec() failed, should have unique PIDs");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, should have unique PIDs");
             return -1;
         }
         children.put(child.PID, child);
 
         if (fileNameAddr == 0 || fileNameAddr >= numPages * pageSize || argvAddr >= numPages * pageSize) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec() failed, invalid address reference");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid address reference");
             return -1;
         }
         String name = readVirtualMemoryString(fileNameAddr, 256);
         if (name == null) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec() failed, invalid file name");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid file name");
             return -1;
         }
 
         String[] args = new String[argc];
         for (int i = 0; i < argc; i += 1) {
             if (argvAddr == 0 || argvAddr >= numPages * pageSize) {
-                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec() failed, invalid address reference");
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid address reference");
                 return -1;
             }
             args[i] = readVirtualMemoryString(argvAddr, 256);
             if (args[i] == null) {
-                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec() failed, invalid argument");
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid argument");
                 return -1;
             }
             argvAddr += (args[i].length() + 1);
         }
         if (!child.execute(name, args)) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleExec() failed, execute failed");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, execute failed");
             return -1;
         }
         return child.PID;
@@ -721,13 +721,13 @@ public class UserProcess {
      * Handle the join(int processID, int *status) system call.
      */
     private int handleJoin(int pid, int statusAddr) {
-        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleJoin()");
+        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleJoin()");
         if (statusAddr >= numPages * pageSize) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleJoin() failed, invalid address reference");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleJoin() failed, invalid address reference");
             return -1;
         }
         if (!children.containsKey(pid)) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "UserProcess.handleJoin() failed, invalid pid, not a child");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleJoin() failed, invalid pid, not a child");
             return -1;
         }
 
