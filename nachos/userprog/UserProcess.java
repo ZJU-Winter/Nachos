@@ -416,7 +416,6 @@ public class UserProcess {
      * Clear file table and set children's parent to null
      */
     protected void cleanup() {
-        UserKernel.decrementProcess();
          // close files
          for (int i = 0; i < 16; i += 1) {
              if (fileTable[i] != null) {
@@ -483,6 +482,7 @@ public class UserProcess {
 
         unloadSections();
         cleanup();
+        UserKernel.decrementProcess();
         if (this.parent != null) {
             this.parent.childStatus.put(this, status);
         }
@@ -888,7 +888,8 @@ public class UserProcess {
             
             unloadSections();
             cleanup();
-            Lib.debug(dbgProcess, "number of left processes:" + UserKernel.getNumProcess());
+            UserKernel.decrementProcess();
+            Lib.debug(dbgProcess, "number of processes:" + UserKernel.getNumProcess());
             if (UserKernel.isLastProcess()) {
                 Kernel.kernel.terminate();
             }
