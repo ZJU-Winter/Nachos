@@ -75,7 +75,6 @@ int main()
     printf("test 3 ends!\n\n");
 
 
-
     printf("Test 4: join except1.coff. Should exit abnormally.\n");
     cpid1 = exec("except1.coff",0,0);
 
@@ -87,8 +86,6 @@ int main()
         printf("except1 exits normally (FAIL)! join status: %d; exit status: %d\n", joinRes, *status);
 
     printf("test 4 ends!\n\n");
-
-
 
 
     printf("Test 5: join test.coff\n");
