@@ -1,7 +1,3 @@
-/*
-fage_fault generator that a wrong pointer cannot fit in memory
-*/
-
 #include "syscall.h"
 
 int
