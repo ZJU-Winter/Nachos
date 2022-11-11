@@ -8,11 +8,11 @@ This test is used for test join and waiting program execute
 int 
 main() {
     char* argv1[1];
-    argv1[0] = "simpleTest.coff";
+    argv1[0] = "hello.coff";
     char* argv2[1];
-    argv2[0] = "spin_running.coff";
-    int pid1 = exec("spin_running.coff", 1, argv1);
-    int pid2 = exec("simpleTest.coff", 1, argv2);
+    argv2[0] = "spin.coff";
+    int pid1 = exec("spin.coff", 1, argv1);
+    int pid2 = exec("hello.coff", 1, argv2);
     int status = 0;
     int result = join(pid2, &status);
     if (result == 1) {

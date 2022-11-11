@@ -12,7 +12,7 @@ main(int argc, char* argv[]) {
         // in the root process, we try to create the child process
         char* args[1];
         args[0] = "NULL";
-        pid = exec("join_parent_child.coff", 1, args);
+        pid = exec("join5.coff", 1, args);
         int result = join(pid, &status);
         if (result > 0) {
             printf("Join pass! result = %d. \n", result);

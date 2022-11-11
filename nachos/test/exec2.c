@@ -10,7 +10,7 @@ main() {
     int status = 0;
     int pid;
     for (int i = 0; i < 5; ++i) {
-        pid = exec("simpleTest.coff", 0, 0);
+        pid = exec("hello.coff", 0, 0);
         if (pid <= 0) {
             printf("exec failed.\n");
             break;

@@ -30,7 +30,7 @@ STDLIB_O = start.o stdio.o stdlib.o
 LIB = assert atoi printf readline stdio strncmp strcat strcmp strcpy strlen memcpy memset rand
 NLIB = libnachos.a
 
-TARGETS = halt sh matmult sort echo cat cp mv rm creat1 creat2 creat3 creat4 open1 open2 read1 read2 read3 read4 write1 write2 write3 write4 write5 write6 write10 close1 unlink exec1 join1 exit1 execarg1 runAWhile page_fault join2 multi_join join_waiting join_parent_child simpleTest test spin_running exec2 dungeon dungeon-gen
+TARGETS = halt sh matmult sort echo cat cp mv rm creat1 creat2 creat3 creat4 open1 open2 read1 read2 read3 read4 write1 write2 write3 write4 write5 write6 write10 close1 unlink exec1 exec2 join1 join2 join3 join4 join5 exit1 execarg1 spin pageFault hello spin dungeon dungeon-gen
 
 .SECONDARY: $(patsubst %.c,%.o,$(wildcard *.c))
 

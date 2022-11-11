@@ -10,9 +10,9 @@
 int main()
 {
     char * argv1 [1];
-    argv1[0] = "simpleTest.coff";
+    argv1[0] = "hello.coff";
     char * argv2 [1];
-    argv2[0] = "runAWhile.coff";
+    argv2[0] = "spin.coff";
     char * argv3 [1];
     argv3[0] = "exit1.coff";
 
@@ -23,9 +23,9 @@ int main()
 
 
 
-    printf("Test 1: exec two simpleTest.coff, join in reversed order\n");
-    cpid1 = exec("simpleTest.coff",1,argv1);
-    cpid2 = exec("simpleTest.coff",1,argv1);
+    printf("Test 1: exec two hello.coff, join in reversed order\n");
+    cpid1 = exec("hello.coff",1,argv1);
+    cpid2 = exec("hello.coff",1,argv1);
 
     joinRes = join(cpid2, status);
     printf("Join cpid2: join status: %d; exit status: %d\n", joinRes, *status);
@@ -42,9 +42,9 @@ int main()
 
 
 
-    printf("Test 2: exec runAWhile.coff then simpleTest.coff, join in order\n");
-    cpid1 = exec("runAWhile.coff",1,argv2);
-    cpid2 = exec("simpleTest.coff",1,argv1);
+    printf("Test 2: exec spin.coff then hello.coff, join in order\n");
+    cpid1 = exec("spin.coff",1,argv2);
+    cpid2 = exec("hello.coff",1,argv1);
 
     joinRes = join(cpid1, status);
     printf("Join cpid2: join status: %d; exit status: %d\n", joinRes, *status);
@@ -87,8 +87,8 @@ int main()
     printf("test 4 ends!\n\n");
 
 
-    printf("Test 5: join test.coff\n");
-    cpid1 = exec("test.coff",0,0);
+    printf("Test 5: join hello.coff\n");
+    cpid1 = exec("hello.coff",0,0);
 
     joinRes = join(cpid1, status);
     if (joinRes != 1) {
