@@ -5,7 +5,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 int main() {
-    char *str = "testFile.txt";
+    char *str = "output.txt";
     char *inputStr = "write something here";
     int fd = open(str);
     int send = write(fd, inputStr, strlen(inputStr));

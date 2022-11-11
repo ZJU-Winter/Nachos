@@ -4,7 +4,7 @@
 #include "syscall.h"
 #include "stdio.h"
 int main() {
-    char *str = "testFile.txt";
+    char *str = "output.txt";
     int fd = open(str);
     char buff[10];
     int recv = 0;

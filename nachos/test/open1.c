@@ -5,9 +5,9 @@
 
 int main() {
 
-    char *str = "testFile.txt";
+    char *str = "output.txt";
     int fd = open(str);
-    if (fd != -1) { printf("Test Passed: open 'testFile.txt' in test directory. "); }
+    if (fd != -1) { printf("Test Passed: open 'output.txt' in test directory. "); }
     else { printf("Test Failed."); }
     assert(fd != -1);
     return 0;

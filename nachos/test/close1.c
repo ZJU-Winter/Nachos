@@ -5,7 +5,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 int main() {
-    char *str = "testFile.txt";
+    char *str = "output.txt";
     int fd = open(str);
     int res1 = close(fd);
     assert(res1 == 0);

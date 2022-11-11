@@ -4,7 +4,7 @@
 #include "syscall.h"
 #include "stdio.h"
 int main() {
-    char *str = "testFile.txt";
+    char *str = "output.txt";
     char *inputStr = "write something here";
     int fd = open(str);
     int send = write(fd, inputStr, -1);

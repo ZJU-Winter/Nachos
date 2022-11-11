@@ -5,7 +5,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 int main() {
-    char *str = "testFile.txt";
+    char *str = "output.txt";
     int res1 = unlink(str);
     assert(res1 == 0);
     if (res1 == 0) { printf("Test Passed: unlinked a exist file"); }
