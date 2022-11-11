@@ -1,5 +1,4 @@
-/*
- * write1.c
+/* 
  *
  * Write a string to stdout, one byte at a time.  Does not require any
  * of the other system calls to be implemented.
@@ -9,7 +8,6 @@
  */
 
 #include "syscall.h"
-
 int
 main (int argc, char *argv[])
 {

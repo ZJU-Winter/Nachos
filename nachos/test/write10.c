@@ -10,7 +10,7 @@
  * Geoff Voelker
  * 11/9/15
  */
-
+#include "syscall.h"
 #include "stdio.h"
 #include "stdlib.h"
 
