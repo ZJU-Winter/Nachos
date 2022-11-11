@@ -687,23 +687,26 @@ public class UserProcess {
     private int handleExec(int fileNameAddr, int argc, int argvAddr) {
         Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec()");
         UserProcess child = newUserProcess();
-        //child.parent = this;
+        child.parent = this;
 
         if (children.containsKey(child.PID)) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, should have unique PIDs");
+            child.cleanup();
             UserKernel.decrementProcess();
             return -1;
         }
-        //children.put(child.PID, child);
+        children.put(child.PID, child);
 
         if (fileNameAddr == 0 || fileNameAddr >= numPages * pageSize || argvAddr >= numPages * pageSize) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid address reference");
+            child.cleanup();
             UserKernel.decrementProcess();
             return -1;
         }
         String name = readVirtualMemoryString(fileNameAddr, 256);
         if (name == null) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid file name");
+            child.cleanup();
             UserKernel.decrementProcess();
             return -1;
         }
@@ -712,12 +715,14 @@ public class UserProcess {
         for (int i = 0; i < argc; i += 1) {
             if (argvAddr == 0 || argvAddr >= numPages * pageSize) {
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid address reference");
+                child.cleanup();
                 UserKernel.decrementProcess();
                 return -1;
             }
             args[i] = readVirtualMemoryString(argvAddr, 256);
             if (args[i] == null) {
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid argument");
+                child.cleanup();
                 UserKernel.decrementProcess();
                 return -1;
             }
@@ -730,8 +735,6 @@ public class UserProcess {
             UserKernel.decrementProcess();
             return -1;
         }
-        child.parent = this;
-        children.put(child.PID, child);
         return child.PID;
     }
 
@@ -895,7 +898,7 @@ public class UserProcess {
             unloadSections();
             cleanup();
             UserKernel.decrementProcess();
-            Lib.debug(dbgProcess, "number of processes:" + UserKernel.getNumProcess());
+            Lib.debug(dbgProcess, "Number of live processes:" + UserKernel.getNumProcess());
             if (UserKernel.isLastProcess()) {
                 Kernel.kernel.terminate();
             }
