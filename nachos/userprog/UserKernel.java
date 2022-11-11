@@ -137,14 +137,13 @@ public class UserKernel extends ThreadedKernel {
      */
     public static int allocate() {
         lock.acquire();
-        try {
-            while (freePageList.size() == 0) {
+        while (freePageList.size() == 0) {
+            try {
                 notEmpty.wait();
+            } catch (Exception e) {
+                e.getStackTrace();
             }
-        } catch (Exception e) {
-            e.getStackTrace();
         }
-        
         int pageNum = freePageList.removeFirst();
         lock.release();
         return pageNum;
