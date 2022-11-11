@@ -888,6 +888,7 @@ public class UserProcess {
             
             unloadSections();
             cleanup();
+            Lib.debug(dbgProcess, "number of left processes:" + UserKernel.getNumProcess());
             if (UserKernel.isLastProcess()) {
                 Kernel.kernel.terminate();
             }

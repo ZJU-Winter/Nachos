@@ -189,6 +189,13 @@ public class UserKernel extends ThreadedKernel {
     }
 
     /**
+     * @return the number of process.
+     */
+    public static int getNumProcess() {
+        return numProcess;
+    }
+
+    /**
      * @return if there is only one process left.
      */
     public static boolean isLastProcess() {
