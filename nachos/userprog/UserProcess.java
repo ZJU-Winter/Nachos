@@ -50,6 +50,7 @@ public class UserProcess {
 	 */
 	public static UserProcess newUserProcess() {
 	    String name = Machine.getProcessClassName ();
+        UserKernel.incrementProcess();
 
 		// If Lib.constructObject is used, it quickly runs out
 		// of file descriptors and throws an exception in
@@ -690,17 +691,20 @@ public class UserProcess {
 
         if (children.containsKey(child.PID)) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, should have unique PIDs");
+            UserKernel.decrementProcess();
             return -1;
         }
         //children.put(child.PID, child);
 
         if (fileNameAddr == 0 || fileNameAddr >= numPages * pageSize || argvAddr >= numPages * pageSize) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid address reference");
+            UserKernel.decrementProcess();
             return -1;
         }
         String name = readVirtualMemoryString(fileNameAddr, 256);
         if (name == null) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid file name");
+            UserKernel.decrementProcess();
             return -1;
         }
 
@@ -708,11 +712,13 @@ public class UserProcess {
         for (int i = 0; i < argc; i += 1) {
             if (argvAddr == 0 || argvAddr >= numPages * pageSize) {
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid address reference");
+                UserKernel.decrementProcess();
                 return -1;
             }
             args[i] = readVirtualMemoryString(argvAddr, 256);
             if (args[i] == null) {
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid argument");
+                UserKernel.decrementProcess();
                 return -1;
             }
             argvAddr += (args[i].length() + 1);
@@ -721,11 +727,11 @@ public class UserProcess {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, execute failed");
             child.unloadSections();
             child.cleanup();
+            UserKernel.decrementProcess();
             return -1;
         }
         child.parent = this;
         children.put(child.PID, child);
-        UserKernel.incrementProcess();
         return child.PID;
     }
 
