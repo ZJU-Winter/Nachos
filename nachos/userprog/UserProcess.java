@@ -412,7 +412,7 @@ public class UserProcess {
 	}
 
     /**
-     * Release any resources allocated for the process.
+     * Release any resources belongs to the process.
      */
     protected void cleanup() {
         UserKernel.decrementProcess();
