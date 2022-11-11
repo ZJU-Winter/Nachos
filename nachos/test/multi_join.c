@@ -99,6 +99,5 @@ int main()
         printf("test exits normally! join status: %d; exit status: %d\n", joinRes, *status);
 
     printf("test 5 ends!\n\n");
-
-    return 0;
+    exit(0);
 }
