@@ -34,7 +34,6 @@ public class UserProcess {
 			pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
         }
         */
-        UserKernel.incrementProcess();
         fileTable[0] = UserKernel.console.openForReading();
         fileTable[1] = UserKernel.console.openForWriting();
         for (int i = 2; i < 16; i += 1) {
@@ -414,6 +413,7 @@ public class UserProcess {
 
     /**
      * Release any resources belongs to the process.
+     * Clear file table and set children's parent to null
      */
     protected void cleanup() {
         UserKernel.decrementProcess();
@@ -686,13 +686,13 @@ public class UserProcess {
     private int handleExec(int fileNameAddr, int argc, int argvAddr) {
         Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec()");
         UserProcess child = newUserProcess();
-        child.parent = this;
+        //child.parent = this;
 
         if (children.containsKey(child.PID)) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, should have unique PIDs");
             return -1;
         }
-        children.put(child.PID, child);
+        //children.put(child.PID, child);
 
         if (fileNameAddr == 0 || fileNameAddr >= numPages * pageSize || argvAddr >= numPages * pageSize) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid address reference");
@@ -719,8 +719,13 @@ public class UserProcess {
         }
         if (!child.execute(name, args)) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, execute failed");
+            child.unloadSections();
+            child.cleanup();
             return -1;
         }
+        child.parent = this;
+        children.put(child.PID, child);
+        UserKernel.incrementProcess();
         return child.PID;
     }
 
