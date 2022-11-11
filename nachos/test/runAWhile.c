@@ -12,7 +12,9 @@ int main()
     printf("runAWhile starts\n");
     int i;
     int t = 100000;
-    for (i = 0; i < t; i++) {}
+    for (i = 0; i < t; i++) {
+        
+    }
     printf("runAWhile ends\n");
     return 0;
 }

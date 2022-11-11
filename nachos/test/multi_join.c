@@ -10,23 +10,22 @@
 int main()
 {
     char * argv1 [1];
-    argv1[0] = "hello.coff";
+    argv1[0] = "simpleTest.coff";
     char * argv2 [1];
     argv2[0] = "runAWhile.coff";
     char * argv3 [1];
     argv3[0] = "exit1.coff";
 
     int cpid1, cpid2;
-    int statusStore = -99;
-    int* status = &statusStore;
+    int* status = 0;
     int joinRes, failNum;
 
 
 
 
-    printf("Test 1: exec two hello.coff, join in reversed order\n");
-    cpid1 = exec("hello.coff",1,argv1);
-    cpid2 = exec("hello.coff",1,argv1);
+    printf("Test 1: exec two simpleTest.coff, join in reversed order\n");
+    cpid1 = exec("simpleTest.coff",1,argv1);
+    cpid2 = exec("simpleTest.coff",1,argv1);
 
     joinRes = join(cpid2, status);
     printf("Join cpid2: join status: %d; exit status: %d\n", joinRes, *status);
@@ -43,9 +42,9 @@ int main()
 
 
 
-    printf("Test 2: exec runAWhile.coff then hello.coff, join in order\n");
+    printf("Test 2: exec runAWhile.coff then simpleTest.coff, join in order\n");
     cpid1 = exec("runAWhile.coff",1,argv2);
-    cpid2 = exec("hello.coff",1,argv1);
+    cpid2 = exec("simpleTest.coff",1,argv1);
 
     joinRes = join(cpid1, status);
     printf("Join cpid2: join status: %d; exit status: %d\n", joinRes, *status);
