@@ -13,7 +13,7 @@ int main() {
         printf("Error");
         exit(-1);
     } else {
-        printf("send %d, pass", written);
+        printf("send %d, pass\n", written);
     }
     return 0;
 }

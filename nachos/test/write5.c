@@ -9,10 +9,10 @@ int main() {
     int fd = open(str);
     int written = write(fd, inputStr, -1);
     if (written == -1) {
-        printf("Error");
+        printf("Error, pass\n");
         exit(-1);
     } else {
-        printf("send %d", written);
+        printf("send %d, test failed\n", written);
     }
     return 0;
 }
