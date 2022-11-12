@@ -494,10 +494,10 @@ public class UserProcess {
         unloadSections();
         cleanup();
         UserKernel.decrementProcess();
+        Lib.debug(dbgProcess, "Number of live processes:" + UserKernel.getNumProcess());
         if (this.parent != null) {
             this.parent.childStatus.put(this, status);
         }
-        Lib.debug(dbgProcess, "Number of live processes:" + UserKernel.getNumProcess());
         if (UserKernel.isLastProcess()) {
 		    Kernel.kernel.terminate();
         }
@@ -711,6 +711,7 @@ public class UserProcess {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, should have unique PIDs");
             child.cleanup();
             UserKernel.decrementProcess();
+            Lib.debug(dbgProcess, "Number of live processes:" + UserKernel.getNumProcess());
             return -1;
         }
 
@@ -718,6 +719,7 @@ public class UserProcess {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid address reference");
             child.cleanup();
             UserKernel.decrementProcess();
+            Lib.debug(dbgProcess, "Number of live processes:" + UserKernel.getNumProcess());
             return -1;
         }
         String name = readVirtualMemoryString(fileNameAddr, 256);
@@ -725,6 +727,7 @@ public class UserProcess {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid file name");
             child.cleanup();
             UserKernel.decrementProcess();
+            Lib.debug(dbgProcess, "Number of live processes:" + UserKernel.getNumProcess());
             return -1;
         }
         byte[] data = new byte[4];
@@ -735,6 +738,7 @@ public class UserProcess {
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid address reference");
                 child.cleanup();
                 UserKernel.decrementProcess();
+                Lib.debug(dbgProcess, "Number of live processes:" + UserKernel.getNumProcess());
                 return -1;
             }
 
@@ -746,6 +750,7 @@ public class UserProcess {
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid argument");
                 child.cleanup();
                 UserKernel.decrementProcess();
+                Lib.debug(dbgProcess, "Number of live processes:" + UserKernel.getNumProcess());
                 return -1;
             }
             argvAddr += 4;
