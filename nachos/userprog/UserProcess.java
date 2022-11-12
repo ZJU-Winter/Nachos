@@ -49,7 +49,7 @@ public class UserProcess {
 	 * @return a new process of the correct class.
 	 */
 	public static UserProcess newUserProcess() {
-	    String name = Machine.getProcessClassName ();
+	    String name = Machine.getProcessClassName();
         UserKernel.incrementProcess();
 
 		// If Lib.constructObject is used, it quickly runs out
@@ -691,7 +691,7 @@ public class UserProcess {
             }
         }
         if (ThreadedKernel.fileSystem.remove(name)) {
-            System.out.println("PID[" + PID + "]: Removed " + name + "successfully");
+            System.out.println("PID[" + PID + "]: Removed " + name + " successfully");
         }
         return 0;
     }
