@@ -688,6 +688,7 @@ public class UserProcess {
      */
     private int handleExec(int fileNameAddr, int argc, int argvAddr) {
         Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec()");
+        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec()" + "fileNameAddr:" + fileNameAddr + " argvAddr:" + argvAddr);
         UserProcess child = newUserProcess();
         child.parent = this;
 
