@@ -163,11 +163,11 @@ void runline(char* line) {
 	    strcat(prog, ".coff");
 
         printf("sh.c: argc is %d\n", argc);
-        printf("sh.c: argc's address is %x\n", &argc);
+        printf("sh.c: argc's address is %p\n", &argc);
 
         for (int i = 0; i < argc; i += 1) {
         printf("sh.c: argv[%d] is %s\n",i, argv[i]);
-        printf("sh.c: argv[%d]'s address is %x\n",i, &(argv[i]));
+        printf("sh.c: argv[%d]'s address is %p\n",i, &(argv[i]));
         }
 	    pid = exec(prog, argc, argv);
 
