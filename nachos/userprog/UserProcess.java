@@ -430,7 +430,9 @@ public class UserProcess {
          for (UserProcess child : children.values()) {
              child.parent = null;
          }
-         coff.close();
+         if (coff != null) {
+            coff.close();
+         }
     }
 
 	/**
@@ -723,9 +725,11 @@ public class UserProcess {
                 UserKernel.decrementProcess();
                 return -1;
             }
+
             readVirtualMemory(argvAddr, data, 0, 4);
             int agumentAddress = Lib.bytesToInt(data, 0);
             args[i] = readVirtualMemoryString(agumentAddress, 256);
+
             if (args[i] == null) {
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid argument");
                 child.cleanup();
