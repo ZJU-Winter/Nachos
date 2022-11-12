@@ -169,11 +169,13 @@ public class UserProcess {
 	}
 
 	private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
-        //TODO valid
 		int currentVa = vaddr;
 		int totalRead = 0;
 		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
+            if (!pageTable[vpn].valid) {
+                return totalRead;
+            }
 			int ppn = pageTable[vpn].ppn;
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
@@ -224,7 +226,6 @@ public class UserProcess {
 	 * @return the number of bytes successfully transferred.
 	 */
 	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
-        //TODO: readonly valid
 		Lib.assertTrue(offset >= 0 && length >= 0
 				&& offset + length <= data.length);
 
@@ -244,6 +245,9 @@ public class UserProcess {
 		int totalWrite = 0;
 		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
+            if (!pageTable[vpn].valid || pageTable[vpn].readOnly) {
+                return totalWrite;
+            }
 			int ppn = pageTable[vpn].ppn;
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
