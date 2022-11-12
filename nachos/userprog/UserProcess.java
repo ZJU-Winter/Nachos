@@ -515,6 +515,9 @@ public class UserProcess {
         if (file == null) {
             return -1;
         }
+        if (nextIndexQueue.isEmpty()) {
+            return -1;
+        }
         int index = nextIndexQueue.poll();
         //Lib.assertTrue(fileTable[index] == null, "file object at " + index + " should be null.");
         fileTable[index] = file;
@@ -533,6 +536,9 @@ public class UserProcess {
 		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleOpen(" + name + ")");
         OpenFile file = ThreadedKernel.fileSystem.open(name, false);
         if (file == null) {
+            return -1;
+        }
+        if (nextIndexQueue.isEmpty()) {
             return -1;
         }
         int index = nextIndexQueue.poll();
@@ -696,7 +702,6 @@ public class UserProcess {
     private int handleExec(int fileNameAddr, int argc, int argvAddr) {
         Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec()");
         UserProcess child = newUserProcess();
-        child.parent = this;
 
         if (children.containsKey(child.PID)) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, should have unique PIDs");
@@ -704,7 +709,6 @@ public class UserProcess {
             UserKernel.decrementProcess();
             return -1;
         }
-        children.put(child.PID, child);
 
         if (fileNameAddr == 0 || fileNameAddr >= numPages * pageSize || argvAddr >= numPages * pageSize) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid address reference");
@@ -749,6 +753,8 @@ public class UserProcess {
             UserKernel.decrementProcess();
             return -1;
         }
+        child.parent = this;
+        children.put(child.PID, child);
         return child.PID;
     }
 
