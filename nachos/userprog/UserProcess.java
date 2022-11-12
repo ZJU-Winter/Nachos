@@ -755,6 +755,7 @@ public class UserProcess {
             child.unloadSections();
             child.cleanup();
             UserKernel.decrementProcess();
+            Lib.debug(dbgProcess, "Number of live processes:" + UserKernel.getNumProcess());
             return -1;
         }
         child.parent = this;
