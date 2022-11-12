@@ -5,10 +5,14 @@
 
 int main() {
 
-    char *str = "non_exist.txt";
+    char *str = "nonexist.txt";
     int fd = open(str);
-    if (fd == -1) { printf("Test Passed: open a non-exist file. "); }
-    else { printf("Test Failed."); }
+    if (fd == -1) { 
+        printf("open a non-exist file failed, test pass. ");
+    }
+    else {
+        printf("Test Failed.");
+    }
     assert(fd == -1);
     return 0;
 }
