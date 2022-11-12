@@ -11,14 +11,14 @@ int main(int argc, char** argv)
   int src, dst, amount;
 
   if (argc!=3) {
-    printf("Usage: cp <src> <dst>\n");
+    printf("Usage: mv <src> <dst>\n");
     return 1;
   }
-  printf("src:%s\n", argv[0]);
-  printf("dst:%s\n", argv[1]);
+  printf("src:%s\n", argv[1]);
+  printf("dst:%s\n", argv[2]);
   src = open(argv[1]);
   if (src==-1) {
-    printf("Open to open %s\n", argv[1]);
+    printf("Unable to open %s\n", argv[1]);
     return 1;
   }
 
