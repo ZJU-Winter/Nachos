@@ -493,6 +493,7 @@ public class UserProcess {
         if (this.parent != null) {
             this.parent.childStatus.put(this, status);
         }
+        Lib.debug(dbgProcess, "Number of live processes:" + UserKernel.getNumProcess());
         if (UserKernel.isLastProcess()) {
 		    Kernel.kernel.terminate();
         }
