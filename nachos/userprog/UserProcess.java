@@ -678,7 +678,7 @@ public class UserProcess {
             }
         }
         if (ThreadedKernel.fileSystem.remove(name)) {
-            System.out.println("PID[" + PID + "]: Removed " + name + "successfuly");
+            System.out.println("PID[" + PID + "]: Removed " + name + "successfully");
         }
         return 0;
     }
