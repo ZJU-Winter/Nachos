@@ -383,6 +383,10 @@ public class UserProcess {
 				// for now, just assume virtual addresses=physical addresses
 				//section.loadPage(i, vpn);
                 int ppn = UserKernel.allocate();
+                if (ppn < 0) {
+			        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tinsufficient physical memory");
+                    return false;
+                }
                 section.loadPage(i, ppn);
                 pageTable[vpn] = new TranslationEntry(vpn, ppn, true, section.isReadOnly(), false, false);
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);

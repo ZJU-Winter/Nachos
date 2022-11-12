@@ -29,7 +29,6 @@ public class UserKernel extends ThreadedKernel {
         lock = new Lock();
         pidLock = new Lock();
         numProcessLock = new Lock();
-        notEmpty = new Condition(lock);
 
         int numPhysPages = Machine.processor().getNumPhysPages();
         for (int i = 0; i < numPhysPages; i += 1) {
@@ -137,12 +136,9 @@ public class UserKernel extends ThreadedKernel {
      */
     public static int allocate() {
         lock.acquire();
-        while (freePageList.size() == 0) {
-            try {
-                notEmpty.wait();
-            } catch (Exception e) {
-                e.getStackTrace();
-            }
+        if (freePageList.size() == 0) {
+            lock.release();
+            return -1;
         }
         int pageNum = freePageList.removeFirst();
         lock.release();
@@ -215,8 +211,6 @@ public class UserKernel extends ThreadedKernel {
     private static Lock pidLock;
 
     private static Lock numProcessLock;
-
-    private static Condition notEmpty;
 
     private static int PIDCount = 0;
 
