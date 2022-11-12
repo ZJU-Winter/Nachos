@@ -151,7 +151,6 @@ public class UserKernel extends ThreadedKernel {
     public static void deallocate(int pagenum) {
         lock.acquire();
         freePageList.addLast(pagenum);
-        notEmpty.wake();
         lock.release();
     }
 
