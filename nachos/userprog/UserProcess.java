@@ -538,7 +538,7 @@ public class UserProcess {
      * Handle the read(int fileDescriptor, void *buffer, int count) system call.
      */
     private int handleRead(int fileDescriptor, int addr, int count) {
-		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleRead(" + fileDescriptor + ")");
+		//Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleRead(" + fileDescriptor + ")");
         if (addr == 0 || count < 0) {
             return -1;
         }
