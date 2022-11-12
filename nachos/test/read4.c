@@ -6,7 +6,7 @@
 int main() {
     char *str = "output.txt";
     int fd = open(str);
-    char buff[10];
+    char buff[100] = "";
     int recv = 0;
     while ((recv = read(fd, buff, 100)) != 0) {
         if (recv == -1) {
