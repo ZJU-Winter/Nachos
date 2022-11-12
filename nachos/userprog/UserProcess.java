@@ -690,7 +690,6 @@ public class UserProcess {
      */
     private int handleExec(int fileNameAddr, int argc, int argvAddr) {
         Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec()");
-        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec()" + "fileNameAddr:" + fileNameAddr + " argvAddr:" + argvAddr);
         UserProcess child = newUserProcess();
         child.parent = this;
 
@@ -727,8 +726,8 @@ public class UserProcess {
             }
 
             readVirtualMemory(argvAddr, data, 0, 4);
-            int agumentAddress = Lib.bytesToInt(data, 0);
-            args[i] = readVirtualMemoryString(agumentAddress, 256);
+            int argumentAddress = Lib.bytesToInt(data, 0);
+            args[i] = readVirtualMemoryString(argumentAddress, 256);
 
             if (args[i] == null) {
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid argument");
