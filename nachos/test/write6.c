@@ -8,7 +8,7 @@ int main() {
     char *str = "output.txt";
     char *inputStr = "write something here";
     int fd = open(str);
-    int written = write(fd, inputStr + 100, strlen(inputStr));
+    int written = write(fd, inputStr, strlen(inputStr));
     if (written == -1) {
         printf("Error");
         exit(-1);
