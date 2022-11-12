@@ -14,8 +14,10 @@ int main(int argc, char** argv)
     printf("Usage: mv <src> <dst>\n");
     return 1;
   }
-  printf("src:%s\n", argv[1]);
-  printf("dst:%s\n", argv[2]);
+  printf("mv.c: argv[0] is %s\n", argv[0]);
+  printf("mv.c: src is %s\n", argv[1]);
+  printf("mv.c: dst is %s\n", argv[2]);
+
   src = open(argv[1]);
   if (src==-1) {
     printf("Unable to open %s\n", argv[1]);
