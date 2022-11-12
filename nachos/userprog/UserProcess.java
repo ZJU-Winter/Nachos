@@ -706,6 +706,7 @@ public class UserProcess {
             return -1;
         }
         String name = readVirtualMemoryString(fileNameAddr, 256);
+        //TODO
         Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() with file name " + name);
         if (name == null) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid file name");
@@ -713,6 +714,10 @@ public class UserProcess {
             UserKernel.decrementProcess();
             return -1;
         }
+        //TODO
+        String argv0 = readVirtualMemoryString(argvAddr, 256);
+        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() with file name " + name + "with argv[0]" + argv0);
+        
 
         String[] args = new String[argc];
         for (int i = 0; i < argc; i += 1) {
