@@ -707,7 +707,6 @@ public class UserProcess {
             return -1;
         }
         String name = readVirtualMemoryString(fileNameAddr, 256);
-        argvAddr += 4;
         if (name == null) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid file name");
             child.cleanup();
@@ -716,7 +715,7 @@ public class UserProcess {
         }
         byte[] data = new byte[4];
         String[] args = new String[argc];
-        
+
         for (int i = 0; i < argc; i += 1) {
             if (argvAddr == 0 || argvAddr >= numPages * pageSize) {
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid address reference");
