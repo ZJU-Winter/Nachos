@@ -706,6 +706,7 @@ public class UserProcess {
             return -1;
         }
         String name = readVirtualMemoryString(fileNameAddr, 256);
+        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() with file name " + name);
         if (name == null) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid file name");
             child.cleanup();
