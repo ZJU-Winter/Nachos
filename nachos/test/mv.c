@@ -14,7 +14,8 @@ int main(int argc, char** argv)
     printf("Usage: cp <src> <dst>\n");
     return 1;
   }
-
+  printf("src:%s\n", argv[0]);
+  printf("dst:%s\n", argv[1]);
   src = open(argv[1]);
   if (src==-1) {
     printf("Open to open %s\n", argv[1]);
