@@ -162,7 +162,12 @@ void runline(char* line) {
 	    strcpy(prog, argv[0]);
 	    strcat(prog, ".coff");
 
+        printf("sh.c: argc is %d\n", argc);
+        for (int i = 0; i < argc; i += 1) {
+        printf("sh.c: argv[%d] is %s\n",i, argv[i]);
+        }
 	    pid = exec(prog, argc, argv);
+
 	    if (pid == -1) {
 		printf("%s: exec failed.\n", argv[0]);
 		return;
