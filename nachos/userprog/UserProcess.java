@@ -562,7 +562,7 @@ public class UserProcess {
                 return -1;
             }
             if (readBytes == 0) {
-                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleRead() reach end of file");
+                //Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleRead() reach end of file");
                 return total;
             }
             if (readBytes < pageSize) { // reach end of file or count < pageSize
