@@ -162,14 +162,14 @@ void runline(char* line) {
 	    strcpy(prog, argv[0]);
 	    strcat(prog, ".coff");
 
-        printf("sh.c: argc is %d\n", argc);
-        printf("sh.c: argc's address is %d\n", &argc);
-        printf("sh.c: argv is %d\n", argv);
+        // printf("sh.c: argc is %d\n", argc);
+        // printf("sh.c: argc's address is %d\n", &argc);
+        // printf("sh.c: argv is %d\n", argv);
 
-        for (int i = 0; i < argc; i += 1) {
-        printf("sh.c: argv[%d] is %s\n",i, argv[i]);
-        printf("sh.c: argv[%d]'s address is %d\n",i, &(argv[i]));
-        }
+        // for (int i = 0; i < argc; i += 1) {
+        // printf("sh.c: argv[%d] is %s\n",i, argv[i]);
+        // printf("sh.c: argv[%d]'s address is %d\n",i, &(argv[i]));
+        // }
 	    pid = exec(prog, argc, argv);
 
 	    if (pid == -1) {
