@@ -707,23 +707,16 @@ public class UserProcess {
             return -1;
         }
         String name = readVirtualMemoryString(fileNameAddr, 256);
-        //TODO
-        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() with file name " + name);
+        argvAddr += 4;
         if (name == null) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid file name");
             child.cleanup();
             UserKernel.decrementProcess();
             return -1;
         }
-        //TODO
         byte[] data = new byte[4];
-        readVirtualMemory(argvAddr, data, 0, 4);
-        int start = Lib.bytesToInt(data, 0);
-        String argv1 = readVirtualMemoryString(start, 256);
-        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() with file name " + name + " with argv[1]" + argv1);
-        
-
         String[] args = new String[argc];
+        
         for (int i = 0; i < argc; i += 1) {
             if (argvAddr == 0 || argvAddr >= numPages * pageSize) {
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid address reference");
@@ -731,14 +724,16 @@ public class UserProcess {
                 UserKernel.decrementProcess();
                 return -1;
             }
-            args[i] = readVirtualMemoryString(argvAddr, 256);
+            readVirtualMemory(argvAddr, data, 0, 4);
+            int agumentAddress = Lib.bytesToInt(data, 0);
+            args[i] = readVirtualMemoryString(agumentAddress, 256);
             if (args[i] == null) {
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, invalid argument");
                 child.cleanup();
                 UserKernel.decrementProcess();
                 return -1;
             }
-            argvAddr += (args[i].length() + 1);
+            argvAddr += 4;
         }
         if (!child.execute(name, args)) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, execute failed");
