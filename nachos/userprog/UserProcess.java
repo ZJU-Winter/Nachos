@@ -718,8 +718,7 @@ public class UserProcess {
         //TODO
         byte[] data = new byte[4];
         readVirtualMemory(argvAddr, data, 0, 4);
-        int start = 0;
-        Lib.bytesToInt(data, start);
+        int start = Lib.bytesToInt(data, 0);
         String argv1 = readVirtualMemoryString(start, 256);
         Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() with file name " + name + " with argv[1]" + argv1);
         
