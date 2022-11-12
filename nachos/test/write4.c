@@ -30,23 +30,18 @@ main ()
     printf ("Enter up to 80 characters per line:\n");
     
     while (1) {
-       // print the prompt
        puts (prompt);
 
-       // read the input terminated by a newline
        i = 0;
        do {
-	   buffer[i] = getchar ();
+        buffer[i] = getchar ();
        } while (buffer[i++] != '\n' && i < 80);
        buffer[i] = '\0';
 
-       // if the input is just a period, then exit
-       if (buffer[0] == '.' &&
-	   buffer[1] == '\n') {
-	   return 0;
+       if (buffer[0] == '.' && buffer[1] == '\n') {
+        return 0; 
        }
 
-       // echo the input to the output
        puts (buffer);
    }
 }
