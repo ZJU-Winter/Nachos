@@ -716,8 +716,8 @@ public class UserProcess {
             return -1;
         }
         //TODO
-        String argv1 = readVirtualMemoryString(argvAddr, 256);
-        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() with file name " + name + "with argv[1]" + argv1);
+        String argv1 = readVirtualMemoryString(argvAddr, 4);
+        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() with file name " + name + " with argv[1]" + argv1);
         
 
         String[] args = new String[argc];
