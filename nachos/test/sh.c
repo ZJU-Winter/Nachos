@@ -164,6 +164,7 @@ void runline(char* line) {
 
         printf("sh.c: argc is %d\n", argc);
         printf("sh.c: argc's address is %d\n", &argc);
+        printf("sh.c: argv is %d\n", argv);
 
         for (int i = 0; i < argc; i += 1) {
         printf("sh.c: argv[%d] is %s\n",i, argv[i]);
