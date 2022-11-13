@@ -742,7 +742,11 @@ public class UserProcess {
                 return -1;
             }
 
-            readVirtualMemory(argvAddr, data, 0, 4);
+            int read = readVirtualMemory(argvAddr, data, 0, 4);
+            if (read != 4) {
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleExec() failed, read failed");
+                return -1;
+            }
             int argumentAddress = Lib.bytesToInt(data, 0);
             args[i] = readVirtualMemoryString(argumentAddress, 256);
 
