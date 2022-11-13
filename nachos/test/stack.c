@@ -1,9 +1,10 @@
 #include "syscall.h"
 
+//* test for reading
 int main (int argc, char *argv[])
 {
     char *fileName = "alice_in_wonderland.txt"; // fileExists
-    int fd = creat(fileName);
+    int fd = open(fileName);
     printf ("open file (fd = %d)\n", fd);
 
     char buffer[50];
@@ -40,7 +41,7 @@ int main (int argc, char *argv[])
 
 
     char* invalidFileName = "alice_in_wonderland.txtalice_in_wonderland.txtalice_in_wonderland.txtalice_in_wonderland.txtalice_in_wonderland.txtalice_in_wonderland.txtalice_in_wonderland.txtalice_in_wonderland.txtalice_in_wonderland.txtalice_in_wonderland.txtalice_in_wonderland.txtalice_in_wonderland.txtalice_in_wonderland.txtalice_in_wonderland.txt";
-    int fd1 = creat(invalidFileName);
+    int fd1 = open(invalidFileName);
     if(fd1 != -1) {
         printf ("should not open invalid filename\n");
         close(fd1); 
