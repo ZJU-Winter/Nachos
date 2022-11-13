@@ -37,4 +37,3 @@
 * Wentao Huang: group discussion, implementation of file system calls, virtual memory and multiprogramming system calls, testing
 * Siran Ma: group discussion, implementation of file system calls and virtual memory, testing
 * Jiayi Wang: group discussion and testing
-
