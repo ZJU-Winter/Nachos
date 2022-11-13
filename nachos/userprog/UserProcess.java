@@ -794,12 +794,12 @@ public class UserProcess {
             }
             byte[] statusBytes = new byte[4];
             Lib.bytesFromInt(statusBytes, 0, status);
-            if (writeVirtualMemory(statusAddr, statusBytes) != 4) {
+            int writtenBytes = writeVirtualMemory(statusAddr, statusBytes);
+            if (writtenBytes != 4) {
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleJoin(), write failed");
                 children.remove(pid); 
                 return -1;
             }
-
             children.remove(pid);
             return 1;
         }
