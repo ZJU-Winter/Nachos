@@ -17,7 +17,8 @@ int main()
     argv3[0] = "exit1.coff";
 
     int cpid1, cpid2;
-    int* status = 0;
+    int num = 0;
+    int* status = &num;
     int joinRes, failNum;
 
 
