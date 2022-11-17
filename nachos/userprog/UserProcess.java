@@ -682,20 +682,25 @@ public class UserProcess {
      */
     private int handleUnlink(int addr) {
         String name = readVirtualMemoryString(addr, 256);
+        int i = 0;
         if (name == null) {
 		    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleUnlink() failed");
             return -1;
         }
 		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleUnlink(" + name + ")");
-        for (int i = 0; i < 16; i += 1) {
+        for (i = 0; i < 16; i += 1) {
             if (fileTable[i] != null && fileTable[i].getName().equals(name)) {
                 nextIndexQueue.offer(i);
                 fileTable[i] = null;
                 break;
             }
         }
+        if (i == 16) {
+		    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleUnlink(" + name + ") failed, can't find file");
+            return -1;
+        }
         if (ThreadedKernel.fileSystem.remove(name)) {
-            System.out.println("PID[" + PID + "]: Removed " + name + " successfully");
+            Lib.debug(dbgProcess, "PID[" + PID + "]: Removed " + name + " successfully");
         }
         return 0;
     }
