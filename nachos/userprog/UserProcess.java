@@ -700,7 +700,7 @@ public class UserProcess {
             return -1;
         }
         if (ThreadedKernel.fileSystem.remove(name)) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]: Removed " + name + " successfully");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:\tRemoved " + name + " successfully");
         }
         return 0;
     }
