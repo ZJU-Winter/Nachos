@@ -692,15 +692,16 @@ public class UserProcess {
             if (fileTable[i] != null && fileTable[i].getName().equals(name)) {
                 nextIndexQueue.offer(i);
                 fileTable[i] = null;
+		        System.out.println("PID[" + PID + "]:" + "\tUserProcess.handleUnlink(" + name + "), unlinked fd " + i + " successfully");
                 break;
             }
         }
         if (i == 16) {
-		    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleUnlink(" + name + ") failed, can't find file");
+		    System.out.println("PID[" + PID + "]:" + "\tUserProcess.handleUnlink(" + name + ") failed, can't find file");
             return -1;
         }
         if (ThreadedKernel.fileSystem.remove(name)) {
-            Lib.debug(dbgProcess, "PID[" + PID + "]:\tRemoved " + name + " successfully");
+            System.out.println("PID[" + PID + "]:\tRemoved " + name + " successfully");
         }
         return 0;
     }
