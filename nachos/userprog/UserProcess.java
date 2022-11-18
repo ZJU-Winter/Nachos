@@ -689,6 +689,9 @@ public class UserProcess {
         }
 		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleUnlink(" + name + ")");
         for (i = 0; i < 16; i += 1) {
+            if (fileTable[i] != null) {
+                System.out.println("fd: " + i + "name: " + fileTable[i].getName());
+            }
             if (fileTable[i] != null && fileTable[i].getName().equals(name)) {
                 nextIndexQueue.offer(i);
                 fileTable[i] = null;
