@@ -687,6 +687,7 @@ public class UserProcess {
             return -1;
         }
 		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleUnlink(" + name + ")");
+        // unlink delete the file, but does not close it
         /* 
         for (int i = 0; i < 16; i += 1) {
             if (fileTable[i] != null && fileTable[i].getName().equals(name)) {
