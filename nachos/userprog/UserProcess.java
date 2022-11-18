@@ -687,6 +687,7 @@ public class UserProcess {
             return -1;
         }
 		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleUnlink(" + name + ")");
+        /* 
         for (int i = 0; i < 16; i += 1) {
             if (fileTable[i] != null && fileTable[i].getName().equals(name)) {
                 nextIndexQueue.offer(i);
@@ -696,6 +697,7 @@ public class UserProcess {
                 break;
             }
         }
+        */
         if (ThreadedKernel.fileSystem.remove(name)) {
             Lib.debug(dbgProcess, "PID[" + PID + "]:\tRemoved " + name + " successfully");
             return 0;
