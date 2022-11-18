@@ -682,31 +682,25 @@ public class UserProcess {
      */
     private int handleUnlink(int addr) {
         String name = readVirtualMemoryString(addr, 256);
-        int i = 0;
         if (name == null) {
 		    Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleUnlink() failed");
             return -1;
         }
 		Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleUnlink(" + name + ")");
-        for (i = 0; i < 16; i += 1) {
-            if (fileTable[i] != null) {
-                System.out.println("fd: " + i + "name: " + fileTable[i].getName());
-            }
+        for (int i = 0; i < 16; i += 1) {
             if (fileTable[i] != null && fileTable[i].getName().equals(name)) {
                 nextIndexQueue.offer(i);
+                fileTable[i].close();
                 fileTable[i] = null;
-		        System.out.println("PID[" + PID + "]:" + "\tUserProcess.handleUnlink(" + name + "), unlinked fd " + i + " successfully");
+		        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tUserProcess.handleUnlink(" + name + "), unlinked fd " + i + " successfully");
                 break;
             }
         }
-        if (i == 16) {
-		    System.out.println("PID[" + PID + "]:" + "\tUserProcess.handleUnlink(" + name + ") failed, can't find file");
-            return -1;
-        }
         if (ThreadedKernel.fileSystem.remove(name)) {
-            System.out.println("PID[" + PID + "]:\tRemoved " + name + " successfully");
+            Lib.debug(dbgProcess, "PID[" + PID + "]:\tRemoved " + name + " successfully");
+            return 0;
         }
-        return 0;
+        return -1;
     }
 
     /**
