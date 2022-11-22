@@ -38,9 +38,8 @@ public class VMProcess extends UserProcess {
      * 
      * @return <tt>true</tt> if successful.
      */
-    protected boolean loadSections() {
-        return super.loadSections();
-        /*
+    @Override
+    protected boolean loadSections() {        
         if (numPages > Machine.processor().getNumPhysPages()) {
             coff.close();
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tinsufficient physical memory");
@@ -72,7 +71,7 @@ public class VMProcess extends UserProcess {
             //Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
         }
         return true;
-        */
+        
     }
 
     /**
@@ -91,7 +90,6 @@ public class VMProcess extends UserProcess {
         super.writeVMWithPT();
     }
     */
-
 
     private int handlePageFault(int vaddr) {
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tPage Fault on " + vaddr);
