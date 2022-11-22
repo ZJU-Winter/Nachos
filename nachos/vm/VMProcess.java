@@ -79,6 +79,7 @@ public class VMProcess extends UserProcess {
         super.unloadSections();
     }
 
+    /*
     private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
         super.readVMWithPT();
     }
@@ -86,6 +87,7 @@ public class VMProcess extends UserProcess {
     private int writeVMWithPT(byte[] data, int offset, byte[] memory, int vaddr, int amount) {
         super.writeVMWithPT();
     }
+    */
 
 
     private int handlePageFault(int vaddr) {
