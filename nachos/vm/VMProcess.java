@@ -32,39 +32,91 @@ public class VMProcess extends UserProcess {
 		super.restoreState();
 	}
 
-	/**
-	 * Initializes page tables for this process so that the executable can be
-	 * demand-paged.
-	 * 
-	 * @return <tt>true</tt> if successful.
-	 */
-	protected boolean loadSections() {
-		return super.loadSections();
-	}
+    /**
+     * Initializes page tables for this process so that the executable can be
+     * demand-paged.
+     * 
+     * @return <tt>true</tt> if successful.
+     */
+    protected boolean loadSections() {
+        if (numPages > Machine.processor().getNumPhysPages()) {
+            coff.close();
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tinsufficient physical memory");
+            return false;
+        }
 
-	/**
-	 * Release any resources allocated by <tt>loadSections()</tt>.
-	 */
-	protected void unloadSections() {
-		super.unloadSections();
-	}
+        pageTable = new TranslationEntry[numPages];
 
-	/**
-	 * Handle a user exception. Called by <tt>UserKernel.exceptionHandler()</tt>
-	 * . The <i>cause</i> argument identifies which exception occurred; see the
-	 * <tt>Processor.exceptionZZZ</tt> constants.
-	 * 
-	 * @param cause the user exception that occurred.
-	 */
-	public void handleException(int cause) {
-		Processor processor = Machine.processor();
+        for (int s = 0; s < coff.getNumSections(); s++) {
+            CoffSection section = coff.getSection(s);
 
-		switch (cause) {
-		default:
-			super.handleException(cause);
-			break;
-		}
-	}
+            Lib.debug(dbgProcess, "\tinitializing " + section.getName()
+                    + " section (" + section.getLength() + " pages)");
+
+            for (int i = 0; i < section.getLength(); i++) {
+                int vpn = section.getFirstVPN() + i;
+                int ppn = -1;
+                //section.loadPage(i, ppn);
+                pageTable[vpn] = new TranslationEntry(vpn, ppn, false, section.isReadOnly(), false, false);
+                /*
+                 * TranslationEntry(int vpn, int ppn, boolean valid, boolean readOnly,
+            boolean used, boolean dirty)
+                 */
+                //Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
+            }
+        }
+        //load pages for stack and args
+        CoffSection lastSection = coff.getSection(coff.getNumSections() - 1);
+        int nextVPN = lastSection.getFirstVPN() + lastSection.getLength();
+        for (int i = 0; i <= stackPages; i += 1) {
+            int ppn = -1;
+            int vpn = nextVPN + i;
+            pageTable[vpn] = new TranslationEntry(vpn, ppn, false, true, false, false);
+            //Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
+        }
+        return true;
+    }
+
+    /**
+     * Release any resources allocated by <tt>loadSections()</tt>.
+     */
+    protected void unloadSections() {
+        super.unloadSections();
+    }
+
+    private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
+        super.readVMWithPT();
+    }
+
+    private int writeVMWithPT(byte[] data, int offset, byte[] memory, int vaddr, int amount) {
+        super.writeVMWithPT();
+    }
+
+
+    private void handlePageFault(){
+        
+    }
+
+    /**
+     * Handle a user exception. Called by <tt>UserKernel.exceptionHandler()</tt>
+     * . The <i>cause</i> argument identifies which exception occurred; see the
+     * <tt>Processor.exceptionZZZ</tt> constants.
+     * 
+     * @param cause the user exception that occurred.
+     */
+    public void handleException(int cause) {
+        Processor processor = Machine.processor();
+
+        switch (cause) {
+            case Prosessor.exceptionPageFault:
+                handlePageFault();
+                break;
+            default:
+                super.handleException(cause);
+                break;
+        }
+    }
+
 
 	private static final int pageSize = Processor.pageSize;
 
