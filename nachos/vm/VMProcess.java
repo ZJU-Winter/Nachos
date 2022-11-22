@@ -104,7 +104,7 @@ public class VMProcess extends UserProcess {
         Processor processor = Machine.processor();
 
         switch (cause) {
-            case Prosessor.exceptionPageFault:
+            case Processor.exceptionPageFault:
                 int result = handlePageFault(processor.readRegister(Processor.regBadVAddr));
 			    processor.writeRegister(Processor.regV0, result);
                 break;
