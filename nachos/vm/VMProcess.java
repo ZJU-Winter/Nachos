@@ -113,7 +113,7 @@ public class VMProcess extends UserProcess {
             }
         }
         byte[] memory = Machine.processor().getMemory();
-        Arrays.fill(memory, ppn * pageSize, (ppn + 1) * pageSize, 0);
+        Arrays.fill(memory, ppn * pageSize, (ppn + 1) * pageSize, (byte) 0);
         pageTable[vpn].valid = true;
         pageTable[vpn].used = true;
         return 0;
