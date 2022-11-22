@@ -89,7 +89,7 @@ public class VMProcess extends UserProcess {
 
 
     private int handlePageFault(int vaddr) {
-        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tPage Fault on " + vaddr);
+        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tPage Fault on " + vaddr);
         return -1;
     }
 
