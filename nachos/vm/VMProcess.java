@@ -1,5 +1,7 @@
 package nachos.vm;
 
+import java.util.Arrays;
+
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
@@ -56,7 +58,7 @@ public class VMProcess extends UserProcess {
             for (int i = 0; i < section.getLength(); i += 1) {
                 int vpn = section.getFirstVPN() + i;
                 int ppn = VMKernel.allocate();
-                //section.loadPage(i, ppn);
+
                 pageTable[vpn] = new TranslationEntry(vpn, ppn, false, section.isReadOnly(), false, false);
                 //Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
             }
@@ -91,9 +93,30 @@ public class VMProcess extends UserProcess {
     }
     */
 
+    /**
+     * 
+     * @param vaddr the virtual address of page that is invalid.
+     * @return -1 if load the page fails, return 0 if load the page successfully.
+     */
     private int handlePageFault(int vaddr) {
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tPage Fault on " + vaddr);
-        return -1;
+        int vpn = Processor.pageFromAddress(vaddr);
+        int ppn = pageTable[vpn].ppn;
+        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tPage Fault on " + vaddr + " VPN:" + vpn);
+        for (int s = 0; s < coff.getNumSections(); s += 1) {
+            CoffSection section = coff.getSection(s);
+            if (section.getFirstVPN() <= vpn && section.getFirstVPN() + section.getLength() > vpn) {
+                section.loadPage(vpn, ppn);
+                pageTable[vpn].valid = true;
+                pageTable[vpn].used = true;
+                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tLoad a page " + " VPN: " + vpn + "PPN: " + ppn);
+                return 0;
+            }
+        }
+        byte[] memory = Machine.processor().getMemory();
+        Arrays.fill(memory, ppn * pageSize, (ppn + 1) * pageSize, 0);
+        pageTable[vpn].valid = true;
+        pageTable[vpn].used = true;
+        return 0;
     }
 
     /**
@@ -116,7 +139,6 @@ public class VMProcess extends UserProcess {
                 break;
         }
     }
-
 
 	private static final int pageSize = Processor.pageSize;
 
