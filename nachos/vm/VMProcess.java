@@ -39,6 +39,8 @@ public class VMProcess extends UserProcess {
      * @return <tt>true</tt> if successful.
      */
     protected boolean loadSections() {
+        return super.loadSections();
+        /*
         if (numPages > Machine.processor().getNumPhysPages()) {
             coff.close();
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tinsufficient physical memory");
@@ -66,10 +68,11 @@ public class VMProcess extends UserProcess {
         for (int i = 0; i <= stackPages; i += 1) {
             int vpn = nextVPN + i;
             int ppn = VMKernel.allocate();
-            pageTable[vpn] = new TranslationEntry(vpn, ppn, false, true, false, false);
+            pageTable[vpn] = new TranslationEntry(vpn, ppn, false, false, false, false);
             //Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
         }
         return true;
+        */
     }
 
     /**
