@@ -396,7 +396,7 @@ public class UserProcess {
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
 			}
 		}
-        //load pages for stack and args
+        //load pages for the stack and args
         CoffSection lastSection = coff.getSection(coff.getNumSections() - 1);
         int nextVPN = lastSection.getFirstVPN() + lastSection.getLength();
         for (int i = 0; i <= stackPages; i += 1) {
@@ -984,7 +984,7 @@ public class UserProcess {
 
     private PriorityQueue<Integer> nextIndexQueue = new PriorityQueue<>();
 
-    private final int PID = UserKernel.allocatePID();
+    protected final int PID = UserKernel.allocatePID();
 
     private Map<Integer, UserProcess> children = new HashMap<>();
 

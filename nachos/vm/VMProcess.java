@@ -47,30 +47,25 @@ public class VMProcess extends UserProcess {
 
         pageTable = new TranslationEntry[numPages];
 
-        for (int s = 0; s < coff.getNumSections(); s++) {
+        for (int s = 0; s < coff.getNumSections(); s += 1) {
             CoffSection section = coff.getSection(s);
 
-            Lib.debug(dbgProcess, "\tinitializing " + section.getName()
-                    + " section (" + section.getLength() + " pages)");
+            Lib.debug(dbgVM, "\tinitializing " + section.getName() + " section (" + section.getLength() + " pages)");
 
-            for (int i = 0; i < section.getLength(); i++) {
+            for (int i = 0; i < section.getLength(); i += 1) {
                 int vpn = section.getFirstVPN() + i;
-                int ppn = -1;
+                int ppn = VMKernel.allocate();
                 //section.loadPage(i, ppn);
                 pageTable[vpn] = new TranslationEntry(vpn, ppn, false, section.isReadOnly(), false, false);
-                /*
-                 * TranslationEntry(int vpn, int ppn, boolean valid, boolean readOnly,
-            boolean used, boolean dirty)
-                 */
                 //Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
             }
         }
-        //load pages for stack and args
+        //load pages for the stack and args
         CoffSection lastSection = coff.getSection(coff.getNumSections() - 1);
         int nextVPN = lastSection.getFirstVPN() + lastSection.getLength();
         for (int i = 0; i <= stackPages; i += 1) {
-            int ppn = -1;
             int vpn = nextVPN + i;
+            int ppn = VMKernel.allocate();
             pageTable[vpn] = new TranslationEntry(vpn, ppn, false, true, false, false);
             //Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
         }
@@ -93,8 +88,9 @@ public class VMProcess extends UserProcess {
     }
 
 
-    private void handlePageFault(){
-        
+    private int handlePageFault(int vaddr) {
+        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tPage Fault on " + vaddr);
+        return -1;
     }
 
     /**
@@ -109,7 +105,8 @@ public class VMProcess extends UserProcess {
 
         switch (cause) {
             case Prosessor.exceptionPageFault:
-                handlePageFault();
+                int result = handlePageFault(processor.readRegister(Processor.regBadVAddr));
+			    processor.writeRegister(Processor.regV0, result);
                 break;
             default:
                 super.handleException(cause);
