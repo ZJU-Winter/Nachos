@@ -113,7 +113,6 @@ public class VMProcess extends UserProcess {
 		return readVMWithPT(memory, vaddr, data, offset, amount);
 	}
 
-    @Override
     private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
 		int currentVa = vaddr;
 		int totalRead = 0;
@@ -176,7 +175,6 @@ public class VMProcess extends UserProcess {
 		return writeVMWithPT(data, offset, memory, vaddr, amount);
 	}
 
-    @Override
 	private int writeVMWithPT(byte[] data, int offset, byte[] memory, int vaddr, int amount) {
 		int currentVa = vaddr;
 		int totalWrite = 0;
