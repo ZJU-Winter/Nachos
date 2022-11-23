@@ -160,6 +160,7 @@ public class VMProcess extends UserProcess {
 	 * @return the number of bytes successfully transferred.
 	 */
     @Override
+    /* 
 	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
 				&& offset + length <= data.length);
@@ -174,6 +175,7 @@ public class VMProcess extends UserProcess {
 
 		return writeVMWithPT(data, offset, memory, vaddr, amount);
 	}
+    */
 
 	private int writeVMWithPT(byte[] data, int offset, byte[] memory, int vaddr, int amount) {
 		int currentVa = vaddr;
