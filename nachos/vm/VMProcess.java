@@ -41,7 +41,8 @@ public class VMProcess extends UserProcess {
      * @return <tt>true</tt> if successful.
      */
     @Override
-    protected boolean loadSections() {        
+    protected boolean loadSections() {      
+        //TODO: for now just keep this part
         if (numPages > Machine.processor().getNumPhysPages()) {
             coff.close();
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tinsufficient physical memory");
@@ -50,6 +51,7 @@ public class VMProcess extends UserProcess {
 
         pageTable = new TranslationEntry[numPages];
 
+        // initialize pagetable for the sections
         for (int s = 0; s < coff.getNumSections(); s += 1) {
             CoffSection section = coff.getSection(s);
 
@@ -58,12 +60,12 @@ public class VMProcess extends UserProcess {
             for (int i = 0; i < section.getLength(); i += 1) {
                 int vpn = section.getFirstVPN() + i;
                 int ppn = VMKernel.allocate();
-
                 pageTable[vpn] = new TranslationEntry(vpn, ppn, false, section.isReadOnly(), false, false);
                 //Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
             }
         }
-        //load pages for the stack and args
+
+        //initialize pagetable for the stack and args
         CoffSection lastSection = coff.getSection(coff.getNumSections() - 1);
         int nextVPN = lastSection.getFirstVPN() + lastSection.getLength();
         for (int i = 0; i <= stackPages; i += 1) {

@@ -198,6 +198,7 @@ void runline(char* line) {
 }
 
 int main(int argc, char *argv[]) {
+    //char prompt[] = "nachos% ";
     char *prompt = "nachos% ";
 
     char buffer[BUFFERSIZE];
