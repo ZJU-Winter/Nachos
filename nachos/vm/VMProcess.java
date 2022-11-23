@@ -216,7 +216,7 @@ public class VMProcess extends UserProcess {
      * @param vaddr the virtual address of page that is invalid.
      * @return -1 if load the page fails, return 0 if load the page successfully.
      */
-    private int handlePageFault(int vaddr) {
+    private void handlePageFault(int vaddr) {
         int vpn = Processor.pageFromAddress(vaddr);
         int ppn = pageTable[vpn].ppn;
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr " + Lib.toHexString(vaddr) + " vpn " + vpn + " ppn " + ppn);
@@ -229,7 +229,7 @@ public class VMProcess extends UserProcess {
                 pageTable[vpn].valid = true;
                 pageTable[vpn].used = true;
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn);
-                return 0;
+                return;
             }
         }
         byte[] memory = Machine.processor().getMemory();
@@ -237,7 +237,6 @@ public class VMProcess extends UserProcess {
         pageTable[vpn].valid = true;
         pageTable[vpn].used = true;
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn);
-        return 0;
     }
 
     /**
