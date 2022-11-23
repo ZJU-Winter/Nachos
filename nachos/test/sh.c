@@ -198,14 +198,12 @@ void runline(char* line) {
 }
 
 int main(int argc, char *argv[]) {
-    char *prompt = "nachos% ";
-    char *string = "MSRNB";
+    char prompt[] = "nachos% ";
 
     char buffer[BUFFERSIZE];
 
     while (1) {
 	printf("%s", prompt);
-    printf("%s", string);
 
 	readline(buffer, BUFFERSIZE);
 
