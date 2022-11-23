@@ -119,7 +119,7 @@ public class VMProcess extends UserProcess {
 		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
             if (!pageTable[vpn].valid) {
-                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\treadVMWithPT Page Fault on vpn " + vpn);
+                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\treadVMWithPT Page Fault on VPN " + vpn);
                 handlePageFault(currentVa);
             }
 			int ppn = pageTable[vpn].ppn;
@@ -181,7 +181,7 @@ public class VMProcess extends UserProcess {
 		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
             if (!pageTable[vpn].valid) {
-                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT Page Fault on vpn " + vpn);
+                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT Page Fault on VPN " + vpn);
                 handlePageFault(currentVa);
             }
 			int ppn = pageTable[vpn].ppn;
