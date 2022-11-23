@@ -51,7 +51,7 @@ public class VMProcess extends UserProcess {
 
         pageTable = new TranslationEntry[numPages];
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tnumPages: " + numPages);
-        
+
         // initialize pagetable for the sections
         for (int s = 0; s < coff.getNumSections(); s += 1) {
             CoffSection section = coff.getSection(s);
@@ -62,7 +62,7 @@ public class VMProcess extends UserProcess {
                 int vpn = section.getFirstVPN() + i;
                 int ppn = VMKernel.allocate();
                 pageTable[vpn] = new TranslationEntry(vpn, ppn, false, section.isReadOnly(), false, false);
-                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
+                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tcreate a PTE, vpn " + vpn + ", ppn " + ppn + " readOnly " + pageTable[vpn].readOnly);
             }
         }
 
@@ -73,7 +73,7 @@ public class VMProcess extends UserProcess {
             int vpn = nextVPN + i;
             int ppn = VMKernel.allocate();
             pageTable[vpn] = new TranslationEntry(vpn, ppn, false, false, false, false);
-            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
+            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tcreate a PTE, vpn " + vpn + ", ppn " + ppn + " readOnly " + pageTable[vpn].readOnly);
         }
         return true;
         
