@@ -113,6 +113,7 @@ public class VMProcess extends UserProcess {
                 return 0;
             }
         }
+        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tWant to load a page in the stack " + " VPN: " + vpn + " PPN: " + ppn);
         byte[] memory = Machine.processor().getMemory();
         Arrays.fill(memory, ppn * pageSize, (ppn + 1) * pageSize, (byte) 0);
         pageTable[vpn].valid = true;
