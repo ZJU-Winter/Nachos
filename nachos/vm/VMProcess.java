@@ -41,7 +41,8 @@ public class VMProcess extends UserProcess {
      * @return <tt>true</tt> if successful.
      */
     @Override
-    protected boolean loadSections() {      
+    protected boolean loadSections() { 
+        /*     
         //TODO: for now just keep this part
         if (numPages > Machine.processor().getNumPhysPages()) {
             coff.close();
@@ -76,7 +77,8 @@ public class VMProcess extends UserProcess {
             Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tcreate a PTE, vpn " + vpn + ", ppn " + ppn + " readOnly " + pageTable[vpn].readOnly);
         }
         return true;
-        
+        */
+        return super.loadSections();
     }
 
     /**
