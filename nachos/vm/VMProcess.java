@@ -219,7 +219,7 @@ public class VMProcess extends UserProcess {
     private void handlePageFault(int vaddr) {
         int vpn = Processor.pageFromAddress(vaddr);
         int ppn = pageTable[vpn].ppn;
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr " + Lib.toHexString(vaddr) + " vpn " + vpn + " ppn " + ppn);
+        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + vpn + " ppn " + ppn);
 
         for (int s = 0; s < coff.getNumSections(); s += 1) {
             CoffSection section = coff.getSection(s);
