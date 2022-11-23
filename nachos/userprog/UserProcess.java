@@ -346,7 +346,7 @@ public class UserProcess {
 		this.argc = args.length;
 		this.argv = entryOffset;
 
-		for (int i = 0; i < argv.length; i++) {
+		for (int i = 0; i < argv.length; i += 1) {
 			byte[] stringOffsetBytes = Lib.bytesFromInt(stringOffset);
 			Lib.assertTrue(writeVirtualMemory(entryOffset, stringOffsetBytes) == 4);
 			entryOffset += 4;

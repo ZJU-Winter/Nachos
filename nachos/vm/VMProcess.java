@@ -97,7 +97,6 @@ public class VMProcess extends UserProcess {
 	 * array.
 	 * @return the number of bytes successfully transferred.
 	 */
-    /* 
     @Override
 	public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
@@ -113,7 +112,6 @@ public class VMProcess extends UserProcess {
 
 		return readVMWithPT(memory, vaddr, data, offset, amount);
 	}
-    */
 
     private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
 		int currentVa = vaddr;
@@ -161,8 +159,7 @@ public class VMProcess extends UserProcess {
 	 * memory.
 	 * @return the number of bytes successfully transferred.
 	 */
-    //@Override
-    /* 
+    @Override
 	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
 				&& offset + length <= data.length);
@@ -177,9 +174,9 @@ public class VMProcess extends UserProcess {
 
 		return writeVMWithPT(data, offset, memory, vaddr, amount);
 	}
-    */
 
 	private int writeVMWithPT(byte[] data, int offset, byte[] memory, int vaddr, int amount) {
+        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT on VPN " + vpn);
 		int currentVa = vaddr;
 		int totalWrite = 0;
 		while (currentVa < vaddr + amount) {
