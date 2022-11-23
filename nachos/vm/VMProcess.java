@@ -176,7 +176,7 @@ public class VMProcess extends UserProcess {
 	}
 
 	private int writeVMWithPT(byte[] data, int offset, byte[] memory, int vaddr, int amount) {
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT on VPN " + vpn);
+        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tEnterring writeVMWithPT");
 		int currentVa = vaddr;
 		int totalWrite = 0;
 		while (currentVa < vaddr + amount) {
