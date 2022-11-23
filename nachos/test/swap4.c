@@ -47,8 +47,6 @@ validate_buf ()
 int
 main (int argc, char *argv[])
 {
-    char *string = "MSRNB";
-    printf("%s", string);
     init_buf ();
     validate_buf ();
     validate_buf ();
