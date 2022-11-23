@@ -83,12 +83,44 @@ public class VMProcess extends UserProcess {
         super.unloadSections();
     }
 
-	private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
+	/**
+	 * Transfer data from this process's virtual memory to the specified array.
+	 * This method handles address translation details. This method must
+	 * <i>not</i> destroy the current process if an error occurs, but instead
+	 * should return the number of bytes successfully copied (or zero if no data
+	 * could be copied).
+	 * 
+	 * @param vaddr the first byte of virtual memory to read.
+	 * @param data the array where the data will be stored.
+	 * @param offset the first byte to write in the array.
+	 * @param length the number of bytes to transfer from virtual memory to the
+	 * array.
+	 * @return the number of bytes successfully transferred.
+	 */
+    @Override
+	public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
+		Lib.assertTrue(offset >= 0 && length >= 0
+				&& offset + length <= data.length);
+
+		byte[] memory = Machine.processor().getMemory();
+
+        if (vaddr < 0 || vaddr >= numPages * pageSize) {
+            return 0;
+        }
+
+		int amount = Math.min(length, numPages * pageSize - vaddr);
+
+		return readVMWithPT(memory, vaddr, data, offset, amount);
+	}
+
+    @Override
+    private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
 		int currentVa = vaddr;
 		int totalRead = 0;
 		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
             if (!pageTable[vpn].valid) {
+                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\treadVMWithPT Page Fault on vpn " + vpn);
                 handlePageFault(currentVa);
             }
 			int ppn = pageTable[vpn].ppn;
@@ -114,12 +146,44 @@ public class VMProcess extends UserProcess {
 		return totalRead;
 	}
 
+    /**
+	 * Transfer data from the specified array to this process's virtual memory.
+	 * This method handles address translation details. This method must
+	 * <i>not</i> destroy the current process if an error occurs, but instead
+	 * should return the number of bytes successfully copied (or zero if no data
+	 * could be copied).
+	 * 
+	 * @param vaddr the first byte of virtual memory to write.
+	 * @param data the array containing the data to transfer.
+	 * @param offset the first byte to transfer from the array.
+	 * @param length the number of bytes to transfer from the array to virtual
+	 * memory.
+	 * @return the number of bytes successfully transferred.
+	 */
+    @Override
+	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
+		Lib.assertTrue(offset >= 0 && length >= 0
+				&& offset + length <= data.length);
+
+		byte[] memory = Machine.processor().getMemory();
+
+		if (vaddr < 0 || vaddr >= numPages * pageSize) {
+			return 0;
+        }
+
+		int amount = Math.min(length, numPages * pageSize - vaddr);
+
+		return writeVMWithPT(data, offset, memory, vaddr, amount);
+	}
+
+    @Override
 	private int writeVMWithPT(byte[] data, int offset, byte[] memory, int vaddr, int amount) {
 		int currentVa = vaddr;
 		int totalWrite = 0;
 		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
-            if (!pageTable[vpn].valid || pageTable[vpn].readOnly) {
+            if (!pageTable[vpn].valid) {
+                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT Page Fault on vpn " + vpn);
                 handlePageFault(currentVa);
             }
 			int ppn = pageTable[vpn].ppn;
