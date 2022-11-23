@@ -98,7 +98,6 @@ public class VMProcess extends UserProcess {
 	 * array.
 	 * @return the number of bytes successfully transferred.
 	 */
-    
     @Override
 	public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
@@ -246,6 +245,7 @@ public class VMProcess extends UserProcess {
      * 
      * @param cause the user exception that occurred.
      */
+    @Override
     public void handleException(int cause) {
         Processor processor = Machine.processor();
 
