@@ -104,21 +104,19 @@ public class VMProcess extends UserProcess {
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tPage Fault on " + vaddr + " VPN: " + vpn + " PPN: " + ppn);
         for (int s = 0; s < coff.getNumSections(); s += 1) {
             CoffSection section = coff.getSection(s);
-            Lib.debug(dbgVM, "\tSection starts from " + section.getFirstVPN() + "to " + (section.getFirstVPN() + section.getLength() - 1));
             if (section.getFirstVPN() <= vpn && section.getFirstVPN() + section.getLength() > vpn) {
-                section.loadPage(vpn, ppn);
+                section.loadPage(vpn - section.getFirstVPN(), ppn);
                 pageTable[vpn].valid = true;
                 pageTable[vpn].used = true;
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tLoad a page " + " VPN: " + vpn + " PPN: " + ppn);
                 return 0;
             }
         }
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tWant to load a page in the stack " + " VPN: " + vpn + " PPN: " + ppn);
         byte[] memory = Machine.processor().getMemory();
         Arrays.fill(memory, ppn * pageSize, (ppn + 1) * pageSize, (byte) 0);
         pageTable[vpn].valid = true;
         pageTable[vpn].used = true;
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tLoad a page in the stack " + " VPN: " + vpn + " PPN: " + ppn);
+        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tLoad a page " + " VPN: " + vpn + " PPN: " + ppn);
         return 0;
     }
 
