@@ -128,19 +128,16 @@ public class VMProcess extends UserProcess {
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
 			int nextVa = pageSize * (vpn + 1);
-            //Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tvirtual address " + vaddr + ", physical address " + paddr + ", offset " + addrOffset);
 			if (nextVa < vaddr + amount) { // reach the end of page
 				int toRead = pageSize - addrOffset;
 				System.arraycopy(memory, paddr, data, offset, toRead);
 				offset += toRead;
 				totalRead += toRead;
-                //Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tread from vpn " + vpn + " / ppn " + ppn + " to buffer " + toRead + " bytes");
 			} else { // will not reach the end of page
                 int toRead = vaddr + amount - currentVa;
 				System.arraycopy(memory, paddr, data, offset, toRead);
 				offset += toRead;
 				totalRead += toRead;
-                //Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tread from vpn " + vpn + " / ppn " + ppn + " to buffer " + toRead + " bytes");
 			}
 			currentVa = nextVa;
 		}
@@ -191,19 +188,16 @@ public class VMProcess extends UserProcess {
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
 			int nextVa = pageSize * (vpn + 1);
-            //Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\tvirtual address " + vaddr + ", physical address " + paddr + ", offset " + addrOffset);
 			if (nextVa < vaddr + amount) { // reach the end of page
 				int toWrite = pageSize - addrOffset;
 				System.arraycopy(data, offset, memory, paddr, toWrite);
 				offset += toWrite;
 				totalWrite += toWrite;
-                //Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\twrite from vpn " + vpn + " / ppn " + ppn + " to buffer " + toWrite + " bytes");
 			} else { // will not reach the end of page
                 int toWrite = vaddr + amount - currentVa;
 				System.arraycopy(data, offset, memory, paddr, toWrite);
 				offset += toWrite;
 				totalWrite += toWrite;
-                //Lib.debug(dbgProcess,  "PID[" + PID + "]:" + "\twrite from vpn " + vpn + " / ppn " + ppn + " to buffer " + toWrite + " bytes");
 			}
 			currentVa = nextVa;
 		}
@@ -213,7 +207,6 @@ public class VMProcess extends UserProcess {
     /**
      * 
      * @param vaddr the virtual address of page that is invalid.
-     * @return -1 if load the page fails, return 0 if load the page successfully.
      */
     private void handlePageFault(int vaddr) {
         int vpn = Processor.pageFromAddress(vaddr);
@@ -252,7 +245,6 @@ public class VMProcess extends UserProcess {
         switch (cause) {
             case Processor.exceptionPageFault:
                 handlePageFault(processor.readRegister(Processor.regBadVAddr));
-			    //processor.writeRegister(Processor.regV0, result);
                 break;
             default:
                 super.handleException(cause);
