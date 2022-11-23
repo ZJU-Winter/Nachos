@@ -400,8 +400,12 @@ public class UserProcess {
         CoffSection lastSection = coff.getSection(coff.getNumSections() - 1);
         int nextVPN = lastSection.getFirstVPN() + lastSection.getLength();
         for (int i = 0; i <= stackPages; i += 1) {
-            int ppn = UserKernel.allocate();
             int vpn = nextVPN + i;
+            int ppn = UserKernel.allocate();
+            if (ppn < 0) {
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tinsufficient physical memory");
+                return false;
+            }
             pageTable[vpn] = new TranslationEntry(vpn, ppn, true, false, false, false);
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tloaded a page, vpn " + vpn + ", ppn " + ppn);
         }

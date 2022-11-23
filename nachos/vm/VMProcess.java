@@ -42,43 +42,38 @@ public class VMProcess extends UserProcess {
      */
     @Override
     protected boolean loadSections() { 
-        /*     
         //TODO: for now just keep this part
         if (numPages > Machine.processor().getNumPhysPages()) {
-            coff.close();
-            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tinsufficient physical memory");
-            return false;
-        }
+			coff.close();
+			Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tinsufficient physical memory");
+			return false;
+		}
 
         pageTable = new TranslationEntry[numPages];
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tnumPages: " + numPages);
 
-        // initialize pagetable for the sections
-        for (int s = 0; s < coff.getNumSections(); s += 1) {
-            CoffSection section = coff.getSection(s);
+		for (int s = 0; s < coff.getNumSections(); s++) {
+			CoffSection section = coff.getSection(s);
 
-            Lib.debug(dbgVM, "\tinitializing " + section.getName() + " section (" + section.getLength() + " pages)");
+			Lib.debug(dbgVM, "\tinitializing " + section.getName()
+					+ " section (" + section.getLength() + " pages)");
 
-            for (int i = 0; i < section.getLength(); i += 1) {
-                int vpn = section.getFirstVPN() + i;
-                int ppn = VMKernel.allocate();
+			for (int i = 0; i < section.getLength(); i++) {
+				int vpn = section.getFirstVPN() + i;
+                int ppn = UserKernel.allocate();
                 pageTable[vpn] = new TranslationEntry(vpn, ppn, false, section.isReadOnly(), false, false);
-                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tcreate a PTE, vpn " + vpn + ", ppn " + ppn + " readOnly " + pageTable[vpn].readOnly);
-            }
-        }
-
-        //initialize pagetable for the stack and args
+                Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tcreate a PTE, vpn " + vpn + ", ppn " + ppn);
+			}
+		}
+        //load pages for the stack and args
         CoffSection lastSection = coff.getSection(coff.getNumSections() - 1);
         int nextVPN = lastSection.getFirstVPN() + lastSection.getLength();
         for (int i = 0; i <= stackPages; i += 1) {
             int vpn = nextVPN + i;
-            int ppn = VMKernel.allocate();
+            int ppn = UserKernel.allocate();
             pageTable[vpn] = new TranslationEntry(vpn, ppn, false, false, false, false);
-            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tcreate a PTE, vpn " + vpn + ", ppn " + ppn + " readOnly " + pageTable[vpn].readOnly);
+            Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tcreate a PTE, vpn " + vpn + ", ppn " + ppn);
         }
-        return true;
-        */
-        return super.loadSections();
+		return true;
     }
 
     /**
@@ -215,7 +210,6 @@ public class VMProcess extends UserProcess {
 		return totalWrite;
 	}
     
-
     /**
      * 
      * @param vaddr the virtual address of page that is invalid.
@@ -224,22 +218,24 @@ public class VMProcess extends UserProcess {
     private int handlePageFault(int vaddr) {
         int vpn = Processor.pageFromAddress(vaddr);
         int ppn = pageTable[vpn].ppn;
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tPage Fault on " + vaddr + " VPN: " + vpn + " PPN: " + ppn);
+        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on " + vaddr + " vpn " + vpn + " ppn " + ppn);
+
         for (int s = 0; s < coff.getNumSections(); s += 1) {
             CoffSection section = coff.getSection(s);
-            if (section.getFirstVPN() <= vpn && section.getFirstVPN() + section.getLength() > vpn) {
+            int firstVPN = section.getFirstVPN(), lastVPN = section.getFirstVPN() + section.getLength() - 1;
+            if (vpn >= firstVPN && vpn <= lastVPN) {
                 section.loadPage(vpn - section.getFirstVPN(), ppn);
                 pageTable[vpn].valid = true;
                 pageTable[vpn].used = true;
-                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tLoad a page " + " VPN: " + vpn + " PPN: " + ppn);
+                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page " + " vpn " + vpn + " ppn " + ppn);
                 return 0;
             }
         }
-        byte[] memory = Machine.processor().getMemory();
-        Arrays.fill(memory, ppn * pageSize, (ppn + 1) * pageSize, (byte) 0);
+        //byte[] memory = Machine.processor().getMemory();
+        //Arrays.fill(memory, ppn * pageSize, (ppn + 1) * pageSize, (byte) 0);
         pageTable[vpn].valid = true;
         pageTable[vpn].used = true;
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tLoad a page " + " VPN: " + vpn + " PPN: " + ppn);
+        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page " + " vpn " + vpn + " ppn " + ppn);
         return 0;
     }
 
