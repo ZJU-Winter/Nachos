@@ -97,6 +97,7 @@ public class VMProcess extends UserProcess {
 	 * array.
 	 * @return the number of bytes successfully transferred.
 	 */
+    /* 
     @Override
 	public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
@@ -112,6 +113,7 @@ public class VMProcess extends UserProcess {
 
 		return readVMWithPT(memory, vaddr, data, offset, amount);
 	}
+    */
 
     private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
 		int currentVa = vaddr;
