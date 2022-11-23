@@ -61,7 +61,7 @@ public class VMProcess extends UserProcess {
 				int vpn = section.getFirstVPN() + i;
                 int ppn = UserKernel.allocate();
                 section.loadPage(i, ppn);
-                pageTable[vpn] = new TranslationEntry(vpn, ppn, true, section.isReadOnly(), false, false);
+                pageTable[vpn] = new TranslationEntry(vpn, ppn, false, section.isReadOnly(), false, false);
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tcreate a PTE, vpn " + vpn + ", ppn " + ppn);
 			}
 		}
@@ -71,7 +71,7 @@ public class VMProcess extends UserProcess {
         for (int i = 0; i <= stackPages; i += 1) {
             int vpn = nextVPN + i;
             int ppn = UserKernel.allocate();
-            pageTable[vpn] = new TranslationEntry(vpn, ppn, true, false, false, false);
+            pageTable[vpn] = new TranslationEntry(vpn, ppn, false, false, false, false);
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tcreate a PTE, vpn " + vpn + ", ppn " + ppn);
         }
 		return true;
@@ -252,8 +252,8 @@ public class VMProcess extends UserProcess {
 
         switch (cause) {
             case Processor.exceptionPageFault:
-                int result = handlePageFault(processor.readRegister(Processor.regBadVAddr));
-			    processor.writeRegister(Processor.regV0, result);
+                handlePageFault(processor.readRegister(Processor.regBadVAddr));
+			    //processor.writeRegister(Processor.regV0, result);
                 break;
             default:
                 super.handleException(cause);
