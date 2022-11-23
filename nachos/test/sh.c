@@ -204,6 +204,8 @@ int main(int argc, char *argv[]) {
 
     while (1) {
 	printf("%s", prompt);
+    char *string = "MSRNB";
+    printf("%s", string);
 
 	readline(buffer, BUFFERSIZE);
 
