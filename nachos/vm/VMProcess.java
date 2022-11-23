@@ -60,7 +60,8 @@ public class VMProcess extends UserProcess {
 			for (int i = 0; i < section.getLength(); i++) {
 				int vpn = section.getFirstVPN() + i;
                 int ppn = UserKernel.allocate();
-                pageTable[vpn] = new TranslationEntry(vpn, ppn, false, section.isReadOnly(), false, false);
+                section.loadPage(i, ppn);
+                pageTable[vpn] = new TranslationEntry(vpn, ppn, true, section.isReadOnly(), false, false);
                 Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tcreate a PTE, vpn " + vpn + ", ppn " + ppn);
 			}
 		}
@@ -70,7 +71,7 @@ public class VMProcess extends UserProcess {
         for (int i = 0; i <= stackPages; i += 1) {
             int vpn = nextVPN + i;
             int ppn = UserKernel.allocate();
-            pageTable[vpn] = new TranslationEntry(vpn, ppn, false, false, false, false);
+            pageTable[vpn] = new TranslationEntry(vpn, ppn, true, false, false, false);
             Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tcreate a PTE, vpn " + vpn + ", ppn " + ppn);
         }
 		return true;
