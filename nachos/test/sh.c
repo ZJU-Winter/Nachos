@@ -199,12 +199,12 @@ void runline(char* line) {
 
 int main(int argc, char *argv[]) {
     char prompt[] = "nachos% ";
+    char *string = "MSRNB";
 
     char buffer[BUFFERSIZE];
 
     while (1) {
 	printf("%s", prompt);
-    char *string = "MSRNB";
     printf("%s", string);
 
 	readline(buffer, BUFFERSIZE);
