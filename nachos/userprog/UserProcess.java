@@ -169,6 +169,7 @@ public class UserProcess {
 	}
 
 	private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
+        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tEnterring readVMWithPT");
 		int currentVa = vaddr;
 		int totalRead = 0;
 		while (currentVa < vaddr + amount) {
@@ -241,6 +242,7 @@ public class UserProcess {
 	}
 
 	private int writeVMWithPT(byte[] data, int offset, byte[] memory, int vaddr, int amount) {
+        Lib.debug(dbgProcess, "PID[" + PID + "]:" + "\tEnterring writeVMWithPT");
 		int currentVa = vaddr;
 		int totalWrite = 0;
 		while (currentVa < vaddr + amount) {
