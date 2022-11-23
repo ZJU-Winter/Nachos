@@ -114,6 +114,7 @@ public class VMProcess extends UserProcess {
 	}
 
     private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
+        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tEnterring readVMWithPT");
 		int currentVa = vaddr;
 		int totalRead = 0;
 		while (currentVa < vaddr + amount) {
