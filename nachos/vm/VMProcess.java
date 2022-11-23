@@ -100,6 +100,7 @@ public class VMProcess extends UserProcess {
 	 * array.
 	 * @return the number of bytes successfully transferred.
 	 */
+    /*
     @Override
 	public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
@@ -148,6 +149,7 @@ public class VMProcess extends UserProcess {
 		}
 		return totalRead;
 	}
+    */
 
     /**
 	 * Transfer data from the specified array to this process's virtual memory.
@@ -163,6 +165,7 @@ public class VMProcess extends UserProcess {
 	 * memory.
 	 * @return the number of bytes successfully transferred.
 	 */
+    /*
     @Override
 	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
@@ -211,6 +214,7 @@ public class VMProcess extends UserProcess {
 		}
 		return totalWrite;
 	}
+    */
 
     /**
      * 
