@@ -101,14 +101,15 @@ public class VMProcess extends UserProcess {
     private int handlePageFault(int vaddr) {
         int vpn = Processor.pageFromAddress(vaddr);
         int ppn = pageTable[vpn].ppn;
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tPage Fault on " + vaddr + " VPN: " + vpn + "PPN: " + ppn);
+        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tPage Fault on " + vaddr + " VPN: " + vpn + " PPN: " + ppn);
         for (int s = 0; s < coff.getNumSections(); s += 1) {
             CoffSection section = coff.getSection(s);
+            Lib.debug(dbgVM, "\tSection starts from " + section.getFirstVPN() + "to " + (section.getFirstVPN() + section.getLength() - 1));
             if (section.getFirstVPN() <= vpn && section.getFirstVPN() + section.getLength() > vpn) {
                 section.loadPage(vpn, ppn);
                 pageTable[vpn].valid = true;
                 pageTable[vpn].used = true;
-                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tLoad a page " + " VPN: " + vpn + "PPN: " + ppn);
+                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tLoad a page " + " VPN: " + vpn + " PPN: " + ppn);
                 return 0;
             }
         }
