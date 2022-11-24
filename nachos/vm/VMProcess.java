@@ -216,6 +216,7 @@ public class VMProcess extends UserProcess {
         pageTable[vpn].ppn = ppn;
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + vpn + " ppn " + ppn);
 
+        //TODO: from COFF or swap file
         for (int s = 0; s < coff.getNumSections(); s += 1) {
             CoffSection section = coff.getSection(s);
             int firstVPN = section.getFirstVPN(), lastVPN = section.getFirstVPN() + section.getLength() - 1;

@@ -40,19 +40,24 @@ public class VMKernel extends UserKernel {
 	/**
 	 * Terminate this kernel. Never returns.
 	 */
+    //TODO: remove and close swap file
 	public void terminate() {
 		super.terminate();
 	}
 
     /**
-     * Evict a physical page using clock algorithm,
+     * Allocate a physical page and return the physical page number,
+     * evict a physical page using clock algorithm if the freePageList is empty,
      * find the owner process and invalid the page table entry,
-     * write back if the evicted page is dirty.
+     * write back if the evicted page is dirty,
+     * update page table entry's ppn to spn,
+     * set -1 if write it back to the COFF
      * @return the evicted page number.
      */
-    protected static int evict() {
-        //TODO: Lock
-        return 1;
+    //TODO: Lock
+    @Override
+    public static int allocate() {
+        return UserKernel.allocate();
     }
 
 	// dummy variables to make javac smarter
