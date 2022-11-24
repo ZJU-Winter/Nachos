@@ -95,6 +95,7 @@ public class VMProcess extends UserProcess {
 	 * array.
 	 * @return the number of bytes successfully transferred.
 	 */
+    //TODO: Pin using CV
     @Override
 	public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
@@ -155,6 +156,7 @@ public class VMProcess extends UserProcess {
 	 * memory.
 	 * @return the number of bytes successfully transferred.
 	 */
+    //TODO: Pin using CV
     @Override
 	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
@@ -208,6 +210,9 @@ public class VMProcess extends UserProcess {
     private void handlePageFault(int vaddr) {
         int vpn = Processor.pageFromAddress(vaddr);
         int ppn = VMKernel.allocate();
+        if (ppn == -1) {
+            ppn = VMKernel.evict();
+        }
         pageTable[vpn].ppn = ppn;
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + vpn + " ppn " + ppn);
 

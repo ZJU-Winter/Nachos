@@ -5,6 +5,7 @@ import nachos.threads.*;
 import nachos.userprog.*;
 import nachos.vm.*;
 
+import javafx.util.Pair;
 /**
  * A kernel that can support multiple demand-paging user processes.
  */
@@ -43,6 +44,17 @@ public class VMKernel extends UserKernel {
 	public void terminate() {
 		super.terminate();
 	}
+
+    /**
+     * Evict a physical page using clock algorithm,
+     * find the owner process and invalid the page table entry,
+     * write back if the evicted page is dirty.
+     * @return the evicted page number.
+     */
+    protected static int evict() {
+        //TODO: Lock
+        return 1;
+    }
 
 	// dummy variables to make javac smarter
 	private static VMProcess dummy1 = null;
