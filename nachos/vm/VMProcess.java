@@ -59,9 +59,7 @@ public class VMProcess extends UserProcess {
 
 			for (int i = 0; i < section.getLength(); i++) {
 				int vpn = section.getFirstVPN() + i;
-                int ppn = UserKernel.allocate();
-                section.loadPage(i, ppn);
-                pageTable[vpn] = new TranslationEntry(vpn, ppn, false, section.isReadOnly(), false, false);
+                pageTable[vpn] = new TranslationEntry(vpn, -1, false, section.isReadOnly(), false, false);
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tcreate a PTE, vpn " + vpn + ", ppn " + ppn);
 			}
 		}
@@ -70,8 +68,7 @@ public class VMProcess extends UserProcess {
         int nextVPN = lastSection.getFirstVPN() + lastSection.getLength();
         for (int i = 0; i <= stackPages; i += 1) {
             int vpn = nextVPN + i;
-            int ppn = UserKernel.allocate();
-            pageTable[vpn] = new TranslationEntry(vpn, ppn, false, false, false, false);
+            pageTable[vpn] = new TranslationEntry(vpn, -1, false, false, false, false);
             Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tcreate a PTE, vpn " + vpn + ", ppn " + ppn);
         }
 		return true;
@@ -210,7 +207,8 @@ public class VMProcess extends UserProcess {
      */
     private void handlePageFault(int vaddr) {
         int vpn = Processor.pageFromAddress(vaddr);
-        int ppn = pageTable[vpn].ppn;
+        int ppn = VMKernel.allocate();
+        pageTable[vpn].ppn = ppn;
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + vpn + " ppn " + ppn);
 
         for (int s = 0; s < coff.getNumSections(); s += 1) {
