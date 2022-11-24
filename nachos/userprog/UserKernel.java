@@ -1,10 +1,11 @@
 package nachos.userprog;
 
-import java.util.Deque;
-import java.util.ArrayDeque;
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
+
+import java.util.Deque;
+import java.util.ArrayDeque;
 
 /**
  * A kernel that can support multiple user processes.

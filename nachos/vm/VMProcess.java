@@ -1,12 +1,11 @@
 package nachos.vm;
 
-import java.util.Arrays;
-
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
 import nachos.vm.*;
 
+import java.util.Arrays;
 /**
  * A <tt>UserProcess</tt> that supports demand-paging.
  */
@@ -209,8 +208,8 @@ public class VMProcess extends UserProcess {
      */
     private void handlePageFault(int vaddr) {
         int vpn = Processor.pageFromAddress(vaddr);
-        int ppn = VMKernel.allocate();
-        //TODO: delay to assign
+        int ppn = VMKernel.allocate(this, vpn);
+        //TODO: assign later
         pageTable[vpn].ppn = ppn;
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + vpn + " ppn " + ppn);
 
