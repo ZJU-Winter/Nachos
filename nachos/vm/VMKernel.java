@@ -5,7 +5,6 @@ import nachos.threads.*;
 import nachos.userprog.*;
 import nachos.vm.*;
 
-import javafx.util.Pair;
 /**
  * A kernel that can support multiple demand-paging user processes.
  */
