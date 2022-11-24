@@ -210,9 +210,7 @@ public class VMProcess extends UserProcess {
     private void handlePageFault(int vaddr) {
         int vpn = Processor.pageFromAddress(vaddr);
         int ppn = VMKernel.allocate();
-        if (ppn == -1) {
-            ppn = VMKernel.evict();
-        }
+        //TODO: delay to assign
         pageTable[vpn].ppn = ppn;
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + vpn + " ppn " + ppn);
 
