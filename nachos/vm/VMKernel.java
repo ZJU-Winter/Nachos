@@ -209,7 +209,7 @@ public class VMKernel extends UserKernel {
         pinLock.release();
     }
 
-    public static unpinPage(int ppn) {
+    public static void unpinPage(int ppn) {
         pinLock.acquire();
         invertedPageTable[ppn].pinned = false;
         numPinned -= 1;
