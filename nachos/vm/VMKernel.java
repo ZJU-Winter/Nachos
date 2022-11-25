@@ -100,6 +100,7 @@ public class VMKernel extends UserKernel {
         }
         int toEvict;
         while (true) {
+            System.out.println(victim);
             VMProcess process = invertedPageTable[victim].process;
             int vpn = invertedPageTable[victim].vpn;
             if (!process.isUsed(vpn) && !invertedPageTable[victim].pinned) {
