@@ -159,7 +159,7 @@ public class VMKernel extends UserKernel {
     /**
      * Write one page from physical memory to swap file.
      * @param ppn the physical memory page number to read.
-     * @param spn the swap page number of write.
+     * @param spn the swap page number to write.
      */
     private static void writeToSwapFile(int ppn, int spn) {
         Lib.debug(dbgVM, "VMKernel: write from physical memory ppn " + ppn + " to swap file spn " + spn);
