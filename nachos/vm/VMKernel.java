@@ -81,6 +81,13 @@ public class VMKernel extends UserKernel {
         return pageNum;
     }
 
+    public static void deallocate(int ppn) {
+        lock.acquire();
+        freePageList.addLast(ppn);
+        //TODO: update IPT
+        lock.release();
+    }
+
     /**
      * Evict a physical page and return the ecvicted physical page number.
      * Find the owner process and invalid the page table entry,

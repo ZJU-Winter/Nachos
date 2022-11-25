@@ -75,7 +75,7 @@ public class VMProcess extends UserProcess {
         for (int i = 0; i < numPages; i += 1) {
             int ppn = pageTable[i].ppn;
             if (pageTable[i].valid) {
-                UserKernel.deallocate(ppn);
+                VMKernel.deallocate(ppn);
             }
             pageTable[i] = null;
         }
