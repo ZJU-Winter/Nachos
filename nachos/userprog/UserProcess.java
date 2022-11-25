@@ -421,7 +421,6 @@ public class UserProcess {
             int ppn = pageTable[i].ppn;
             pageTable[i] = null;
             UserKernel.deallocate(ppn);
-            Lib.debug(dbgProcess, "deallocate ppn " + ppn);
         }
 	}
 

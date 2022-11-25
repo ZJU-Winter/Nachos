@@ -69,8 +69,16 @@ public class VMProcess extends UserProcess {
     /**
      * Release any resources allocated by <tt>loadSections()</tt>.
      */
+    @Override
     protected void unloadSections() {
-        super.unloadSections();
+        // deacllocate memory
+        for (int i = 0; i < numPages; i += 1) {
+            int ppn = pageTable[i].ppn;
+            if (pageTable[i].valid) {
+                UserKernel.deallocate(ppn);
+            }
+            pageTable[i] = null;
+        }
     }
 
 	/**
