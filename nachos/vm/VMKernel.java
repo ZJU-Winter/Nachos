@@ -110,8 +110,8 @@ public class VMKernel extends UserKernel {
                 if (process.isDirty(vpn)) {
                     int spn = allocateSwapFilePage();
                     process.setPPN(vpn, spn);
-                    writeToSwapFile(toEvict, spn);
                     Lib.debug(dbgVM, "VMKernel: evict ppn "+ toEvict + " and write it to disk spn " + spn);
+                    writeToSwapFile(toEvict, spn);
                 } else {
                     process.setPPN(vpn, -1);
                     Lib.debug(dbgVM, "VMKernel: evict ppn "+ toEvict + " no need to write back");
