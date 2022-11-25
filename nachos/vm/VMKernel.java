@@ -190,7 +190,7 @@ public class VMKernel extends UserKernel {
         swapFileTotalPages += 8;
     }
 
-    private class InvertedPageTableEntry {
+    private static class InvertedPageTableEntry {
         VMProcess process;
         int vpn;
         boolean pinned;
