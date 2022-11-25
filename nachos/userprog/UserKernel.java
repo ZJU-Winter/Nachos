@@ -204,9 +204,9 @@ public class UserKernel extends ThreadedKernel {
 	// dummy variables to make javac smarter
 	private static Coff dummy1 = null;
 
-    private static Deque<Integer> freePageList = new ArrayDeque<>();
+    protected static Deque<Integer> freePageList = new ArrayDeque<>();
 
-    private static Lock lock;
+    protected static Lock lock;
 
     private static Lock pidLock;
 

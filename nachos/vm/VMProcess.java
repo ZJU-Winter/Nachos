@@ -40,14 +40,7 @@ public class VMProcess extends UserProcess {
      * @return <tt>true</tt> if successful.
      */
     @Override
-    protected boolean loadSections() { 
-        //TODO: for now just keep this part
-        if (numPages > Machine.processor().getNumPhysPages()) {
-			coff.close();
-			Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tinsufficient physical memory");
-			return false;
-		}
-
+    protected boolean loadSections() {
         pageTable = new TranslationEntry[numPages];
 
 		for (int s = 0; s < coff.getNumSections(); s++) {
@@ -94,7 +87,6 @@ public class VMProcess extends UserProcess {
 	 * array.
 	 * @return the number of bytes successfully transferred.
 	 */
-    //TODO: Pin using CV
     @Override
 	public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
@@ -112,16 +104,18 @@ public class VMProcess extends UserProcess {
 	}
 
     private int readVMWithPT(byte[] memory, int vaddr, byte[] data, int offset, int amount) {
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tEnterring readVMWithPT");
 		int currentVa = vaddr;
 		int totalRead = 0;
 		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
             if (!pageTable[vpn].valid) {
-                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\treadVMWithPT Page Fault on VPN " + vpn);
+                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\treadVMWithPT Page Fault on vpn " + vpn);
                 handlePageFault(currentVa);
             }
 			int ppn = pageTable[vpn].ppn;
+            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\treading a page, ppn " + ppn);
+            VMKernel.pinPage(ppn);
+            setUsed(vpn);
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
 			int nextVa = pageSize * (vpn + 1);
@@ -137,6 +131,8 @@ public class VMProcess extends UserProcess {
 				totalRead += toRead;
 			}
 			currentVa = nextVa;
+            VMKernel.unpinPage(ppn);
+            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tend reading a page, ppn " + ppn);
 		}
 		return totalRead;
 	}
@@ -155,7 +151,6 @@ public class VMProcess extends UserProcess {
 	 * memory.
 	 * @return the number of bytes successfully transferred.
 	 */
-    //TODO: Pin using CV
     @Override
 	public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
 		Lib.assertTrue(offset >= 0 && length >= 0
@@ -173,16 +168,19 @@ public class VMProcess extends UserProcess {
 	}
 
 	private int writeVMWithPT(byte[] data, int offset, byte[] memory, int vaddr, int amount) {
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tEnterring writeVMWithPT");
 		int currentVa = vaddr;
 		int totalWrite = 0;
 		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
             if (!pageTable[vpn].valid) {
-                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT Page Fault on VPN " + vpn);
+                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT Page Fault on vpn " + vpn);
                 handlePageFault(currentVa);
             }
 			int ppn = pageTable[vpn].ppn;
+            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriting a page, ppn " + ppn);
+            VMKernel.pinPage(ppn);
+            setUsed(vpn);
+            setDirty(vpn);
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
 			int nextVa = pageSize * (vpn + 1);
@@ -198,6 +196,8 @@ public class VMProcess extends UserProcess {
 				totalWrite += toWrite;
 			}
 			currentVa = nextVa;
+            VMKernel.unpinPage(ppn);
+            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tend writing a page, ppn " + ppn);
 		}
 		return totalWrite;
 	}
@@ -207,29 +207,40 @@ public class VMProcess extends UserProcess {
      * @param vaddr the virtual address of page that is invalid.
      */
     private void handlePageFault(int vaddr) {
+        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + vpn);
         int vpn = Processor.pageFromAddress(vaddr);
         int ppn = VMKernel.allocate(this, vpn);
-        //TODO: assign later
-        pageTable[vpn].ppn = ppn;
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + vpn + " ppn " + ppn);
-
-        //TODO: from COFF or swap file
-        for (int s = 0; s < coff.getNumSections(); s += 1) {
-            CoffSection section = coff.getSection(s);
-            int firstVPN = section.getFirstVPN(), lastVPN = section.getFirstVPN() + section.getLength() - 1;
-            if (vpn >= firstVPN && vpn <= lastVPN) {
-                section.loadPage(vpn - section.getFirstVPN(), ppn);
-                pageTable[vpn].valid = true;
-                pageTable[vpn].used = true;
-                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn);
-                return;
+        if (pageTable[vpn].ppn == -1) {
+            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault, reading from COFF");
+            for (int s = 0; s < coff.getNumSections(); s += 1) {
+                CoffSection section = coff.getSection(s);
+                int firstVPN = section.getFirstVPN(), lastVPN = section.getFirstVPN() + section.getLength() - 1;
+                if (vpn >= firstVPN && vpn <= lastVPN) {
+                    section.loadPage(vpn - section.getFirstVPN(), ppn);
+                    setValid(vpn);
+                    setUsed(vpn);
+                    unsetDirty(vpn);
+                    pageTable[vpn].ppn = ppn;
+                    Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn);
+                    return;
+                }
             }
+            byte[] memory = Machine.processor().getMemory();
+            Arrays.fill(memory, ppn * pageSize, (ppn + 1) * pageSize, (byte) 0);
+            setValid(vpn);
+            setUsed(vpn);
+            unsetDirty(vpn);
+            pageTable[vpn].ppn = ppn;
+            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn);
+        } else {
+            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault, reading from swap file, spn " + pageTable[vpn].ppn);
+            VMKernel.readFromSwapFile(ppn, pageTable[vpn].ppn);
+            setValid(vpn);
+            setUsed(vpn);
+            unsetDirty(vpn);
+            pageTable[vpn].ppn = ppn;
+            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn);
         }
-        byte[] memory = Machine.processor().getMemory();
-        Arrays.fill(memory, ppn * pageSize, (ppn + 1) * pageSize, (byte) 0);
-        pageTable[vpn].valid = true;
-        pageTable[vpn].used = true;
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn);
     }
 
     /**
@@ -251,6 +262,74 @@ public class VMProcess extends UserProcess {
                 super.handleException(cause);
                 break;
         }
+    }
+
+    /**
+     * Return pageTable[vpn].used.
+     */
+    protected boolean isUsed(int vpn) {
+        return pageTable[vpn].used;
+    }
+
+    /**
+     * Return pageTable[vpn].dirty.
+     */
+    protected boolean isDirty(int vpn) {
+        return pageTable[vpn].dirty;
+    }
+
+    /**
+     * Set pageTable[vpn].ppn to ppn.
+     * @param vpn the virtual page number.
+     * @param ppn the new ppn, could be the swap page number or -1
+     */
+    protected void setPPN(int vpn, int ppn) {
+        pageTable[vpn].ppn = ppn;
+    }
+
+    /**
+     * Set pageTable[vpn].used to true.
+     * @param vpn the virtual page number.
+     */
+    private void setUsed(int vpn) {
+        pageTable[vpn].used = true;
+    }
+
+    /**
+     * Set pageTable[vpn].unsed to false.
+     */
+    protected void unsetUsed(int vpn) {
+        pageTable[vpn].used = false;
+    }
+
+    /**
+     * Set pageTable[vpn].dirty to true, called by writeVM.
+     * @param vpn the virtual page number.
+     */
+    private void setDirty(int vpn) {
+        pageTable[vpn].dirty = true;
+    }
+
+    /**
+     * Set pageTable[vpn].dirty to false, called when load a page from disk to the memory.
+     * @param vpn the virtual page number.
+     */
+    private void unsetDirty(int vpn) {
+        pageTable[vpn].dirty = false;
+    }
+
+    /**
+     * Set pageTable[vpn].valid to true.
+     */
+    private void setValid(int vpn) {
+        pageTable[vpn].valid = true;
+    }
+
+    /**
+     * Unset pageTable[vpn].valid to false.
+     */
+    protected void unsetValid(int vpn) {
+        pageTable[vpn].valid = false;
     }
 
 	private static final int pageSize = Processor.pageSize;
