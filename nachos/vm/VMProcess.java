@@ -227,7 +227,6 @@ public class VMProcess extends UserProcess {
                     section.loadPage(vpn - section.getFirstVPN(), ppn);
                     setValid(vpn);
                     setUsed(vpn);
-                    //unsetDirty(vpn);
                     pageTable[vpn].ppn = ppn;
                     Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn + "\n");
                     return;
@@ -237,7 +236,6 @@ public class VMProcess extends UserProcess {
             Arrays.fill(memory, ppn * pageSize, (ppn + 1) * pageSize, (byte) 0);
             setValid(vpn);
             setUsed(vpn);
-            //unsetDirty(vpn);
             pageTable[vpn].ppn = ppn;
             Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn + "\n");
         } else {
@@ -245,7 +243,6 @@ public class VMProcess extends UserProcess {
             VMKernel.readFromSwapFile(ppn, pageTable[vpn].ppn);
             setValid(vpn);
             setUsed(vpn);
-            //unsetDirty(vpn);
             pageTable[vpn].ppn = ppn;
             Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn + "\n");
         }
@@ -316,14 +313,6 @@ public class VMProcess extends UserProcess {
      */
     private void setDirty(int vpn) {
         pageTable[vpn].dirty = true;
-    }
-
-    /**
-     * Set pageTable[vpn].dirty to false, called when load a page from disk to the memory.
-     * @param vpn the virtual page number.
-     */
-    private void unsetDirty(int vpn) {
-        pageTable[vpn].dirty = false;
     }
 
     /**
