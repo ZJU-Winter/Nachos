@@ -24,6 +24,7 @@ public class VMKernel extends UserKernel {
 	/**
 	 * Initialize this kernel.
 	 */
+    @Override
 	public void initialize(String[] args) {
 		super.initialize(args);
         numPhysPages = Machine.processor().getNumPhysPages();
@@ -50,14 +51,14 @@ public class VMKernel extends UserKernel {
 	/**
 	 * Terminate this kernel. Never returns.
 	 */
-    //TODO: remove and close swap file
+    @Override
 	public void terminate() {
         Lib.debug(dbgVM, "VMKernel: terminating VMKernel...");
         if (swapFile != null) {
             swapFile.close();
-            if(ThreadedKernel.fileSystem.remove(swapFileName)) {
-                Lib.debug(dbgVM, "VMKernel: remove swapfile successfully");
-            }
+            // if(ThreadedKernel.fileSystem.remove(swapFileName)) {
+            //     Lib.debug(dbgVM, "VMKernel: remove swapfile successfully");
+            // }
         }
 		super.terminate();
 	}
