@@ -81,6 +81,10 @@ public class VMKernel extends UserKernel {
         return pageNum;
     }
 
+    /**
+     * Free a physical page.
+     * @param ppn the physical page number to be freed.
+    */
     public static void deallocate(int ppn) {
         lock.acquire();
         freePageList.addLast(ppn);
@@ -218,6 +222,7 @@ public class VMKernel extends UserKernel {
         pinLock.acquire();
         invertedPageTable[ppn].pinned = true;
         numPinned += 1;
+        Lib.debug(dbgVM, "VMKernel: pinned page " + ppn + " total pinned " + numPinned);
         pinLock.release();
     }
 
@@ -225,6 +230,7 @@ public class VMKernel extends UserKernel {
         pinLock.acquire();
         invertedPageTable[ppn].pinned = false;
         numPinned -= 1;
+        Lib.debug(dbgVM, "VMKernel: unpinned page " + ppn + " total pinned " + numPinned);
         allPinned.wake();
         pinLock.release();
     }
