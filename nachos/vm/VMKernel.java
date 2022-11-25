@@ -52,11 +52,11 @@ public class VMKernel extends UserKernel {
 	 */
     //TODO: remove and close swap file
 	public void terminate() {
-        Lib.debug(dbgVM, "VMKernel: \tterminating VMKernel...");
+        Lib.debug(dbgVM, "VMKernel: terminating VMKernel...");
         if (swapFile != null) {
             swapFile.close();
             if(ThreadedKernel.fileSystem.remove(swapFileName)) {
-                Lib.debug(dbgVM, "VMKernel: \tremove swapfile successfully");
+                Lib.debug(dbgVM, "VMKernel: remove swapfile successfully");
             }
         }
 		super.terminate();
@@ -76,7 +76,7 @@ public class VMKernel extends UserKernel {
             pageNum = freePageList.removeFirst();
         }
         invertedPageTable[pageNum] = new InvertedPageTableEntry(process, vpn);
-        Lib.debug(dbgVM, "VMKernel: \tassign a physical page to PID[" + process.getPID() + "] vpn " + vpn + " ppn " + pageNum);
+        Lib.debug(dbgVM, "VMKernel: assign a physical page to PID[" + process.getPID() + "] vpn " + vpn + " ppn " + pageNum);
         lock.release();
         return pageNum;
     }
@@ -89,9 +89,9 @@ public class VMKernel extends UserKernel {
      */
     private static int evict() {
         pinLock.acquire();
-        Lib.debug(dbgVM, "VMKernel: \tinsufficient physical memory, evicting...");
+        Lib.debug(dbgVM, "VMKernel: insufficient physical memory, evicting...");
         while (numPinned == numPhysPages) {
-            Lib.debug(dbgVM, "VMKernel: \tall pages are pinned, waiting...");
+            Lib.debug(dbgVM, "VMKernel: all pages are pinned, waiting...");
             try {
                 allPinned.wait();
             } catch (Exception exception) {
@@ -110,10 +110,10 @@ public class VMKernel extends UserKernel {
                     int spn = allocateSwapFilePage();
                     process.setPPN(vpn, spn);
                     writeToSwapFile(toEvict, spn);
-                    Lib.debug(dbgVM, "VMKernel: \tevict ppn "+ toEvict + " and write it to disk spn " + spn);
+                    Lib.debug(dbgVM, "VMKernel: evict ppn "+ toEvict + " and write it to disk spn " + spn);
                 } else {
                     process.setPPN(vpn, -1);
-                    Lib.debug(dbgVM, "VMKernel: \tevict ppn "+ toEvict + " no need to write back");
+                    Lib.debug(dbgVM, "VMKernel: evict ppn "+ toEvict + " no need to write back");
                 }
                 break;
             } else {
@@ -134,7 +134,7 @@ public class VMKernel extends UserKernel {
         if (swapFile == null) {
             swapFile = ThreadedKernel.fileSystem.open(swapFileName, true);
             if (swapFile == null) {
-                System.out.println("VMKernel: \tcreate the swap file failed");
+                System.out.println("VMKernel: create the swap file failed");
                 Lib.assertNotReached();
             }
         }
@@ -165,7 +165,7 @@ public class VMKernel extends UserKernel {
         byte[] memory = Machine.processor().getMemory();
         int written = swapFile.write(spn * pageSize, memory, ppn * pageSize, pageSize);
         if (written != pageSize) {
-            Lib.debug(dbgVM, "VMKernel: \twrite to swap file less than " + pageSize + " bytes");
+            Lib.debug(dbgVM, "VMKernel: write to swap file less than " + pageSize + " bytes");
         }
     }
 
@@ -178,7 +178,7 @@ public class VMKernel extends UserKernel {
         byte[] memory = Machine.processor().getMemory();
         int read = swapFile.read(spn * pageSize, memory, ppn * pageSize, pageSize);
         if (read != pageSize) {
-            Lib.debug(dbgVM, "VMKernel: \tread from swap file less than " + pageSize + " bytes");
+            Lib.debug(dbgVM, "VMKernel: read from swap file less than " + pageSize + " bytes");
         }
         deallocateSwapFilePage(spn);
     }
