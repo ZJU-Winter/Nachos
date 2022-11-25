@@ -107,21 +107,21 @@ public class VMKernel extends UserKernel {
                 toEvict = victim;
                 victim = (victim + 1) % numPhysPages;
                 process.unsetValid(vpn);
-                /* 
+                
                 int spn = allocateSwapFilePage();
                 process.setPPN(vpn, spn);
                 Lib.debug(dbgVM, "VMKernel: evict ppn "+ toEvict + " and write it to disk spn " + spn);
                 writeToSwapFile(toEvict, spn);
-                */
-                if (process.isDirty(vpn)) {
-                    int spn = allocateSwapFilePage();
-                    process.setPPN(vpn, spn);
-                    Lib.debug(dbgVM, "VMKernel: evict ppn "+ toEvict + " and write it to disk spn " + spn);
-                    writeToSwapFile(toEvict, spn);
-                } else {
-                    process.setPPN(vpn, -1);
-                    Lib.debug(dbgVM, "VMKernel: evict ppn "+ toEvict + " no need to write back");
-                }
+                
+                // if (process.isDirty(vpn)) {
+                //     int spn = allocateSwapFilePage();
+                //     process.setPPN(vpn, spn);
+                //     Lib.debug(dbgVM, "VMKernel: evict ppn "+ toEvict + " and write it to disk spn " + spn);
+                //     writeToSwapFile(toEvict, spn);
+                // } else {
+                //     process.setPPN(vpn, -1);
+                //     Lib.debug(dbgVM, "VMKernel: evict ppn "+ toEvict + " no need to write back");
+                // }
                 break;
             } else {
                 victim = (victim + 1) % numPhysPages;
