@@ -180,6 +180,10 @@ public class VMProcess extends UserProcess {
 		int totalWrite = 0;
 		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
+            if (pageTable[vpn].readOnly) {
+                Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT on a readOnly page vpn " + vpn);
+                return totalWrite;
+            }
             if (!pageTable[vpn].valid) {
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT Page Fault on vpn " + vpn);
                 handlePageFault(currentVa);
@@ -215,6 +219,7 @@ public class VMProcess extends UserProcess {
      * @param vaddr the virtual address of page that is invalid.
      */
     private void handlePageFault(int vaddr) {
+        pageFaultLock.acquire();
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + Processor.pageFromAddress(vaddr));
         int vpn = Processor.pageFromAddress(vaddr);
         int ppn = VMKernel.allocate(this, vpn);
@@ -241,6 +246,7 @@ public class VMProcess extends UserProcess {
         setValid(vpn);
         setUsed(vpn);
         pageTable[vpn].ppn = ppn;
+        pageFaultLock.release();
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + pageTable[vpn].ppn + "\n");
     }
 
@@ -324,6 +330,8 @@ public class VMProcess extends UserProcess {
     protected void unsetValid(int vpn) {
         pageTable[vpn].valid = false;
     }
+
+    private static Lock pageFaultLock = new Lock();
 
 	private static final int pageSize = Processor.pageSize;
 
