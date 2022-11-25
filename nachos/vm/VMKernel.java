@@ -56,9 +56,9 @@ public class VMKernel extends UserKernel {
         Lib.debug(dbgVM, "VMKernel: terminating VMKernel...");
         if (swapFile != null) {
             swapFile.close();
-            // if(ThreadedKernel.fileSystem.remove(swapFileName)) {
-            //     Lib.debug(dbgVM, "VMKernel: remove swapfile successfully");
-            // }
+            if(ThreadedKernel.fileSystem.remove(swapFileName)) {
+                Lib.debug(dbgVM, "VMKernel: remove swapfile successfully");
+            }
         }
 		super.terminate();
 	}
@@ -251,5 +251,5 @@ public class VMKernel extends UserKernel {
 
 	private static final char dbgVM = 'v';
 
-    private static final String swapFileName = ".swapfile";
+    private static final String swapFileName = "swapfile";
 }
