@@ -215,9 +215,9 @@ public class VMProcess extends UserProcess {
      * @param vaddr the virtual address of page that is invalid.
      */
     private void handlePageFault(int vaddr) {
+        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + Processor.pageFromAddress(vaddr));
         int vpn = Processor.pageFromAddress(vaddr);
         int ppn = VMKernel.allocate(this, vpn);
-        Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + vpn);
         if (pageTable[vpn].ppn == -1) {
             Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault, reading from COFF");
             for (int s = 0; s < coff.getNumSections(); s += 1) {
