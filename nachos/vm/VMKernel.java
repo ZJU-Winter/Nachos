@@ -92,7 +92,11 @@ public class VMKernel extends UserKernel {
         Lib.debug(dbgVM, "VMKernel: \tinsufficient physical memory, evicting...");
         while (numPinned == numPhysPages) {
             Lib.debug(dbgVM, "VMKernel: \tall pages are pinned, waiting...");
-            allPinned.wait();
+            try {
+                allPinned.wait();
+            } catch (Exception exception) {
+                System.out.println(exception.getMessage());
+            }
         }
         int toEvict;
         while (true) {
