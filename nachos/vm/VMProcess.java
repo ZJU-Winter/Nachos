@@ -226,7 +226,7 @@ public class VMProcess extends UserProcess {
                 if (vpn >= firstVPN && vpn <= lastVPN) {
                     section.loadPage(vpn - section.getFirstVPN(), ppn);
                     setValid(vpn);
-                    //setUsed(vpn);
+                    setUsed(vpn);
                     //unsetDirty(vpn);
                     pageTable[vpn].ppn = ppn;
                     Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn + "\n");
@@ -236,7 +236,7 @@ public class VMProcess extends UserProcess {
             byte[] memory = Machine.processor().getMemory();
             Arrays.fill(memory, ppn * pageSize, (ppn + 1) * pageSize, (byte) 0);
             setValid(vpn);
-            //setUsed(vpn);
+            setUsed(vpn);
             //unsetDirty(vpn);
             pageTable[vpn].ppn = ppn;
             Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn + "\n");
@@ -244,7 +244,7 @@ public class VMProcess extends UserProcess {
             Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault, reading from swap file, spn " + pageTable[vpn].ppn);
             VMKernel.readFromSwapFile(ppn, pageTable[vpn].ppn);
             setValid(vpn);
-            //setUsed(vpn);
+            setUsed(vpn);
             //unsetDirty(vpn);
             pageTable[vpn].ppn = ppn;
             Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn + "\n");
