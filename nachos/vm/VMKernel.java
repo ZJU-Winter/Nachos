@@ -27,7 +27,7 @@ public class VMKernel extends UserKernel {
     @Override
 	public void initialize(String[] args) {
 		super.initialize(args);
-        numPhysPages = Machine.processor().getNumPhysPages();
+        //numPhysPages = Machine.processor().getNumPhysPages();
         invertedPageTable = new InvertedPageTableEntry[numPhysPages];
         swapLock = new Lock();
         pinLock = new Lock();
@@ -242,7 +242,7 @@ public class VMKernel extends UserKernel {
 
     private static int numPinned = 0;
 
-    private static int numPhysPages;
+    private static final int numPhysPages = Machine.processor().getNumPhysPages();
 
 	private static final int pageSize = Processor.pageSize;
 

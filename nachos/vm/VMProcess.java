@@ -211,7 +211,7 @@ public class VMProcess extends UserProcess {
 	}
     
     /**
-     * 
+     * Page Fault Handler.
      * @param vaddr the virtual address of page that is invalid.
      */
     private void handlePageFault(int vaddr) {
@@ -228,7 +228,7 @@ public class VMProcess extends UserProcess {
                     setValid(vpn);
                     setUsed(vpn);
                     pageTable[vpn].ppn = ppn;
-                    Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn + "\n");
+                    Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + pageTable[vpn].ppn + "\n");
                     return;
                 }
             }
@@ -237,14 +237,14 @@ public class VMProcess extends UserProcess {
             setValid(vpn);
             setUsed(vpn);
             pageTable[vpn].ppn = ppn;
-            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn + "\n");
+            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + pageTable[vpn].ppn + "\n");
         } else {
             Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault, reading from swap file, spn " + pageTable[vpn].ppn);
             VMKernel.readFromSwapFile(ppn, pageTable[vpn].ppn);
             setValid(vpn);
             setUsed(vpn);
             pageTable[vpn].ppn = ppn;
-            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + ppn + "\n");
+            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + pageTable[vpn].ppn + "\n");
         }
     }
 
