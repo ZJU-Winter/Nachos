@@ -77,7 +77,7 @@ public class VMKernel extends UserKernel {
             pageNum = freePageList.removeFirst();
         }
         invertedPageTable[pageNum] = new InvertedPageTableEntry(process, vpn);
-        Lib.debug(dbgVM, "VMKernel: assign a physical page ppn " + pageNum + " to PID[" + process.getPID() + "]'s vpn " + vpn);
+        Lib.debug(dbgVM, "VMKernel: assign a physical page ppn " + pageNum + " to PID[" + invertedPageTable[pageNum].process.getPID() + "]'s vpn " + invertedPageTable[pageNum].vpn);
         lock.release();
         return pageNum;
     }
