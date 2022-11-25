@@ -124,6 +124,7 @@ public class VMProcess extends UserProcess {
             Lib.debug(dbgVM, "PID[" + PID + "]:" + "\treading a page, ppn " + ppn);
             VMKernel.pinPage(ppn);
             setUsed(vpn);
+            setDirty(vpn);
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
 			int nextVa = pageSize * (vpn + 1);
