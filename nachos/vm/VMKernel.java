@@ -84,7 +84,6 @@ public class VMKernel extends UserKernel {
     public static void deallocate(int ppn) {
         lock.acquire();
         freePageList.addLast(ppn);
-        //TODO: update IPT
         lock.release();
     }
 
