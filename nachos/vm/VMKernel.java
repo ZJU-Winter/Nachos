@@ -25,12 +25,12 @@ public class VMKernel extends UserKernel {
 	 * Initialize this kernel.
 	 */
 	public void initialize(String[] args) {
+		super.initialize(args);
         numPhysPages = Machine.processor().getNumPhysPages();
         invertedPageTable = new InvertedPageTableEntry[numPhysPages];
         swapLock = new Lock();
         pinLock = new Lock();
         allPinned = new Condition(pinLock);
-		super.initialize(args);
 	}
 
 	/**
