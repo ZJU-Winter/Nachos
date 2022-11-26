@@ -88,8 +88,8 @@ public class VMKernel extends UserKernel {
     public static void deallocate(int ppn) {
         lock.acquire();
         freePageList.addLast(ppn);
-        invertedPageTable[ppn] = null;
-        Lib.debug(dbgVM, "VMKernel: deallocate a physical page ppn " + ppn);
+        //invertedPageTable[ppn] = null;
+        //Lib.debug(dbgVM, "VMKernel: deallocate a physical page ppn " + ppn);
         lock.release();
     }
 
