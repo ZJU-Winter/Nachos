@@ -94,7 +94,7 @@ public class VMKernel extends UserKernel {
     /**
      * Evict a physical page and return the ecvicted physical page number.
      * Find the owner process and invalid the page table entry,
-     * if the evicted page is dirty, write back to the dish and set the entry's ppn to the spn, set -1 otherwise.
+     * if the evicted page is dirty, write back to the disk and set the entry's ppn to the spn, set -1 otherwise.
      * @return the evicted physical page number.
      */
     private static int evict() {
