@@ -216,7 +216,7 @@ public class VMProcess extends UserProcess {
     
     /**
      * Page Fault Handler.
-     * @param vaddr the virtual address of page that is invalid.
+     * @param vaddr the invalid virtual address.
      */
     private void handlePageFault(int vaddr) {
         pageFaultLock.acquire();
