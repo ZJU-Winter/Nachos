@@ -163,6 +163,7 @@ public class VMKernel extends UserKernel {
     public static void deallocateSwapFilePage(int spn) {
         swapLock.acquire();
         swapFileFreePageList.addLast(spn);
+        invertedPageTable[spn] = null;
         swapLock.release();
     }
 
