@@ -116,13 +116,14 @@ public class VMProcess extends UserProcess {
 		int totalRead = 0;
 		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
-            while (!pageTable[vpn].valid) {
+            if (!pageTable[vpn].valid) {
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\treadVMWithPT Page Fault on vpn " + vpn);
                 handlePageFault(currentVa);
+                VMKernel.pinPage(pageTable[vpn].ppn);
             }
 			int ppn = pageTable[vpn].ppn;
-            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\treading a page, ppn " + ppn);
             VMKernel.pinPage(ppn);
+            Lib.debug(dbgVM, "PID[" + PID + "]:" + "\treading a page, ppn " + ppn);
             setUsed(vpn);
 			int addrOffset = Processor.offsetFromAddress(currentVa);
 			int paddr = pageSize * ppn + addrOffset;
@@ -184,9 +185,10 @@ public class VMProcess extends UserProcess {
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT on a readOnly page vpn " + vpn);
                 return totalWrite;
             }
-            while (!pageTable[vpn].valid) {
+            if (!pageTable[vpn].valid) {
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT Page Fault on vpn " + vpn);
                 handlePageFault(currentVa);
+                VMKernel.pinPage(pageTable[vpn].ppn);
             }
 			int ppn = pageTable[vpn].ppn;
             Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriting a page, ppn " + ppn);
