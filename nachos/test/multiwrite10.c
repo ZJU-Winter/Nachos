@@ -1,5 +1,4 @@
 #include "syscall.h"
-#include <stdio.h>
 #define N 8
 int main() {
     char *progrm = "write10.coff";
@@ -13,8 +12,7 @@ int main() {
     }
     for (int i = 0; i < N; i += 1) {
         if (retureValues[i] != 0) {
-            printf("%d write10 failed", i);
-            exit(-1);
+            exit(i + 1000);
         }
     }
     return 0;
