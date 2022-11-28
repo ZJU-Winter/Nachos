@@ -224,7 +224,7 @@ public class VMProcess extends UserProcess {
         int vpn = Processor.pageFromAddress(vaddr);
         int ppn = VMKernel.allocate(this, vpn);
         if (pageTable[vpn].ppn == -1) {
-            if (vpn < numPages - stackPages - 1) {
+            if (vpn < numPages - stackPages) {
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault, reading from COFF");
                 for (int s = 0; s < coff.getNumSections(); s += 1) {
                     CoffSection section = coff.getSection(s);
