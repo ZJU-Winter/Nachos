@@ -15,13 +15,6 @@ main() {
             printf("exec failed.\n");
             break;
         }
-        // ##################
-        // execute in order #
-        // ##################
-//        if (join(pid, &status) != 1) {
-//            printf("join failed.\n");
-//            break;
-//        }
         printf("i = %d, status = %d\n", i, status);
     }
     exit(0);
