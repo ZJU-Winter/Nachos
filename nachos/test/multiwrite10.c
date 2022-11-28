@@ -12,7 +12,7 @@ int main() {
     }
     for (int i = 0; i < N; i += 1) {
         if (retureValues[i] != 0) {
-            exit(i + 1000);
+            exit(retureValues[i]);
         }
     }
     return 0;
