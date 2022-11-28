@@ -13,7 +13,7 @@ int main() {
     }
     for (int i = 0; i < N; i += 1) {
         if (retureValues[i] != -1000) {
-            exit(retureValues[i]);
+            exit(-1);
         }
     }
     return 0;
