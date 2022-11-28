@@ -418,6 +418,7 @@ public class UserProcess {
 	protected void unloadSections() {
         // deacllocate memory
         for (int i = 0; i < numPages; i += 1) {
+            if (pageTable[i] == null) break;
             int ppn = pageTable[i].ppn;
             pageTable[i] = null;
             UserKernel.deallocate(ppn);
