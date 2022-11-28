@@ -1,6 +1,6 @@
 #include "syscall.h"
 #include "stdio.h"
-#define N 16
+#define N 8
 int main() {
     printf("Running %d swap5.coff processes.");
     int retureValues[N];
