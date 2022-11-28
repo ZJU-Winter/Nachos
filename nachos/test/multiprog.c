@@ -2,7 +2,7 @@
 #include "stdio.h"
 #define N 8
 int main(int argc, char** argv) {
-    char *progrm = argv[1];
+    char *progrm = argv[0];
     printf("Running %d %s.coff processes.", N, progrm);
     int retureValues[N];
     int pids[N];
