@@ -1,7 +1,9 @@
 #include "syscall.h"
+#include "stdio.h"
 #define N 8
-int main() {
-    char *progrm = "write10.coff";
+int main(int argc, char** argv) {
+    char *progrm = argv[1];
+    printf("Running %d %s.coff processes.", N, progrm);
     int retureValues[N];
     int pids[N];
     for (int i = 0; i < N; i += 1) {
