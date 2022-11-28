@@ -119,7 +119,6 @@ public class VMProcess extends UserProcess {
             if (!pageTable[vpn].valid) {
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\treadVMWithPT Page Fault on vpn " + vpn);
                 handlePageFault(currentVa);
-                VMKernel.pinPage(pageTable[vpn].ppn);
             }
 			int ppn = pageTable[vpn].ppn;
             VMKernel.pinPage(ppn);
@@ -188,7 +187,6 @@ public class VMProcess extends UserProcess {
             if (!pageTable[vpn].valid) {
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT Page Fault on vpn " + vpn);
                 handlePageFault(currentVa);
-                VMKernel.pinPage(pageTable[vpn].ppn);
             }
 			int ppn = pageTable[vpn].ppn;
             Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriting a page, ppn " + ppn);
