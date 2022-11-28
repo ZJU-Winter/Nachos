@@ -116,7 +116,7 @@ public class VMProcess extends UserProcess {
 		int totalRead = 0;
 		while (currentVa < vaddr + amount) {
 			int vpn = Processor.pageFromAddress(currentVa);
-            if (!pageTable[vpn].valid) {
+            while (!pageTable[vpn].valid) {
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\treadVMWithPT Page Fault on vpn " + vpn);
                 handlePageFault(currentVa);
             }
@@ -184,7 +184,7 @@ public class VMProcess extends UserProcess {
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT on a readOnly page vpn " + vpn);
                 return totalWrite;
             }
-            if (!pageTable[vpn].valid) {
+            while (!pageTable[vpn].valid) {
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\twriteVMWithPT Page Fault on vpn " + vpn);
                 handlePageFault(currentVa);
             }
