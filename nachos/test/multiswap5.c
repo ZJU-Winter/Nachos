@@ -2,7 +2,7 @@
 #include "stdio.h"
 #define N 8
 int main() {
-    printf("Running %d swap5.coff processes.");
+    printf("Running %d swap5.coff processes.", N);
     int retureValues[N];
     int pids[N];
     for (int i = 0; i < N; i += 1) {
