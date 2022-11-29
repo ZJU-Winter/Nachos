@@ -45,8 +45,6 @@ public class VMProcess extends UserProcess {
 
 		for (int s = 0; s < coff.getNumSections(); s++) {
 			CoffSection section = coff.getSection(s);
-            System.out.println(section.getName() + " is readonly? " + section.isReadOnly());
-
 			Lib.debug(dbgVM, "\tinitializing " + section.getName()
 					+ " section (" + section.getLength() + " pages)");
 
