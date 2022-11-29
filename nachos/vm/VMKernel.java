@@ -165,6 +165,7 @@ public class VMKernel extends UserKernel {
     public static void deallocateSwapFilePage(int spn) {
         swapLock.acquire();
         swapFileFreePageList.addLast(spn);
+        System.out.println("VMKernel: deallocate swap file page spn " + spn);
         swapLock.release();
     }
 
