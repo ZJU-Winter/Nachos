@@ -223,6 +223,14 @@ public class VMProcess extends UserProcess {
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + Processor.pageFromAddress(vaddr));
         int vpn = Processor.pageFromAddress(vaddr);
         int ppn = VMKernel.allocate(this, vpn);
+        int coffLength = 0;
+        for (int s = 0; s < coff.getNumSections(); s += 1) {
+            CoffSection section = coff.getSection(s);
+            coffLength += section.getLength();
+        }
+        System.out.println("coffLength: " + coffLength);
+        System.out.println("Another: " + (numPages - stackPages - 1));
+        
         if (pageTable[vpn].ppn == -1) {
             if (vpn < numPages - stackPages - 1) {
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault, reading from COFF");
