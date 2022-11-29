@@ -2,7 +2,7 @@
 #include "stdio.h"
 #define N 8
 int main() {
-    printf("Running %d matmult.coff processes.", N);
+    printf("Running %d matmult.coff processes.\n", N);
     int retureValues[N];
     int pids[N];
     for (int i = 0; i < N; i += 1) {
