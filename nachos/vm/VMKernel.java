@@ -176,13 +176,11 @@ public class VMKernel extends UserKernel {
      */
     private static void writeToSwapFile(int ppn, int spn) {
         Lib.debug(dbgVM, "VMKernel: write from physical memory ppn " + ppn + " to swap file spn " + spn);
-        pinPage(ppn);
         byte[] memory = Machine.processor().getMemory();
         int written = swapFile.write(spn * pageSize, memory, ppn * pageSize, pageSize);
         if (written != pageSize) {
             Lib.debug(dbgVM, "VMKernel: write to swap file less than " + pageSize + " bytes");
         }
-        unpinPage(ppn);
     }
 
     /**
@@ -192,14 +190,12 @@ public class VMKernel extends UserKernel {
      */
     public static void readFromSwapFile(int ppn, int spn) {
         Lib.debug(dbgVM, "VMKernel: read from swap file spn " + spn + " to physical memory ppn " + ppn);
-        pinPage(ppn);
         byte[] memory = Machine.processor().getMemory();
         int read = swapFile.read(spn * pageSize, memory, ppn * pageSize, pageSize);
         if (read != pageSize) {
             Lib.debug(dbgVM, "VMKernel: read from swap file less than " + pageSize + " bytes");
         }
         deallocateSwapFilePage(spn);
-        unpinPage(ppn);
     }
 
     /**
