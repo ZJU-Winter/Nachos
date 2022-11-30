@@ -224,6 +224,7 @@ public class VMProcess extends UserProcess {
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + Processor.pageFromAddress(vaddr));
         int vpn = Processor.pageFromAddress(vaddr);
         int ppn = VMKernel.allocate(this, vpn);
+        VMKernel.pinPage(ppn);
         if (pageTable[vpn].ppn == -1) {
             if (vpn < numPages - stackPages - 1) {
                 Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault, reading from COFF");
@@ -247,6 +248,7 @@ public class VMProcess extends UserProcess {
         setValid(vpn);
         setUsed(vpn);
         pageTable[vpn].ppn = ppn;
+        VMKernel.unpinPage(ppn);
         pageFaultLock.release();
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tload a page" + " vpn " + vpn + " ppn " + pageTable[vpn].ppn + "\n");
     }
