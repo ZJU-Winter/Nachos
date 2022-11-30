@@ -195,7 +195,7 @@ public class VMKernel extends UserKernel {
         if (read != pageSize) {
             Lib.debug(dbgVM, "VMKernel: read from swap file less than " + pageSize + " bytes");
         }
-        //deallocateSwapFilePage(spn);
+        deallocateSwapFilePage(spn);
     }
 
     /**
