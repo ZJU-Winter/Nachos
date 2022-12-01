@@ -223,6 +223,9 @@ public class VMProcess extends UserProcess {
         pageFaultLock.acquire();
         Lib.debug(dbgVM, "PID[" + PID + "]:" + "\tpage fault on vaddr 0x" + Lib.toHexString(vaddr) + " vpn " + Processor.pageFromAddress(vaddr));
         int vpn = Processor.pageFromAddress(vaddr);
+        if (pageTable[vpn] == null) {
+            return;
+        }
         int ppn = VMKernel.allocate(this, vpn);
         if (pageTable[vpn].ppn == -1) {
             if (vpn < numPages - stackPages - 1) {
